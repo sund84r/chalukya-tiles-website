@@ -74,19 +74,14 @@ htmlcov/
 .ruff_cache/
 .cache/
 
-# Uploaded media — keep folder structure via .gitkeep only
-uploads/
-media/uploads/
-static/uploads/tiles/*
-!static/uploads/tiles/.gitkeep
-static/uploads/videos/*
-!static/uploads/videos/.gitkeep
-static/uploads/posters/*
-!static/uploads/posters/.gitkeep
-static/uploads/gallery/*
-!static/uploads/gallery/.gitkeep
-static/uploads/inventory/*
-!static/uploads/inventory/.gitkeep
+# Uploaded media — ignore binaries; keep README + .gitkeep folder markers
+# (Do NOT use a bare "uploads/" rule — it also matches static/uploads/)
+/uploads/
+/media/uploads/
+static/uploads/**
+!static/uploads/README.md
+!static/uploads/**/
+!static/uploads/**/.gitkeep
 
 # Optional large local media (keep README placeholders)
 static/videos/*
