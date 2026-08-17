@@ -89,3 +89,7 @@ static/videos/*
 
 # Grok / session tooling (if present)
 .grok/
+
+# local auth temp
+.gh-auth-*.txt
+
