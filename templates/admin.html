@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin Dashboard | {{ brand_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/admin.css?v178-brand-corner">
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+</head>
+<body class="admin-body" data-admin-app data-admin-user="{{ admin_user.username }}">
+  <div class="admin-shell" data-admin-shell>
+    <div class="admin-sidebar-backdrop" data-admin-backdrop hidden aria-hidden="true"></div>
+
+    <aside class="admin-sidebar" data-admin-sidebar id="admin-sidebar" aria-label="Admin menu">
+      <div class="admin-sidebar__brand admin-sidebar__brand--stack">
+        <img src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="200" height="68">
+<strong class="admin-sidebar__admin-title">ADMIN</strong>
+      </div>
+      <nav class="admin-nav" aria-label="Admin sections">
+        <p class="admin-nav__group">Dashboard</p>
+        <button type="button" class="admin-nav__item is-active" data-admin-nav="dashboard">
+          <span class="admin-nav__text">Overview &amp; stats</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="inv-overview">
+          <span class="admin-nav__text">Inventory overview</span>
+        </button>
+
+        <p class="admin-nav__group">Finance</p>
+        <button type="button" class="admin-nav__item" data-admin-nav="sales">
+          <span class="admin-nav__text">Sales</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="sales-returns">
+          <span class="admin-nav__text">Sales Return</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="purchases">
+          <span class="admin-nav__text">Purchase</span>
+        </button>
+
+        <p class="admin-nav__group">Business</p>
+        <button type="button" class="admin-nav__item" data-admin-nav="leads">
+          <span class="admin-nav__text">Leads</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="queries">
+          <span class="admin-nav__text">Queries</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="customers">
+          <span class="admin-nav__text">Customer Details</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="reviews">
+          <span class="admin-nav__text">Reviews &amp; Ratings</span>
+        </button>
+
+        <p class="admin-nav__group">Inventory</p>
+        <button type="button" class="admin-nav__item" data-admin-nav="inventory">
+          <span class="admin-nav__text">Inventory / Stock</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="inventory-add">
+          <span class="admin-nav__text">Add Inventory</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="tiles">
+          <span class="admin-nav__text">New Arrivals</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="videos">
+          <span class="admin-nav__text">Collection Videos</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="concept-gallery">
+          <span class="admin-nav__text">Concept Gallery</span>
+        </button>
+
+        <p class="admin-nav__group">System</p>
+        <button type="button" class="admin-nav__item" data-admin-nav="data-tools">
+          <span class="admin-nav__text">Backup / Export / Import</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="app-logs">
+          <span class="admin-nav__text">Application Logs</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="user-logs">
+          <span class="admin-nav__text">User Logs</span>
+        </button>
+      </nav>
+      <div class="admin-sidebar__foot">
+        <p class="admin-user admin-sidebar__label">Signed in as <strong data-admin-username>{{ admin_user.username }}</strong></p>
+        <a class="admin-link admin-sidebar__label" href="/" target="_blank" rel="noopener">View site</a>
+        <button type="button" class="admin-btn admin-btn--ghost admin-btn--sm" data-admin-logout>Log out</button>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div class="admin-topbar__left">
+          <button
+            type="button"
+            class="admin-menu-btn"
+            data-admin-menu
+            aria-controls="admin-sidebar"
+            aria-expanded="true"
+            aria-label="Open or close menu"
+            title="Toggle menu"
+          >
+            <span class="admin-menu-btn__bars" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </span>
+          </button>
+
+          <div class="admin-topbar__titles">
+            <h1 class="admin-topbar__title" data-admin-title>Dashboard</h1>
+            <p class="admin-topbar__sub">Chalukya Tiles operations console</p>
+          </div>
+        </div>
+        <div class="admin-topbar__right" data-admin-dashboard-tools hidden>
+          <button
+            type="button"
+            class="admin-charts-btn"
+            data-admin-charts
+            title="Charts &amp; analytics"
+            aria-label="Open charts"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path fill="currentColor" d="M3 3h2v18H3V3zm16 8h2v10h-2V11zm-4-4h2v14h-2V7zm-4 6h2v8h-2v-8z"/>
+            </svg>
+          </button>
+          <button type="button" class="admin-btn admin-btn--outline admin-btn--sm" data-admin-refresh>Refresh</button>
+        </div>
+      </header>
+
+      <!-- Charts overlay -->
+      <div class="admin-charts" data-admin-charts-panel hidden>
+        <div class="admin-charts__backdrop" data-admin-charts-close></div>
+        <div class="admin-charts__panel" role="dialog" aria-label="Analytics charts">
+          <div class="admin-charts__head">
+            <h2>Charts &amp; analytics</h2>
+            <button type="button" class="admin-modal__x" data-admin-charts-close aria-label="Close">×</button>
+          </div>
+          <div class="admin-charts__grid">
+            <div class="admin-card">
+              <h3 class="admin-charts__title">Sales (last days)</h3>
+              <canvas data-chart-sales height="160"></canvas>
+            </div>
+            <div class="admin-card">
+              <h3 class="admin-charts__title">Inventory by category</h3>
+              <canvas data-chart-inv-cat height="160"></canvas>
+            </div>
+            <div class="admin-card">
+              <h3 class="admin-charts__title">Low stock items</h3>
+              <canvas data-chart-low height="160"></canvas>
+            </div>
+            <div class="admin-card">
+              <h3 class="admin-charts__title">Posted on website</h3>
+              <canvas data-chart-posted height="160"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-toast" data-admin-toast hidden></div>
+
+      <!-- Dashboard -->
+      <section class="admin-panel is-active" data-admin-panel="dashboard" aria-label="Dashboard">
+        <div class="admin-card" style="margin-bottom:1rem">
+          <div class="admin-card__head">
+            <h2>Exports &amp; backup</h2>
+            <div class="admin-export-btns" data-export-kind="dashboard"></div>
+          </div>
+          <p class="admin-help">Download business data as Excel/PDF. Database backup downloads the SQLite file.</p>
+          <p><a class="admin-btn admin-btn--outline admin-btn--sm" href="/api/admin/backup/database" data-admin-db-backup>Download DB backup (.db)</a></p>
+        </div>
+        <div class="admin-stats" data-dash-stats>
+          <!-- filled by JS -->
+        </div>
+        <div class="admin-grid-2">
+          <div class="admin-card">
+            <div class="admin-card__head">
+              <h2>Recent sales</h2>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Invoice</th>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody data-dash-sales></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card__head">
+              <h2>New leads</h2>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Interest</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody data-dash-leads></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Latest queries</h2>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Message / Product</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody data-dash-queries></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tiles -->
+      <section class="admin-panel" data-admin-panel="tiles" hidden>
+        <div class="admin-grid-2 admin-grid-2--form">
+          <div class="admin-card">
+            <div class="admin-card__head">
+              <h2>Upload new arrival</h2>
+            </div>
+            <p class="admin-help">
+              Active new arrivals appear on the website home page under <strong>New Arrivals / Latest Collections</strong>.
+            </p>
+            <form id="tile-upload-form" class="admin-form" enctype="multipart/form-data">
+              <label class="admin-field">
+                <span>Tile name *</span>
+                <input type="text" name="name" required placeholder="Carrara Luxe">
+              </label>
+              <label class="admin-field">
+                <span>Model number *</span>
+                <input type="text" name="model_number" required placeholder="CT-MRB-1200">
+              </label>
+              <div class="admin-form-row">
+                <label class="admin-field">
+                  <span>Colour *</span>
+                  <input type="text" name="colour" required placeholder="White / Grey">
+                </label>
+                <label class="admin-field">
+                  <span>Pattern</span>
+                  <input type="text" name="pattern" placeholder="Vein / Matt / Design code">
+                </label>
+              </div>
+              <div class="admin-form-row">
+                <label class="admin-field">
+                  <span>Material category *</span>
+                  <select name="material_category" required>
+                    <option value="">Select category</option>
+                    <option>Vitrified Tiles</option>
+                    <option>Ceramic Tiles</option>
+                    <option>Parking Tiles</option>
+                    <option>Outdoor Tiles</option>
+                    <option>Wooden Finish</option>
+                    <option>Marble Finish</option>
+                    <option>Bathroom Tiles</option>
+                    <option>Kitchen Tiles</option>
+                    <option>Elevation Tiles</option>
+                  </select>
+                </label>
+              </div>
+              <div class="admin-form-row">
+                <label class="admin-field">
+                  <span>Size</span>
+                  <input type="text" name="size_label" placeholder="600 × 1200 mm">
+                </label>
+                <label class="admin-field">
+                  <span>Finish</span>
+                  <input type="text" name="finish" placeholder="Polished / Matt">
+                </label>
+              </div>
+              <label class="admin-field">
+                <span>Description</span>
+                <textarea name="description" rows="3" placeholder="Short product description"></textarea>
+              </label>
+              <label class="admin-field">
+                <span>Tile image *</span>
+                <input type="file" name="image" accept="image/*" required>
+              </label>
+              <button class="admin-btn admin-btn--primary" type="submit">Upload new arrival</button>
+            </form>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card__head">
+              <h2>New arrivals uploaded</h2>
+              <span class="admin-badge" data-tiles-count>0</span>
+            </div>
+            <div class="admin-media-grid" data-tiles-grid></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Videos -->
+      <section class="admin-panel" data-admin-panel="videos" hidden>
+        <div class="admin-grid-2 admin-grid-2--form">
+          <div class="admin-card">
+            <div class="admin-card__head">
+              <h2>Upload collection video</h2>
+            </div>
+            <p class="admin-help">Active videos appear mid-down on the home page (below the hero trust strip).</p>
+            <form id="video-upload-form" class="admin-form" enctype="multipart/form-data">
+              <label class="admin-field">
+                <span>Title *</span>
+                <input type="text" name="title" required placeholder="New collections walkthrough">
+              </label>
+              <label class="admin-field">
+                <span>Description</span>
+                <textarea name="description" rows="3" placeholder="Shown under the video on the homepage"></textarea>
+              </label>
+              <div class="admin-form-row">
+                <label class="admin-field">
+                  <span>Sort order</span>
+                  <input type="number" name="sort_order" value="0">
+                </label>
+                <label class="admin-field">
+                  <span>Active</span>
+                  <select name="is_active">
+                    <option value="1" selected>Yes — show on homepage</option>
+                    <option value="0">No — hidden</option>
+                  </select>
+                </label>
+              </div>
+              <label class="admin-field">
+                <span>Video file * (mp4 / webm)</span>
+                <input type="file" name="video" accept="video/*" required>
+              </label>
+              <label class="admin-field">
+                <span>Poster image (optional)</span>
+                <input type="file" name="poster" accept="image/*">
+              </label>
+              <button class="admin-btn admin-btn--primary" type="submit">Upload video</button>
+            </form>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card__head">
+              <h2>Collection videos</h2>
+            </div>
+            <div class="admin-video-list" data-videos-list></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Concept Gallery pictures -->
+      <section class="admin-panel" data-admin-panel="concept-gallery" hidden>
+        <div class="admin-grid-2 admin-grid-2--form">
+          <div class="admin-card">
+            <div class="admin-card__head">
+              <h2>Upload concept gallery picture</h2>
+            </div>
+            <p class="admin-help">
+              Active images appear on the website <strong>Concept Gallery</strong> page under the matching category filter.
+            </p>
+            <form id="concept-gallery-form" class="admin-form" enctype="multipart/form-data">
+              <label class="admin-field">
+                <span>Title *</span>
+                <input type="text" name="title" required placeholder="Modern bathroom set">
+              </label>
+              <label class="admin-field">
+                <span>Category *</span>
+                <select name="category" required>
+                  <option value="living">Living Room</option>
+                  <option value="bathroom">Bathroom</option>
+                  <option value="parking">Parking</option>
+                  <option value="elevation">Elevation</option>
+                  <option value="outdoor">Outdoor</option>
+                </select>
+              </label>
+              <label class="admin-field">
+                <span>Description</span>
+                <textarea name="description" rows="2" placeholder="Optional caption"></textarea>
+              </label>
+              <div class="admin-form-row">
+                <label class="admin-field">
+                  <span>Sort order</span>
+                  <input type="number" name="sort_order" value="0">
+                </label>
+                <label class="admin-field">
+                  <span>Post on website</span>
+                  <select name="is_active">
+                    <option value="1" selected>Yes — show in Concept Gallery</option>
+                    <option value="0">No — hidden</option>
+                  </select>
+                </label>
+              </div>
+              <label class="admin-field">
+                <span>Picture * (jpg / png / webp)</span>
+                <input type="file" name="image" accept="image/*" required>
+              </label>
+              <button class="admin-btn admin-btn--primary" type="submit">Upload picture</button>
+            </form>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card__head">
+              <h2>Uploaded pictures</h2>
+              <span class="admin-badge" data-concept-gallery-count>0</span>
+            </div>
+            <div class="admin-media-grid" data-concept-gallery-grid></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sales -->
+      <section class="admin-panel" data-admin-panel="sales" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Add sale</h2>
+          </div>
+          <form id="sale-form" class="admin-form admin-form--inline">
+            <label class="admin-field"><span>Invoice *</span><input name="invoice_no" required></label>
+            <label class="admin-field"><span>Customer *</span><input name="customer_name" required></label>
+            <label class="admin-field"><span>Phone</span><input name="customer_phone"></label>
+            <label class="admin-field"><span>Product *</span><input name="product_name" required></label>
+            <label class="admin-field"><span>Qty</span><input name="quantity" type="number" step="0.01" value="1"></label>
+            <label class="admin-field"><span>Amount (₹) *</span><input name="amount" type="number" step="0.01" required></label>
+            <label class="admin-field"><span>Date *</span><input name="sale_date" type="date" required></label>
+            <label class="admin-field"><span>Status</span>
+              <select name="status">
+                <option value="completed">Completed</option>
+                <option value="pending">Pending</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </label>
+            <label class="admin-field admin-field--wide"><span>Notes</span><input name="notes"></label>
+            <button class="admin-btn admin-btn--primary" type="submit">Save sale</button>
+          </form>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Sales table</h2>
+            <div class="admin-export-btns" data-export-kind="sales"></div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Customer</th>
+                  <th>Phone</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-sales-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Leads -->
+      <section class="admin-panel" data-admin-panel="leads" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Add lead</h2></div>
+          <form id="lead-form" class="admin-form admin-form--inline">
+            <label class="admin-field"><span>Name *</span><input name="name" required></label>
+            <label class="admin-field"><span>Phone *</span><input name="phone" required></label>
+            <label class="admin-field"><span>Email</span><input name="email" type="email"></label>
+            <label class="admin-field"><span>Source</span><input name="source" placeholder="Website / WhatsApp"></label>
+            <label class="admin-field"><span>Interest</span><input name="interest" placeholder="Marble Finish"></label>
+            <label class="admin-field"><span>Status</span>
+              <select name="status">
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="qualified">Qualified</option>
+                <option value="won">Won</option>
+                <option value="lost">Lost</option>
+              </select>
+            </label>
+            <label class="admin-field admin-field--wide"><span>Notes</span><input name="notes"></label>
+            <button class="admin-btn admin-btn--primary" type="submit">Save lead</button>
+          </form>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Leads table</h2>
+            <div class="admin-export-btns" data-export-kind="leads"></div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Source</th>
+                  <th>Interest</th>
+                  <th>Status</th>
+                  <th>Reminder</th>
+                  <th>Actions</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-leads-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Queries -->
+      <section class="admin-panel" data-admin-panel="queries" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Contact messages</h2>
+            <div class="admin-export-btns" data-export-kind="queries"></div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>Message</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-contacts-table></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Product enquiries</h2></div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Message</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-enquiries-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reviews / feedback / ratings -->
+      <section class="admin-panel" data-admin-panel="reviews" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Reviews, feedback &amp; ratings</h2>
+            <span class="admin-muted" data-reviews-count></span>
+          </div>
+          <p class="admin-help">
+            Customers submit reviews via the pen icon on the website. Approve to show on the home page; feature to pin at the top of the reviews slider. Rejected reviews stay private.
+          </p>
+          <div class="admin-toolbar" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem">
+            <label class="admin-field" style="margin:0">
+              <span class="sr-only">Filter status</span>
+              <select data-reviews-filter>
+                <option value="">All statuses</option>
+                <option value="pending" selected>Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </label>
+            <button type="button" class="admin-btn admin-btn--outline admin-btn--sm" data-reviews-refresh>Refresh</button>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Rating</th>
+                  <th>Title / Feedback</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                  <th>Featured</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody data-reviews-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customers -->
+      <section class="admin-panel" data-admin-panel="customers" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Add customer</h2></div>
+          <form id="customer-form" class="admin-form admin-form--inline">
+            <label class="admin-field"><span>Name *</span><input name="name" required></label>
+            <label class="admin-field"><span>Phone *</span><input name="phone" required></label>
+            <label class="admin-field"><span>Email</span><input name="email" type="email"></label>
+            <label class="admin-field"><span>City</span><input name="city"></label>
+            <label class="admin-field admin-field--wide"><span>Address</span><input name="address"></label>
+            <label class="admin-field admin-field--wide"><span>Notes</span><input name="notes"></label>
+            <button class="admin-btn admin-btn--primary" type="submit">Save customer</button>
+          </form>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Customer data</h2>
+            <div class="admin-export-btns" data-export-kind="customers"></div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Email</th>
+                  <th>City</th>
+                  <th>Address</th>
+                  <th>Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody data-customers-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inventory overview -->
+      <section class="admin-panel" data-admin-panel="inv-overview" hidden>
+        <div class="admin-stats" data-inv-overview-stats></div>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Low stock</h2>
+            <div class="admin-export-btns" data-export-kind="inventory"></div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Name</th><th>Category</th><th>Qty</th><th>Reorder</th><th>Status</th></tr></thead>
+              <tbody data-low-stock-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inventory list -->
+      <section class="admin-panel" data-admin-panel="inventory" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Inventory / Stock</h2>
+            <div class="admin-export-btns" data-export-kind="inventory"></div>
+          </div>
+          <div class="admin-form admin-form--inline" style="margin-bottom:1rem">
+            <label class="admin-field"><span>Search</span><input data-inv-search placeholder="Name, SKU, brand…"></label>
+            <label class="admin-field"><span>Category</span>
+              <select data-inv-filter-cat>
+                <option value="all">All</option>
+                <option>Tiles</option><option>Paste</option><option>Adhesive</option>
+                <option>Sanitary Wares</option><option>Beading</option><option>Others</option>
+              </select>
+            </label>
+            <label class="admin-field"><span>Subcategory</span>
+              <select data-inv-filter-sub>
+                <option value="all">All subcategories</option>
+              </select>
+            </label>
+            <label class="admin-field"><span>Low stock only</span>
+              <select data-inv-low-only><option value="0">No</option><option value="1">Yes</option></select>
+            </label>
+            <button type="button" class="admin-btn admin-btn--outline" data-inv-refresh>Filter</button>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th><th>Category</th><th>Subcategory</th><th>SKU</th><th>Qty</th><th>Unit</th><th>Reorder</th>
+                  <th>Sell ₹</th><th>Post in website</th><th>Status</th><th>Stock</th><th></th>
+                </tr>
+              </thead>
+              <tbody data-inventory-table></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Edit inventory modal -->
+        <div class="admin-modal" data-inv-edit-modal hidden>
+          <div class="admin-modal__backdrop" data-inv-edit-close tabindex="-1"></div>
+          <div class="admin-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="inv-edit-title">
+            <div class="admin-modal__head">
+              <h2 id="inv-edit-title">Edit inventory</h2>
+              <button type="button" class="admin-modal__x" data-inv-edit-close aria-label="Close">×</button>
+            </div>
+            <form id="inventory-edit-form" class="admin-form">
+              <input type="hidden" name="id" data-inv-edit-id>
+              <div class="admin-form-row">
+                <label class="admin-field"><span>Category *</span>
+                  <select name="category" required data-inv-cat-select>
+                    <option>Tiles</option><option>Paste</option><option>Adhesive</option>
+                    <option>Sanitary Wares</option><option>Beading</option><option>Others</option>
+                  </select>
+                </label>
+                <label class="admin-field"><span>Subcategory *</span>
+                  <select name="material_category" required data-inv-sub-select></select>
+                </label>
+              </div>
+              <div class="admin-form-row" data-inv-sub-custom-wrap hidden>
+                <label class="admin-field admin-field--wide">
+                  <span>Custom subcategory</span>
+                  <input name="material_category_custom" data-inv-sub-custom placeholder="e.g. Pipes">
+                </label>
+              </div>
+              <div class="admin-form-row">
+                <label class="admin-field"><span>Name *</span><input name="name" required></label>
+                <label class="admin-field"><span>Brand</span><input name="brand"></label>
+                <label class="admin-field"><span>SKU</span><input name="sku"></label>
+              </div>
+              <label class="admin-field"><span>Description</span><textarea name="description" rows="2"></textarea></label>
+              <div class="admin-form-row">
+                <label class="admin-field"><span>Unit</span>
+                  <select name="unit" data-inv-unit-select>
+                    <option value="pieces">pieces</option>
+                    <option value="kg">kg</option>
+                    <option value="litre">litre</option>
+                    <option value="grams">grams</option>
+                    <option value="box">box</option>
+                    <option value="bag">bag</option>
+                    <option value="set">set</option>
+                  </select>
+                </label>
+                <label class="admin-field"><span>Stock quantity *</span><input name="quantity" type="number" step="0.01" required></label>
+                <label class="admin-field"><span>Reorder level</span><input name="reorder_level" type="number" step="0.01"></label>
+              </div>
+              <div class="admin-form-row" data-inv-dim-row hidden>
+                <label class="admin-field"><span>Tile length</span><input name="dim_length" type="number" step="0.01" min="0"></label>
+                <label class="admin-field"><span>Tile width</span><input name="dim_width" type="number" step="0.01" min="0"></label>
+                <label class="admin-field"><span>Dimension unit</span>
+                  <select name="dim_unit">
+                    <option value="mm">mm</option>
+                    <option value="cm">cm</option>
+                    <option value="inches">inches</option>
+                    <option value="ft">ft</option>
+                  </select>
+                </label>
+              </div>
+              <div class="admin-form-row">
+                <label class="admin-field"><span>Purchase price</span><input name="purchase_price" type="number" step="0.01"></label>
+                <label class="admin-field"><span>Selling price</span><input name="selling_price" type="number" step="0.01"></label>
+                <label class="admin-field"><span>Tax / GST %</span><input name="tax_gst" type="number" step="0.01"></label>
+              </div>
+              <div class="admin-form-row">
+                <label class="admin-field"><span>Supplier</span><input name="supplier"></label>
+                <label class="admin-field"><span>Status</span>
+                  <select name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+                </label>
+                <label class="admin-field"><span>Post in website</span>
+                  <select name="show_on_website">
+                    <option value="0">No — not on Products</option>
+                    <option value="1">Yes — post on Products page</option>
+                  </select>
+                </label>
+              </div>
+              <div class="admin-form-row">
+                <label class="admin-field"><span>Colour</span><input name="colour"></label>
+                <label class="admin-field"><span>Pattern</span><input name="pattern"></label>
+                <label class="admin-field"><span>Finish</span><input name="finish"></label>
+              </div>
+              <div class="admin-form-row">
+                <label class="admin-field"><span>Date</span><input name="item_date" type="date"></label>
+                <label class="admin-field"><span>Size label (auto if tile dims set)</span><input name="size_label"></label>
+              </div>
+              <label class="admin-field"><span>Notes</span><input name="notes"></label>
+              <div class="admin-modal__actions">
+                <button type="button" class="admin-btn admin-btn--outline" data-inv-edit-close>Cancel</button>
+                <button type="submit" class="admin-btn admin-btn--primary">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Add inventory -->
+      <section class="admin-panel" data-admin-panel="inventory-add" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Add inventory item</h2></div>
+          <form id="inventory-form" class="admin-form" enctype="multipart/form-data">
+            <div class="admin-form-row">
+              <label class="admin-field"><span>Category *</span>
+                <select name="category" required data-inv-cat-select>
+                  <option>Tiles</option><option>Paste</option><option>Adhesive</option>
+                  <option>Sanitary Wares</option><option>Beading</option><option>Others</option>
+                </select>
+              </label>
+              <label class="admin-field"><span>Subcategory * <small>(e.g. Pipes under Sanitary Wares)</small></span>
+                <select name="material_category" required data-inv-sub-select></select>
+              </label>
+            </div>
+            <div class="admin-form-row" data-inv-sub-custom-wrap hidden>
+              <label class="admin-field admin-field--wide">
+                <span>Custom subcategory name</span>
+                <input name="material_category_custom" data-inv-sub-custom placeholder="Type your under-category">
+              </label>
+            </div>
+            <div class="admin-form-row">
+              <label class="admin-field"><span>Name *</span><input name="name" required></label>
+              <label class="admin-field"><span>Brand</span><input name="brand"></label>
+              <label class="admin-field"><span>SKU / Item code</span><input name="sku"></label>
+            </div>
+            <label class="admin-field"><span>Description</span><textarea name="description" rows="2"></textarea></label>
+            <div class="admin-form-row">
+              <label class="admin-field"><span>Unit</span>
+                <select name="unit" data-inv-unit-select>
+                  <option value="pieces" selected>pieces</option>
+                  <option value="kg">kg</option>
+                  <option value="litre">litre</option>
+                  <option value="grams">grams</option>
+                  <option value="box">box</option>
+                  <option value="bag">bag</option>
+                  <option value="set">set</option>
+                </select>
+              </label>
+              <label class="admin-field"><span>Quantity</span><input name="quantity" type="number" step="0.01" value="0"></label>
+              <label class="admin-field"><span>Reorder level</span><input name="reorder_level" type="number" step="0.01" value="0"></label>
+            </div>
+            <div class="admin-form-row" data-inv-dim-row hidden>
+              <label class="admin-field"><span>Tile length</span><input name="dim_length" type="number" step="0.01" min="0" placeholder="e.g. 600"></label>
+              <label class="admin-field"><span>Tile width</span><input name="dim_width" type="number" step="0.01" min="0" placeholder="e.g. 1200"></label>
+              <label class="admin-field"><span>Dimension unit</span>
+                <select name="dim_unit">
+                  <option value="mm" selected>mm</option>
+                  <option value="cm">cm</option>
+                  <option value="inches">inches</option>
+                  <option value="ft">ft</option>
+                </select>
+              </label>
+            </div>
+            <div class="admin-form-row">
+              <label class="admin-field"><span>Purchase price</span><input name="purchase_price" type="number" step="0.01" value="0"></label>
+              <label class="admin-field"><span>Selling price</span><input name="selling_price" type="number" step="0.01" value="0"></label>
+              <label class="admin-field"><span>Tax / GST %</span><input name="tax_gst" type="number" step="0.01" value="0"></label>
+            </div>
+            <div class="admin-form-row">
+              <label class="admin-field"><span>Supplier</span><input name="supplier"></label>
+              <label class="admin-field"><span>Date</span><input name="item_date" type="date"></label>
+              <label class="admin-field"><span>Status</span>
+                <select name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select>
+              </label>
+            </div>
+            <div class="admin-form-row">
+              <label class="admin-field"><span>Colour</span><input name="colour"></label>
+              <label class="admin-field"><span>Pattern</span><input name="pattern"></label>
+              <label class="admin-field">
+                <span>Post in website</span>
+                <select name="show_on_website">
+                  <option value="0">No — not on Products</option>
+                  <option value="1">Yes — post on Products page</option>
+                </select>
+              </label>
+            </div>
+            <div class="admin-form-row">
+              <label class="admin-field"><span>Finish</span><input name="finish"></label>
+              <label class="admin-field"><span>Size label (optional / auto from tile dims)</span><input name="size_label" placeholder="600 × 1200 mm"></label>
+            </div>
+            <label class="admin-field"><span>Notes</span><input name="notes"></label>
+            <label class="admin-field"><span>Image</span><input type="file" name="image" accept="image/*"></label>
+            <button class="admin-btn admin-btn--primary" type="submit">Save inventory item</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Sales returns -->
+      <section class="admin-panel" data-admin-panel="sales-returns" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Sales return</h2></div>
+          <form id="return-form" class="admin-form admin-form--inline">
+            <label class="admin-field"><span>Return no *</span><input name="return_no" required></label>
+            <label class="admin-field"><span>Original invoice</span><input name="original_invoice"></label>
+            <label class="admin-field"><span>Customer *</span><input name="customer_name" required></label>
+            <label class="admin-field"><span>Phone</span><input name="customer_phone"></label>
+            <label class="admin-field"><span>Product *</span><input name="product_name" required></label>
+            <label class="admin-field"><span>Qty</span><input name="quantity" type="number" step="0.01" value="1"></label>
+            <label class="admin-field"><span>Amount</span><input name="amount" type="number" step="0.01" value="0"></label>
+            <label class="admin-field"><span>Date *</span><input name="return_date" type="date" required></label>
+            <label class="admin-field admin-field--wide"><span>Reason</span><input name="reason"></label>
+            <button class="admin-btn admin-btn--primary" type="submit">Save return</button>
+          </form>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Returns table</h2>
+            <div class="admin-export-btns" data-export-kind="sales-returns"></div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>Return</th><th>Invoice</th><th>Customer</th><th>Product</th><th>Qty</th><th>Amount</th><th>Date</th><th></th></tr>
+              </thead>
+              <tbody data-returns-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Purchases -->
+      <section class="admin-panel" data-admin-panel="purchases" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Purchase entry</h2></div>
+          <form id="purchase-form" class="admin-form admin-form--inline">
+            <label class="admin-field"><span>Purchase no *</span><input name="purchase_no" required></label>
+            <label class="admin-field"><span>Supplier *</span><input name="supplier_name" required></label>
+            <label class="admin-field"><span>Phone</span><input name="supplier_phone"></label>
+            <label class="admin-field"><span>Product *</span><input name="product_name" required></label>
+            <label class="admin-field"><span>Category</span>
+              <select name="category">
+                <option value="">—</option>
+                <option>Tiles</option><option>Paste</option><option>Adhesive</option>
+                <option>Sanitary Wares</option><option>Beading</option><option>Others</option>
+              </select>
+            </label>
+            <label class="admin-field"><span>Qty</span><input name="quantity" type="number" step="0.01" value="1"></label>
+            <label class="admin-field"><span>Amount</span><input name="amount" type="number" step="0.01" value="0"></label>
+            <label class="admin-field"><span>Date *</span><input name="purchase_date" type="date" required></label>
+            <label class="admin-field"><span>Link inventory ID</span><input name="inventory_id" type="number" placeholder="optional"></label>
+            <button class="admin-btn admin-btn--primary" type="submit">Save purchase</button>
+          </form>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Purchases table</h2>
+            <div class="admin-export-btns" data-export-kind="purchases"></div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr><th>No</th><th>Supplier</th><th>Product</th><th>Cat</th><th>Qty</th><th>Amount</th><th>Date</th><th></th></tr>
+              </thead>
+              <tbody data-purchases-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Data tools -->
+      <section class="admin-panel" data-admin-panel="data-tools" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Backup data</h2></div>
+          <p class="admin-help">Download the live SQLite database file (recommended full backup).</p>
+          <a class="admin-btn admin-btn--primary" href="/api/admin/backup/database" data-admin-db-backup>Download DB backup (.db)</a>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Export data</h2></div>
+          <p class="admin-help">Excel / PDF exports for business tables (labels show on buttons after load).</p>
+          <div class="admin-export-grid">
+            <div><span class="admin-export-label">Inventory</span><div class="admin-export-btns" data-export-kind="inventory"></div></div>
+            <div><span class="admin-export-label">Sales</span><div class="admin-export-btns" data-export-kind="sales"></div></div>
+            <div><span class="admin-export-label">Customers</span><div class="admin-export-btns" data-export-kind="customers"></div></div>
+            <div><span class="admin-export-label">Leads</span><div class="admin-export-btns" data-export-kind="leads"></div></div>
+            <div><span class="admin-export-label">Queries</span><div class="admin-export-btns" data-export-kind="queries"></div></div>
+            <div><span class="admin-export-label">Purchases</span><div class="admin-export-btns" data-export-kind="purchases"></div></div>
+            <div><span class="admin-export-label">Sales returns</span><div class="admin-export-btns" data-export-kind="sales-returns"></div></div>
+            <div><span class="admin-export-label">New Arrivals</span><div class="admin-export-btns" data-export-kind="tiles"></div></div>
+            <div><span class="admin-export-label">Dashboard</span><div class="admin-export-btns" data-export-kind="dashboard"></div></div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head"><h2>Import data (JSON)</h2></div>
+          <p class="admin-help">Paste JSON like <code>{"inventory":[{"name":"…","category":"Tiles","material_category":"Marble Finish","quantity":10}],"customers":[{"name":"…","phone":"…"}]}</code></p>
+          <textarea data-import-json rows="10" class="admin-import-area" placeholder='{"inventory":[],"customers":[]}'></textarea>
+          <button type="button" class="admin-btn admin-btn--primary" data-import-run style="margin-top:0.75rem">Import JSON</button>
+        </div>
+      </section>
+
+      <!-- App logs -->
+      <section class="admin-panel" data-admin-panel="app-logs" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Application logs</h2>
+            <div>
+              <a class="admin-btn admin-btn--outline admin-btn--sm" href="/api/admin/logs/cli?kind=app" target="_blank">CLI dump</a>
+              <button type="button" class="admin-btn admin-btn--outline admin-btn--sm" data-logs-refresh="app">Refresh</button>
+            </div>
+          </div>
+          <p class="admin-help">CLI: <code>python -m tools.logs_cli --kind app --limit 100</code></p>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Time (UTC)</th><th>Level</th><th>Source</th><th>Message</th><th>Detail</th></tr></thead>
+              <tbody data-app-logs-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- User logs -->
+      <section class="admin-panel" data-admin-panel="user-logs" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>User logs</h2>
+            <div>
+              <a class="admin-btn admin-btn--outline admin-btn--sm" href="/api/admin/logs/cli?kind=user" target="_blank">CLI dump</a>
+              <button type="button" class="admin-btn admin-btn--outline admin-btn--sm" data-logs-refresh="user">Refresh</button>
+            </div>
+          </div>
+          <p class="admin-help">CLI: <code>python -m tools.logs_cli --kind user --limit 100</code></p>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Time (UTC)</th><th>User</th><th>Action</th><th>Entity</th><th>Detail</th><th>IP</th></tr></thead>
+              <tbody data-user-logs-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script src="/static/js/admin.js?v172-review" defer></script>
+  <script src="/static/js/admin-biz.js?v170" defer></script>
+  <script src="/static/js/admin-charts.js?v170" defer></script>
+</body>
+</html>

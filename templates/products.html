@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse Chalukya Tiles products — vitrified, ceramic, parking, outdoor, wooden finish, marble finish, bathroom, kitchen and elevation tiles.">
+  <meta name="keywords" content="vitrified tiles, ceramic tiles, wooden finish tiles, marble finish tiles, bathroom tiles, kitchen tiles, outdoor tiles">
+  <meta name="author" content="Chalukya Tiles">
+  <meta name="theme-color" content="#002147">
+  <meta property="og:title" content="Products | Chalukya Tiles">
+  <meta property="og:description" content="Premium tile collections for every space — filter by category and enquire online.">
+  <meta property="og:type" content="website">
+  <title>{{ page_title }} | {{ brand_name }} — {{ brand_tagline }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/navbar.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/products.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/footer.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/animations.css?v151-fonts">
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+</head>
+<body data-page="products">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="loader" data-loader aria-busy="true" aria-live="polite" role="status">
+    <div class="loader__brand">{{ brand_name }}</div>
+    <div class="loader__bar" aria-hidden="true"><span class="loader__bar-fill"></span></div>
+    <span class="sr-only">Loading website</span>
+  </div>
+
+  <header class="site-header site-header--solid" data-header>
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="nav__brand" href="/" aria-label="{{ brand_name }} home">
+          <img class="nav__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="160" height="48" decoding="async">
+</a>
+        <div class="nav__menu" role="menubar">
+          <a class="nav__link" href="/" data-nav-link="home" role="menuitem">Home</a>
+          <a class="nav__link" href="/about" data-nav-link="about" role="menuitem">About</a>
+          <a class="nav__link is-active" href="/products" data-nav-link="products" role="menuitem">Products</a>
+          <a class="nav__link" href="/gallery" data-nav-link="gallery" role="menuitem">Concept Gallery</a>
+          <a class="nav__link" href="/testimonials" data-nav-link="testimonials" role="menuitem">Testimonials</a>
+          <a class="nav__link" href="/contact" data-nav-link="contact" role="menuitem">Contact</a>
+        </div>
+        <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+        <button class="nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+        </button>
+      </nav>
+    </div>
+    <div class="nav__drawer" id="mobile-nav" data-nav-drawer aria-hidden="true">
+      <div class="nav__drawer-overlay" data-nav-overlay tabindex="-1"></div>
+      <div class="nav__drawer-panel" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <a class="nav__drawer-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav__drawer-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav__drawer-link is-active" href="/products" data-nav-link="products">Products</a>
+        <a class="nav__drawer-link" href="/gallery" data-nav-link="gallery">Concept Gallery</a>
+        <a class="nav__drawer-link" href="/testimonials" data-nav-link="testimonials">Testimonials</a>
+        <a class="nav__drawer-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="btn btn--primary nav__drawer-cta" href="/contact">Book Showroom Visit</a>
+        <p class="nav__drawer-meta">Call us: <a href="tel:+919940718307">99407 18307</a></p>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="main page-enter">
+    <section class="page-hero" aria-labelledby="products-hero-title">
+      <div class="container">
+        <p class="eyebrow" data-animate="fade-up">Catalogue</p>
+        <h1 class="heading-1 page-hero__title" id="products-hero-title" data-animate="fade-up">Products</h1>
+        <p class="lead page-hero__lead" data-animate="fade-up">
+          Explore premium collections across nine categories — filter to find the perfect finish for your project.
+        </p>
+        <nav class="page-hero__breadcrumb" aria-label="Breadcrumb" data-animate="fade-up">
+          <a href="/">Home</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">Products</span>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section" id="catalogue" aria-labelledby="catalogue-heading">
+      <div class="container">
+        <div class="products-intro" data-animate="fade-up">
+          <h2 class="heading-3" id="catalogue-heading">All Collections</h2>
+          <p class="lead">Each card lists size and finish. Enquire to check live stock and shade availability.</p>
+        </div>
+
+        <div class="products-toolbar products-toolbar--layered" data-animate="fade-up">
+          <div class="products-filter-stack">
+            <p class="products-filter-label">Category</p>
+            <div
+              class="products-filters filter-bar"
+              data-product-main-filters
+              role="toolbar"
+              aria-label="Filter by main category"
+            >
+              <button type="button" class="filter-btn is-active" data-main-filter="all" aria-pressed="true">All</button>
+              {% for cat in inventory_categories %}
+              <button
+                type="button"
+                class="filter-btn"
+                data-main-filter="{{ cat|lower|replace(' ', '-') }}"
+                aria-pressed="false"
+              >{{ cat }}</button>
+              {% endfor %}
+            </div>
+
+            <div class="products-subfilter-wrap" data-product-sub-wrap hidden>
+              <p class="products-filter-label">Type under <span data-sub-parent-label>category</span></p>
+              <div
+                class="products-filters products-filters--sub filter-bar"
+                data-product-sub-filters
+                role="toolbar"
+                aria-label="Filter by sub category"
+              >
+                <!-- filled by JS from product data -->
+              </div>
+            </div>
+          </div>
+          <p class="products-toolbar__meta" aria-live="polite">
+            Showing <strong data-products-count>0</strong> products ·
+            <span data-products-category-label>All categories</span>
+          </p>
+        </div>
+
+        <script type="application/json" id="product-subcategories-data">{{ product_subcategories | tojson }}</script>
+
+        <div class="products-grid" data-products-grid>
+          {% if inv_products %}
+          {% for item in inv_products %}
+          <article
+            class="product-card product-card--inventory"
+            data-category="{{ item.sub_category_slug }}"
+            data-main-category="{{ item.main_category_slug }}"
+            data-sub-category="{{ item.sub_category_slug }}"
+            data-animate="fade-up"
+          >
+            <div class="product-card__media">
+              <span class="badge badge--gold product-card__badge">In stock</span>
+              {% if item.image_path %}
+              <img src="{{ item.image_path }}" alt="{{ item.name }}" width="800" height="600" loading="lazy">
+              {% else %}
+              <img src="/static/images/product-vitrified.svg" alt="{{ item.name }}" width="800" height="600" loading="lazy">
+              {% endif %}
+            </div>
+            <div class="product-card__body">
+              <p class="product-card__category">{{ item.main_category }}{% if item.sub_category_label and item.sub_category_label != 'General' %} · {{ item.sub_category_label }}{% endif %}</p>
+              <h3 class="product-card__title">{{ item.name }}</h3>
+              <p class="product-card__text">
+                {% if item.description %}{{ item.description }}{% else %}
+                  {% if item.brand %}{{ item.brand }} · {% endif %}
+                  {% if item.colour %}Colour {{ item.colour }}{% endif %}
+                  {% if item.pattern %} · {{ item.pattern }}{% endif %}
+                {% endif %}
+              </p>
+              <div class="product-card__specs">
+                {% if item.colour %}
+                <div>
+                  <span class="product-card__spec-label">Colour</span>
+                  <span class="product-card__spec-value">{{ item.colour }}</span>
+                </div>
+                {% endif %}
+                {% if item.size_label %}
+                <div>
+                  <span class="product-card__spec-label">Size</span>
+                  <span class="product-card__spec-value">{{ item.size_label }}</span>
+                </div>
+                {% endif %}
+                {% if item.finish %}
+                <div>
+                  <span class="product-card__spec-label">Finish</span>
+                  <span class="product-card__spec-value">{{ item.finish }}</span>
+                </div>
+                {% endif %}
+                {% if item.unit %}
+                <div>
+                  <span class="product-card__spec-label">Unit</span>
+                  <span class="product-card__spec-value">{{ item.unit }}</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="product-card__actions">
+                <a class="btn btn--outline btn--sm" href="{{ item.enquire_url }}">Enquire</a>
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+          {% endif %}
+        </div>
+
+        <div class="products-empty" data-products-empty {% if inv_products %}hidden{% endif %}>
+          <h3 class="heading-4">No products posted yet</h3>
+          <p class="text-muted text-sm mt-4 mb-6">Add inventory in Admin and enable <strong>Post in website</strong>, or try another category filter.</p>
+          <button type="button" class="btn btn--primary btn--sm" data-products-reset>Show all</button>
+        </div>
+<div class="products-note" data-animate="fade-up">
+          <p class="products-note__text">
+            Need bulk quantities, project pricing or shade samples? Our consultants can prepare a tailored quotation.
+          </p>
+          <a class="btn btn--primary btn--sm" href="/contact">Request a Quote</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band" aria-labelledby="products-cta-heading">
+      <div class="container" data-animate="scale">
+        <p class="eyebrow">See &amp; Feel</p>
+        <h2 class="heading-2" id="products-cta-heading">Samples wait at the showroom</h2>
+        <p class="lead">Compare large-format displays under real lighting before you finalise your selection.</p>
+        <div class="cta-band__actions">
+          <a class="btn btn--primary btn--lg" href="/contact">Book a Visit</a>
+          <a class="btn btn--ghost btn--lg" href="/gallery">View Concept Gallery</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer__main">
+      <div class="footer__brand">
+        <a class="footer__logo" href="/">
+          <img class="footer__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="64" height="64" decoding="async">
+</a>
+        <p class="footer__tagline">
+          Premium floor and interior tiles for homes, hospitality and commercial spaces.
+        </p>
+        <div class="footer__social" aria-label="Social media">
+          <a class="footer__social-link" href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v2H6v4h3v8h4v-8h3.1l.9-4H13V9c0-.6.4-1 1-1z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.5 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://wa.me/9940718307" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/gallery">Concept Gallery</a></li>
+          <li><a href="/testimonials">Testimonials</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Products</h3>
+        <ul class="footer__links">
+          <li><a href="/products?category=vitrified-tiles">Vitrified Tiles</a></li>
+          <li><a href="/products?category=ceramic-tiles">Ceramic Tiles</a></li>
+          <li><a href="/products?category=wooden-finish">Wooden Finish</a></li>
+          <li><a href="/products?category=marble-finish">Marble Finish</a></li>
+          <li><a href="/products?category=bathroom-tiles">Bathroom Tiles</a></li>
+          <li><a href="/products?category=outdoor-tiles">Outdoor Tiles</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Newsletter</h3>
+        <p class="footer__newsletter-text">New collections and showroom events — occasional updates, no spam.</p>
+        <form class="footer__newsletter-form" data-newsletter-form novalidate>
+          <label class="sr-only" for="newsletter-email">Email address</label>
+          <input class="footer__newsletter-input" id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="Your email" required>
+          <button class="btn btn--primary btn--sm" type="submit">Subscribe</button>
+        </form>
+        <p class="footer__newsletter-note" data-newsletter-note>We respect your privacy.</p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p class="footer__copy">© <span data-year>2026</span> <strong>{{ brand_name }}</strong>. All rights reserved.</p>
+        <div class="footer__legal">
+          <a href="/contact">Privacy</a>
+          <a href="/contact">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="float-actions">
+    <a class="float-btn float-btn--whatsapp pulse-soft" href="https://wa.me/9940718307?text=Hello%20Chalukya%20Tiles%2C%20I%20would%20like%20to%20know%20more%20about%20your%20collections." target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+    </a>
+    <button class="float-btn float-btn--review" type="button" data-review-open aria-label="Write a review">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    </button>
+    <button class="float-btn float-btn--scrolltop" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 15.4 12 10.8l4.6 4.6L18 14l-6-6-6 6z"/></svg>
+    </button>
+  </div>
+
+  <div class="review-modal" data-review-modal hidden>
+    <div class="review-modal__backdrop" data-review-close></div>
+    <div class="review-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+      <div class="review-modal__head">
+        <h2 id="review-modal-title">Write a review</h2>
+        <button type="button" class="review-modal__x" data-review-close aria-label="Close">×</button>
+      </div>
+      <form class="review-form" data-review-form novalidate>
+        <label class="review-field"><span>Name *</span><input name="name" required minlength="2" maxlength="120"></label>
+        <label class="review-field"><span>Rating *</span>
+          <select name="rating" required>
+            <option value="5">5 — Excellent</option>
+            <option value="4">4 — Very good</option>
+            <option value="3">3 — Good</option>
+            <option value="2">2 — Fair</option>
+            <option value="1">1 — Poor</option>
+          </select>
+        </label>
+        <label class="review-field"><span>Title</span><input name="title" maxlength="200" placeholder="Optional short title"></label>
+        <label class="review-field"><span>Your feedback *</span><textarea name="message" required minlength="10" rows="4" placeholder="Share your experience with Chalukya Tiles"></textarea></label>
+        <div class="review-form-row">
+          <label class="review-field"><span>Email</span><input name="email" type="email" maxlength="180"></label>
+          <label class="review-field"><span>Phone</span><input name="phone" maxlength="40"></label>
+        </div>
+        <p class="review-form__status" data-review-status hidden></p>
+        <button type="submit" class="btn btn--primary">Submit review</button>
+        <p class="review-form__hint">Reviews appear after admin approval.</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js?v172-review" defer></script>
+  <script src="/static/js/navbar.js?v152-mobile-nav" defer></script>
+  <script src="/static/js/main.js?v172-review" defer></script>
+  <script src="/static/js/reviews.js?v172" defer></script>
+</body>
+</html>

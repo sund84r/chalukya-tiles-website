@@ -1,0 +1,292 @@
+/* ==========================================================================
+   Chalukya Tiles — footer.css
+   Multi-column footer: links, products, contact, social, newsletter.
+   ========================================================================== */
+
+.site-footer {
+  background:
+    linear-gradient(180deg, #ffffff 0%, #eef3f9 55%, #e4ecf6 100%);
+  color: #3d5f8f;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(0, 33, 71, 0.1);
+}
+
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(26, 74, 138, 0.55),
+    rgba(107, 140, 184, 0.55),
+    transparent
+  );
+}
+
+.footer__main {
+  display: grid;
+  gap: var(--space-10);
+  padding-block: var(--space-16) var(--space-12);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .footer__main {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .footer__main {
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: var(--space-8);
+  }
+}
+
+/* Brand column */
+.footer__brand {
+  max-width: 20rem;
+}
+
+.footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  text-decoration: none;
+  color: var(--color-oxford, #002147);
+}
+
+.footer__logo:hover {
+  color: var(--color-highlight, #1a4a8a);
+}
+
+.footer__logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.footer__logo-img {
+  display: block;
+  height: 2.9rem;
+  width: auto;
+  max-width: 12rem;
+  object-fit: contain;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  filter: none;
+  flex-shrink: 0;
+}
+
+.footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Logo already carries the brand wordmark */
+.footer__brand-text,
+.footer__brand-name,
+.footer__brand-sub {
+  display: none !important;
+}
+
+.footer__tagline {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+  color: var(--color-stone, #5a7394);
+  margin-bottom: var(--space-6);
+}
+
+/* Social icons */
+.footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.footer__social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(0, 33, 71, 0.14);
+  color: var(--color-oxford-soft, #3d5f8f);
+  transition:
+    color var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.footer__social-link:hover {
+  color: #ffffff;
+  background: var(--color-highlight, #1a4a8a);
+  border-color: var(--color-highlight, #1a4a8a);
+  transform: translateY(-2px);
+}
+
+.footer__social-link svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+}
+
+/* Columns */
+.footer__col-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--color-oxford, #002147);
+  margin-bottom: var(--space-5);
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footer__links a {
+  font-size: var(--fs-sm);
+  color: var(--color-stone, #5a7394);
+  transition: color var(--duration-fast) var(--ease-out),
+    padding-left var(--duration-fast) var(--ease-out);
+}
+
+.footer__links a:hover {
+  color: var(--color-highlight, #1a4a8a);
+  padding-left: var(--space-1);
+}
+
+/* Contact details */
+.footer__contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.footer__contact-item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+}
+
+.footer__contact-item svg {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.15rem;
+  fill: var(--color-highlight);
+}
+
+.footer__contact-item a:hover {
+  color: var(--color-highlight);
+}
+
+/* Newsletter */
+.footer__newsletter-text {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--space-5);
+  color: var(--color-stone, #5a7394);
+}
+
+.footer__newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+@media (min-width: 400px) {
+  .footer__newsletter-form {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.footer__newsletter-input {
+  flex: 1;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 33, 71, 0.14);
+  border-radius: var(--radius-full);
+  color: var(--color-oxford, #002147);
+  font-size: var(--fs-sm);
+  transition: border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.footer__newsletter-input::placeholder {
+  color: rgba(0, 33, 71, 0.4);
+}
+
+.footer__newsletter-input:focus {
+  outline: none;
+  border-color: var(--color-highlight, #1a4a8a);
+  box-shadow: 0 0 0 3px var(--color-highlight-soft);
+}
+
+.footer__newsletter-form .btn {
+  flex-shrink: 0;
+  min-height: 2.75rem;
+}
+
+.footer__newsletter-note {
+  font-size: var(--fs-xs);
+  color: var(--color-stone, #5a7394);
+  margin-top: var(--space-3);
+}
+
+/* Bottom bar */
+.footer__bottom {
+  border-top: 1px solid rgba(0, 33, 71, 0.1);
+  padding-block: var(--space-5);
+}
+
+.footer__bottom-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--color-stone, #5a7394);
+}
+
+@media (min-width: 768px) {
+  .footer__bottom-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  justify-content: center;
+}
+
+.footer__legal a:hover {
+  color: var(--color-highlight, #1a4a8a);
+}
+
+.footer__copy strong {
+  color: var(--color-oxford, #002147);
+  font-weight: var(--fw-medium);
+}

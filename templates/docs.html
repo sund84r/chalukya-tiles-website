@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chalukya Tiles project documentation — architecture, folder structure, features, API, database, and how to use and extend the website.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#002147">
+  <title>{{ page_title }} | {{ brand_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/navbar.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/docs.css?v151-fonts">
+  <link rel="stylesheet" href="/static/css/footer.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/animations.css?v151-fonts">
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+</head>
+<body data-page="docs">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header site-header--solid" data-header>
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="nav__brand" href="/" aria-label="{{ brand_name }} home">
+          <img class="nav__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="160" height="48" decoding="async">
+</a>
+        <div class="nav__menu" role="menubar">
+          <a class="nav__link" href="/" data-nav-link="home" role="menuitem">Home</a>
+          <a class="nav__link" href="/about" data-nav-link="about" role="menuitem">About</a>
+          <a class="nav__link" href="/products" data-nav-link="products" role="menuitem">Products</a>
+          <a class="nav__link" href="/gallery" data-nav-link="gallery" role="menuitem">Concept Gallery</a>
+          <a class="nav__link" href="/testimonials" data-nav-link="testimonials" role="menuitem">Testimonials</a>
+          <a class="nav__link" href="/contact" data-nav-link="contact" role="menuitem">Contact</a>
+        </div>
+        <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+        <button class="nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+        </button>
+      </nav>
+    </div>
+    <div class="nav__drawer" id="mobile-nav" data-nav-drawer aria-hidden="true">
+      <div class="nav__drawer-overlay" data-nav-overlay tabindex="-1"></div>
+      <div class="nav__drawer-panel" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <a class="nav__drawer-link" href="/">Home</a>
+        <a class="nav__drawer-link" href="/about">About</a>
+        <a class="nav__drawer-link" href="/products">Products</a>
+        <a class="nav__drawer-link" href="/gallery">Concept Gallery</a>
+        <a class="nav__drawer-link" href="/testimonials">Testimonials</a>
+        <a class="nav__drawer-link" href="/contact">Contact</a>
+        <a class="btn btn--primary nav__drawer-cta" href="#main">On this page</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="main page-enter">
+    <section class="page-hero" aria-labelledby="docs-hero-title">
+      <div class="container">
+        <p class="eyebrow">Technical handbook</p>
+        <h1 class="heading-1 page-hero__title" id="docs-hero-title">Project Documentation</h1>
+        <p class="lead page-hero__lead">
+          Complete guide to the {{ brand_name }} website — architecture, structure, features, usefulness, APIs, database, and how to run or extend it.
+        </p>
+        <div class="docs-hero-meta">
+          <span class="docs-badge">Version 1.2.0</span>
+          <span class="badge">FastAPI + Vanilla JS</span>
+          <span class="badge">SQLite</span>
+          <span class="badge">Production-ready</span>
+        </div>
+        <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">Documentation</span>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container docs-layout">
+        <aside class="docs-toc" aria-label="Table of contents">
+          <p class="docs-toc__title">Contents</p>
+          <ol>
+            <li><a href="#overview">1. Overview</a></li>
+            <li><a href="#usefulness">2. Why it is useful</a></li>
+            <li><a href="#stack">3. Tech stack</a></li>
+            <li><a href="#architecture">4. Architecture</a></li>
+            <li><a href="#structure">5. Folder structure</a></li>
+            <li><a href="#features">6. Features</a></li>
+            <li><a href="#pages">7. Website pages</a></li>
+            <li><a href="#frontend">8. Frontend system</a></li>
+            <li><a href="#backend">9. Backend system</a></li>
+            <li><a href="#api">10. API reference</a></li>
+            <li><a href="#database">11. Database</a></li>
+            <li><a href="#seo-a11y">12. SEO &amp; accessibility</a></li>
+            <li><a href="#setup">13. Setup &amp; run</a></li>
+            <li><a href="#customize">14. Customize &amp; launch</a></li>
+            <li><a href="#extend">15. Extend next</a></li>
+            <li><a href="#memory">16. Project memory</a></li>
+          </ol>
+        </aside>
+
+        <article class="docs-content">
+          <h2 id="overview">1. Overview</h2>
+          <p>
+            <strong>{{ brand_name }}</strong> is a full-stack showroom website for floor tiles and interior tiles.
+            It is designed to feel premium and minimal while remaining fast, maintainable, and free of heavy frontend frameworks.
+          </p>
+          <p>
+            The backend (FastAPI) renders HTML with Jinja2 and exposes JSON APIs for contact and product enquiries.
+            The frontend is modular CSS and vanilla JavaScript — ideal for a brochure-style business site with light interactivity.
+          </p>
+          <div class="docs-callout">
+            <p>
+              <strong>Permanent memory:</strong> every development session should update
+              <code>PROJECT_MEMORY.md</code> in the project root so context survives new chats and handoffs.
+            </p>
+          </div>
+
+          <h2 id="usefulness">2. Why this project is useful</h2>
+          <div class="docs-grid-2">
+            <div class="docs-card">
+              <h3>For the business</h3>
+              <p>Presents collections, builds trust with reviews, captures leads in SQLite, and supports WhatsApp/phone conversion paths.</p>
+            </div>
+            <div class="docs-card">
+              <h3>For developers</h3>
+              <p>Clean modular files, no SPA build step, easy deploy with Uvicorn, and a clear path from SQLite to MySQL later.</p>
+            </div>
+            <div class="docs-card">
+              <h3>For performance</h3>
+              <p>Minimal JS, lazy media, CSS variables, and no framework runtime keep pages light on mobile networks.</p>
+            </div>
+            <div class="docs-card">
+              <h3>For SEO &amp; a11y</h3>
+              <p>Semantic HTML, meta tags, sitemap/robots, JSON-LD, ARIA, keyboard navigation, and reduced-motion support.</p>
+            </div>
+          </div>
+          <p>
+            Compared with a generic page builder site, this codebase is transparent: every animation, form field, and API route
+            is owned by you and can be audited or customized without fighting a theme marketplace.
+          </p>
+
+          <h2 id="stack">3. Tech stack</h2>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr><th>Layer</th><th>Technology</th><th>Role</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Backend</td><td>Python 3.10+, FastAPI, Uvicorn</td><td>Routes, validation, static + HTML serving</td></tr>
+                <tr><td>Templates</td><td>Jinja2</td><td>Server-rendered HTML pages</td></tr>
+                <tr><td>Frontend</td><td>HTML5, CSS3, Vanilla JS (ES6+)</td><td>UI, filters, lightbox, forms</td></tr>
+                <tr><td>Database</td><td>SQLite via stdlib + helpers</td><td>Contact &amp; enquiry storage</td></tr>
+                <tr><td>Validation</td><td>Pydantic v2</td><td>API request models</td></tr>
+                <tr><td>Fonts</td><td>Inter + Poppins (Google Fonts)</td><td>Premium typography</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><strong>Not used (by design):</strong> React, Vue, Angular, Bootstrap, jQuery, or heavy UI kits.</p>
+
+          <h2 id="architecture">4. Architecture</h2>
+          <p>Request flow at a high level:</p>
+          <div class="docs-diagram" role="img" aria-label="Architecture diagram">Browser
+  │
+  ├─ GET  /pages/*     → app.py → Jinja2 templates → HTML
+  ├─ GET  /static/*    → StaticFiles (css, js, images, videos)
+  └─ POST /api/*       → api/enquiry.py → database/db.py → SQLite
+</div>
+          <h3>Design principles</h3>
+          <ul>
+            <li><strong>Server-rendered pages</strong> for SEO and first paint simplicity.</li>
+            <li><strong>Modular assets</strong> — one CSS/JS concern per file.</li>
+            <li><strong>Isolated data layer</strong> — swap SQLite connection later without rewriting routes.</li>
+            <li><strong>Progressive enhancement</strong> — content works without heavy JS; JS adds polish and forms.</li>
+            <li><strong>Security defaults</strong> — nosniff, frame options, referrer and permissions policies.</li>
+          </ul>
+
+          <h2 id="structure">5. Folder structure</h2>
+          <pre><code>website_tiles1/
+├── PROJECT_MEMORY.md      # Permanent session memory
+├── app.py                 # FastAPI app, pages, SEO, 404
+├── requirements.txt
+├── README.md
+├── templates/             # HTML (Jinja2)
+├── static/css|js|images|videos|icons
+├── api/enquiry.py         # JSON API routers
+├── database/db.py         # SQLite schema &amp; helpers
+└── assets/                # Non-public brand sources</code></pre>
+          <p>
+            Public URLs under <code>/static/…</code> map to the <code>static/</code> folder.
+            Source design files (logo masters, raw video) belong in <code>assets/</code>, not in the public web root.
+          </p>
+
+          <h2 id="features">6. Features</h2>
+          <ul>
+            <li>Mobile-first responsive layout (Flexbox + CSS Grid)</li>
+            <li>Premium theme: white, charcoal, stone grey, warm gold</li>
+            <li>Sticky navbar — transparent over hero, solid on scroll / inner pages</li>
+            <li>Hamburger drawer with keyboard Escape and focus handling</li>
+            <li>Hero video (optional) + typing headline + parallax layer</li>
+            <li>Animated counters, scroll reveals, button ripples, loading screen</li>
+            <li>Product catalogue with 9 category filters + deep links</li>
+            <li>Masonry gallery, lightbox (image/video), keyboard navigation</li>
+            <li>Testimonials with star ratings and animated cards</li>
+            <li>Contact form + product enquiry with client validation and Fetch API</li>
+            <li>SQLite persistence of leads</li>
+            <li>Floating WhatsApp + scroll-to-top</li>
+            <li>Newsletter UI (client-side thank-you feedback)</li>
+            <li>Branded 404 page</li>
+            <li><code>robots.txt</code>, <code>sitemap.xml</code>, home JSON-LD</li>
+          </ul>
+
+          <h2 id="pages">7. Website pages</h2>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr><th>URL</th><th>Template</th><th>Purpose</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>/</code></td><td>index.html</td><td>Hero, featured products, why us, collections, gallery preview, reviews, location, CTA</td></tr>
+                <tr><td><code>/about</code></td><td>about.html</td><td>Story, mission, vision, timeline, achievements</td></tr>
+                <tr><td><code>/products</code></td><td>products.html</td><td>18 products across 9 categories with filters</td></tr>
+                <tr><td><code>/gallery</code></td><td>gallery.html</td><td>Masonry media + lightbox + videos</td></tr>
+                <tr><td><code>/testimonials</code></td><td>testimonials.html</td><td>Ratings summary + review cards</td></tr>
+                <tr><td><code>/contact</code></td><td>contact.html</td><td>Map, hours, social, validated form</td></tr>
+                <tr><td><code>/docs</code></td><td>docs.html</td><td>This documentation</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Product enquire buttons navigate to
+            <code>/contact?product=Name&amp;category=Category</code>,
+            which switches the form to <code>POST /api/enquiry</code>.
+          </p>
+
+          <h2 id="frontend">8. Frontend system</h2>
+          <h3>CSS modules</h3>
+          <ul>
+            <li><code>main.css</code> — design tokens, reset, buttons, cards, forms, about/testimonials, utilities</li>
+            <li><code>navbar.css</code> / <code>footer.css</code> — site chrome</li>
+            <li><code>hero.css</code> — homepage hero and home sections</li>
+            <li><code>products.css</code>, <code>gallery.css</code>, <code>contact.css</code> — page features</li>
+            <li><code>animations.css</code> — scroll reveals, image wipe, typing caret</li>
+          </ul>
+          <h3>JavaScript modules</h3>
+          <ul>
+            <li><code>main.js</code> — loader, scroll-top, ripple, Intersection Observer, counters, typing, parallax, product filters, newsletter, year</li>
+            <li><code>navbar.js</code> — scroll solid state, mobile drawer</li>
+            <li><code>slider.js</code> — reviews carousel + hero video boot</li>
+            <li><code>gallery.js</code> — gallery filters + accessible lightbox</li>
+            <li><code>contact.js</code> — validation + submit</li>
+            <li><code>api.js</code> — <code>window.ChalukyaAPI</code> Fetch helpers</li>
+          </ul>
+          <p>Scripts load with <code>defer</code>. Prefer data-attributes (e.g. <code>data-animate</code>, <code>data-slider</code>) over hard-coded IDs for reuse.</p>
+
+          <h2 id="backend">9. Backend system</h2>
+          <p><code>app.py</code> is the single process entry:</p>
+          <ul>
+            <li>Lifespan hook runs <code>init_db()</code></li>
+            <li>Mounts <code>/static</code></li>
+            <li>Registers HTML page routes via <code>render_page()</code></li>
+            <li>Includes <code>enquiry_router</code> from <code>api/enquiry.py</code></li>
+            <li>Serves <code>/robots.txt</code>, <code>/sitemap.xml</code></li>
+            <li>Custom HTML 404 for non-API paths</li>
+            <li>Security headers middleware</li>
+          </ul>
+          <p>
+            Shared template context includes <code>brand_name</code>, <code>brand_tagline</code>, <code>page_title</code>,
+            <code>active_page</code>, and <code>site_url</code> (from <code>SITE_URL</code> constant).
+          </p>
+
+          <h2 id="api">10. API reference</h2>
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr><th>Method</th><th>Path</th><th>Body</th><th>Success</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>POST</td>
+                  <td><code>/api/contact</code></td>
+                  <td><code>name</code>, <code>phone</code>, <code>email</code>, <code>message</code></td>
+                  <td>201 + JSON</td>
+                </tr>
+                <tr>
+                  <td>POST</td>
+                  <td><code>/api/enquiry</code></td>
+                  <td>Same + optional <code>product_name</code>, <code>product_category</code></td>
+                  <td>201 + JSON</td>
+                </tr>
+                <tr>
+                  <td>GET</td>
+                  <td><code>/api/health</code></td>
+                  <td>—</td>
+                  <td>200 JSON</td>
+                </tr>
+                <tr>
+                  <td>GET</td>
+                  <td><code>/api/docs</code></td>
+                  <td>—</td>
+                  <td>Swagger UI</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Example contact payload</h3>
+          <pre><code>{
+  "name": "Jane Doe",
+  "phone": "99407 18307",
+  "email": "jane@example.com",
+  "message": "Looking for bathroom tiles for a renovation."
+}</code></pre>
+          <h3>Example success response</h3>
+          <pre><code>{
+  "success": true,
+  "message": "Thank you! Your message has been received. We will contact you shortly.",
+  "id": 1
+}</code></pre>
+          <p>Invalid bodies return <strong>422</strong> with FastAPI validation details. Client form maps field errors when possible.</p>
+
+          <h2 id="database">11. Database</h2>
+          <p>File: <code>database/showroom.db</code> (created automatically; gitignored).</p>
+          <h3>Tables</h3>
+          <ul>
+            <li><strong>contact_messages</strong> — general form submissions</li>
+            <li><strong>enquiries</strong> — product/showroom enquiries with optional product fields</li>
+          </ul>
+          <p>
+            Both store ISO-8601 UTC <code>created_at</code> and a <code>status</code> defaulting to <code>new</code>
+            for future admin workflows. List helpers exist in <code>database/db.py</code> but no admin UI yet.
+          </p>
+          <h3>MySQL later</h3>
+          <ol>
+            <li>Recreate tables with MySQL types (<code>DATETIME</code>, <code>AUTO_INCREMENT</code>).</li>
+            <li>Replace <code>get_connection()</code> only.</li>
+            <li>Keep insert column names stable so routes stay unchanged.</li>
+          </ol>
+
+          <h2 id="seo-a11y">12. SEO &amp; accessibility</h2>
+          <h3>SEO</h3>
+          <ul>
+            <li>Per-page <code>&lt;title&gt;</code> and meta description</li>
+            <li>Open Graph basics on main pages</li>
+            <li>Home JSON-LD (<code>HomeAndConstructionBusiness</code>)</li>
+            <li><code>/robots.txt</code> and <code>/sitemap.xml</code> (set real <code>SITE_URL</code>)</li>
+            <li>Semantic landmarks and heading hierarchy</li>
+          </ul>
+          <h3>Accessibility</h3>
+          <ul>
+            <li>Skip link to <code>#main</code></li>
+            <li>ARIA labels on icon buttons and drawers</li>
+            <li>Focus-visible outlines</li>
+            <li>Lightbox focus trap + Escape / arrows</li>
+            <li>Form errors with <code>aria-invalid</code> and live status</li>
+            <li><code>prefers-reduced-motion</code> disables non-essential motion</li>
+          </ul>
+
+          <h2 id="admin">13. Admin panel (v1.5.0)</h2>
+          <p>
+            Private operations console at <code>/admin</code> (login at <code>/admin/login</code>).
+            Default credentials: <code>admin</code> / <code>chalukya@2026</code>
+            (override with env <code>ADMIN_USERNAME</code>, <code>ADMIN_PASSWORD</code>, <code>ADMIN_SECRET</code>).
+          </p>
+          <ul>
+            <li><strong>Dashboard</strong> — sales totals, leads, queries, customers, media counts</li>
+            <li><strong>Tile Media</strong> — upload image + name, model number, colour, material category (optional size/finish/description). Shown on Products, Gallery, and Home featured.</li>
+            <li><strong>Collection Videos</strong> — upload MP4/WebM (+ optional poster). Active videos render mid-down on the homepage (below trust strip).</li>
+            <li><strong>Sales / Leads / Customers</strong> — CRUD tables for analytics and CRM-lite data</li>
+            <li><strong>Queries</strong> — contact form messages + product enquiries with status updates</li>
+          </ul>
+          <p>Uploads land in <code>static/uploads/{tiles,videos,posters}/</code>. Schema lives in <code>database/db.py</code>; API in <code>api/admin.py</code>.</p>
+
+          <h2 id="setup">14. Setup &amp; run (Windows)</h2>
+          <pre><code>cd C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn app:app --reload --host 127.0.0.1 --port 8000</code></pre>
+          <p>Open <strong>http://127.0.0.1:8000</strong> — admin at <strong>http://127.0.0.1:8000/admin</strong> — documentation at <strong>http://127.0.0.1:8000/docs</strong>. Interactive API docs at <code>/api/docs</code>.</p>
+
+          <h2 id="customize">15. Customize &amp; launch checklist</h2>
+          <ol>
+            <li>Change admin password (env vars or re-seed after deleting admin row).</li>
+            <li>Update phone, email, WhatsApp links, address, map embeds.</li>
+            <li>Set <code>SITE_URL</code> / <code>ADMIN_SECRET</code> for production.</li>
+            <li>Upload real tile photos and collection videos via Admin → Tile Media / Videos.</li>
+            <li>Back up <code>database/showroom.db</code> and <code>static/uploads/</code> on a schedule.</li>
+            <li>Serve behind HTTPS reverse proxy in production.</li>
+          </ol>
+
+          <h2 id="extend">16. Recommended next extensions</h2>
+          <ul>
+            <li><strong>Email notify</strong> — send mail on new submission.</li>
+            <li><strong>MySQL</strong> — production multi-instance DB.</li>
+            <li><strong>Role-based admin</strong> — multiple staff accounts with permissions.</li>
+            <li><strong>i18n</strong> — language switch if needed for bilingual markets.</li>
+          </ul>
+
+          <h2 id="memory">17. Project memory workflow</h2>
+          <p>
+            File: <code>PROJECT_MEMORY.md</code> (project root). After every module or coding session:
+          </p>
+          <ol>
+            <li>Create the file if missing; otherwise update it.</li>
+            <li>Record overview, stack, structure, architecture, completed/pending work, files, APIs, DB changes, TODO, next task, version.</li>
+            <li>Never wipe useful history — append session notes.</li>
+            <li>Refresh the <strong>CONTINUE PROMPT</strong> section so a new chat can resume instantly.</li>
+            <li>Keep this <code>/docs</code> page aligned when architecture changes.</li>
+          </ol>
+          <div class="docs-callout">
+            <p>
+              <strong>Tip:</strong> Treat <code>PROJECT_MEMORY.md</code> as the single source of continuity across tools and conversations.
+              This HTML page is the human-friendly handbook for stakeholders and new developers.
+            </p>
+          </div>
+
+          <p class="mt-8">
+            <a class="btn btn--primary" href="/">Visit homepage</a>
+            <a class="btn btn--outline" href="/api/docs">Open API Swagger</a>
+            <a class="btn btn--soft" href="/contact">Contact form</a>
+          </p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer__main">
+      <div class="footer__brand">
+        <a class="footer__logo" href="/">
+          <img class="footer__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="64" height="64" decoding="async">
+</a>
+        <p class="footer__tagline">Project documentation for the {{ brand_name }} showroom website.</p>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Site</h3>
+        <ul class="footer__links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/docs">Documentation</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Developers</h3>
+        <ul class="footer__links">
+          <li><a href="/api/docs">API Docs</a></li>
+          <li><a href="/api/health">Health</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+          <li><a href="/robots.txt">Robots</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Version</h3>
+        <p class="footer__newsletter-text">Site v1.2.0 · Chalukya Tiles · FastAPI + Vanilla JS</p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p class="footer__copy">© <span data-year>2026</span> <strong>{{ brand_name }}</strong>. Documentation page.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/navbar.js?v152-mobile-nav" defer></script>
+  <script src="/static/js/main.js?v151-fonts" defer></script>
+</body>
+</html>

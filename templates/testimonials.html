@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Customer testimonials for Chalukya Tiles — ratings and reviews from homeowners, designers and builders.">
+  <meta name="keywords" content="tile showroom reviews, prestige tiles testimonials, customer ratings">
+  <meta name="author" content="Chalukya Tiles">
+  <meta name="theme-color" content="#002147">
+  <meta property="og:title" content="Testimonials | Chalukya Tiles">
+  <meta property="og:description" content="What our clients say about their showroom experience and completed projects.">
+  <meta property="og:type" content="website">
+  <title>{{ page_title }} | {{ brand_name }} — {{ brand_tagline }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/navbar.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/footer.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/animations.css?v151-fonts">
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+</head>
+<body data-page="testimonials">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="loader" data-loader aria-busy="true" aria-live="polite" role="status">
+    <div class="loader__brand">{{ brand_name }}</div>
+    <div class="loader__bar" aria-hidden="true"><span class="loader__bar-fill"></span></div>
+    <span class="sr-only">Loading website</span>
+  </div>
+
+  <header class="site-header site-header--solid" data-header>
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="nav__brand" href="/" aria-label="{{ brand_name }} home">
+          <img class="nav__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="160" height="48" decoding="async">
+</a>
+        <div class="nav__menu" role="menubar">
+          <a class="nav__link" href="/" data-nav-link="home" role="menuitem">Home</a>
+          <a class="nav__link" href="/about" data-nav-link="about" role="menuitem">About</a>
+          <a class="nav__link" href="/products" data-nav-link="products" role="menuitem">Products</a>
+          <a class="nav__link" href="/gallery" data-nav-link="gallery" role="menuitem">Concept Gallery</a>
+          <a class="nav__link is-active" href="/testimonials" data-nav-link="testimonials" role="menuitem">Testimonials</a>
+          <a class="nav__link" href="/contact" data-nav-link="contact" role="menuitem">Contact</a>
+        </div>
+        <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+        <button class="nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+        </button>
+      </nav>
+    </div>
+    <div class="nav__drawer" id="mobile-nav" data-nav-drawer aria-hidden="true">
+      <div class="nav__drawer-overlay" data-nav-overlay tabindex="-1"></div>
+      <div class="nav__drawer-panel" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <a class="nav__drawer-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav__drawer-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav__drawer-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav__drawer-link" href="/gallery" data-nav-link="gallery">Concept Gallery</a>
+        <a class="nav__drawer-link is-active" href="/testimonials" data-nav-link="testimonials">Testimonials</a>
+        <a class="nav__drawer-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="btn btn--primary nav__drawer-cta" href="/contact">Book Showroom Visit</a>
+        <p class="nav__drawer-meta">Call us: <a href="tel:+919940718307">99407 18307</a></p>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="main page-enter">
+    <section class="page-hero" aria-labelledby="testimonials-hero-title">
+      <div class="container">
+        <p class="eyebrow" data-animate="fade-up">Client Voices</p>
+        <h1 class="heading-1 page-hero__title" id="testimonials-hero-title" data-animate="fade-up">Testimonials</h1>
+        <p class="lead page-hero__lead" data-animate="fade-up">
+          Honest feedback from homeowners, designers and builders who chose {{ brand_name }} for their floors and walls.
+        </p>
+        <nav class="page-hero__breadcrumb" aria-label="Breadcrumb" data-animate="fade-up">
+          <a href="/">Home</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">Testimonials</span>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section" id="reviews" aria-labelledby="reviews-heading">
+      <div class="container">
+        <!-- Rating summary (from approved admin-moderated reviews) -->
+        <div class="testimonials-summary" data-animate="fade-up">
+          <div class="testimonials-summary__score">
+            <span class="testimonials-summary__value" aria-hidden="true">{% if reviews_count %}{{ reviews_avg }}{% else %}—{% endif %}</span>
+            {% if reviews_count %}
+            {% set full = (reviews_avg|int) %}
+            {% set half = 1 if (reviews_avg - full) >= 0.5 else 0 %}
+            <div class="testimonials-summary__stars" aria-label="Average rating {{ reviews_avg }} out of 5">{{ '★' * full }}{{ '★' * half }}{{ '☆' * (5 - full - half) }}</div>
+            {% else %}
+            <div class="testimonials-summary__stars" aria-label="No ratings yet">☆☆☆☆☆</div>
+            {% endif %}
+            <p class="testimonials-summary__label">{% if reviews_count %}Average from approved reviews{% else %}Waiting for first approved reviews{% endif %}</p>
+          </div>
+          <div class="testimonials-summary__stat">
+            <span
+              class="testimonials-summary__stat-value counter"
+              data-counter-target="{{ reviews_count or 0 }}"
+              data-counter-suffix=""
+            >0</span>
+            <p class="testimonials-summary__stat-label">Approved reviews</p>
+          </div>
+          <div class="testimonials-summary__stat delay-1" data-animate="fade-up">
+            <span
+              class="testimonials-summary__stat-value counter"
+              data-counter-target="{{ reviews_recommend_pct or 0 }}"
+              data-counter-suffix="%"
+            >0%</span>
+            <p class="testimonials-summary__stat-label">Rated 4★ or higher</p>
+          </div>
+        </div>
+
+        <header class="section__header section__header--center" data-animate="fade-up">
+          <p class="eyebrow">Stories</p>
+          <h2 class="heading-2" id="reviews-heading">What Clients Say</h2>
+          <p class="lead">Approved customer feedback from our showroom visitors — share yours with the pen button.</p>
+        </header>
+
+        <div class="testimonials-grid">
+          {% if public_reviews %}
+          {% for rev in public_reviews %}
+          {% set rating = rev.rating or 5 %}
+          {% set stars = '★' * rating %}{% set empty = '☆' * (5 - rating) %}
+          {% set parts = (rev.name or 'C').split() %}
+          {% set initials = (parts[0][0] ~ (parts[1][0] if parts|length > 1 else ''))|upper %}
+          <article class="testimonial-card{% if rev.is_featured %} testimonial-card--featured{% elif loop.index0 % 3 == 1 %} delay-1{% elif loop.index0 % 3 == 2 %} delay-2{% endif %}" data-animate="fade-up">
+            <div class="testimonial-card__stars" aria-label="Rated {{ rating }} out of 5">{{ stars }}{{ empty }}</div>
+            <blockquote class="testimonial-card__quote">
+              “{% if rev.title %}<strong>{{ rev.title }}</strong> — {% endif %}{{ rev.message }}”
+            </blockquote>
+            {% if rev.is_featured %}
+            <span class="testimonial-card__project">Featured review</span>
+            {% else %}
+            <span class="testimonial-card__project">Customer review</span>
+            {% endif %}
+            <footer class="testimonial-card__footer">
+              <span class="testimonial-card__avatar" aria-hidden="true">{{ initials }}</span>
+              <div>
+                <cite class="testimonial-card__author">{{ rev.name }}</cite>
+                <p class="testimonial-card__role">{% if rev.is_featured %}Featured · {{ brand_name }}{% else %}Verified visitor{% endif %}</p>
+              </div>
+            </footer>
+          </article>
+          {% endfor %}
+          {% else %}
+          <article class="testimonial-card testimonial-card--featured" data-animate="fade-up">
+            <div class="testimonial-card__stars" aria-label="No ratings yet">☆☆☆☆☆</div>
+            <blockquote class="testimonial-card__quote">
+              “No approved reviews yet. Use the pen icon to write a review — once admin approves it, it will appear here and on the home page.”
+            </blockquote>
+            <span class="testimonial-card__project">Be the first</span>
+            <footer class="testimonial-card__footer">
+              <span class="testimonial-card__avatar" aria-hidden="true">CT</span>
+              <div>
+                <cite class="testimonial-card__author">{{ brand_name }}</cite>
+                <p class="testimonial-card__role">We look forward to your feedback</p>
+              </div>
+            </footer>
+          </article>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured quote band -->
+    <section class="section section--dark" aria-label="Featured client quote">
+      <div class="container text-center" data-animate="scale">
+        <p class="eyebrow">Featured</p>
+        {% if featured_review %}
+        <blockquote class="testimonials-featured-quote">
+          “{% if featured_review.title %}{{ featured_review.title }} — {% endif %}{{ featured_review.message }}”
+        </blockquote>
+        <p class="testimonials-featured-cite mt-6 text-sm">
+          <strong class="text-highlight">— {{ featured_review.name }}</strong>
+          <span class="text-muted"> · {% if featured_review.is_featured %}Featured review{% else %}Customer{% endif %}</span>
+        </p>
+        {% else %}
+        <blockquote class="testimonials-featured-quote">
+          “Your experience matters. Share a rating after your visit — approved reviews are published here for future clients.”
+        </blockquote>
+        <p class="testimonials-featured-cite mt-6 text-sm">
+          <strong class="text-highlight">— {{ brand_name }}</strong>
+          <span class="text-muted"> · Showroom team</span>
+        </p>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="cta-band" aria-labelledby="testimonials-cta-heading">
+      <div class="container" data-animate="scale">
+        <p class="eyebrow">Join Our Clients</p>
+        <h2 class="heading-2" id="testimonials-cta-heading">Ready for your own success story?</h2>
+        <p class="lead">Book a showroom visit or send your project details — we will help you choose with clarity.</p>
+        <div class="cta-band__actions">
+          <a class="btn btn--primary btn--lg" href="/contact">Contact Us</a>
+          <a class="btn btn--ghost btn--lg" href="/gallery">View Concept Gallery</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer__main">
+      <div class="footer__brand">
+        <a class="footer__logo" href="/">
+          <img class="footer__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="64" height="64" decoding="async">
+</a>
+        <p class="footer__tagline">Premium floor and interior tiles for homes, hospitality and commercial spaces.</p>
+        <div class="footer__social" aria-label="Social media">
+          <a class="footer__social-link" href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v2H6v4h3v8h4v-8h3.1l.9-4H13V9c0-.6.4-1 1-1z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.5 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://wa.me/9940718307" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/gallery">Concept Gallery</a></li>
+          <li><a href="/testimonials">Testimonials</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Products</h3>
+        <ul class="footer__links">
+          <li><a href="/products?category=vitrified-tiles">Vitrified Tiles</a></li>
+          <li><a href="/products?category=marble-finish">Marble Finish</a></li>
+          <li><a href="/products?category=wooden-finish">Wooden Finish</a></li>
+          <li><a href="/products?category=bathroom-tiles">Bathroom Tiles</a></li>
+          <li><a href="/products?category=outdoor-tiles">Outdoor Tiles</a></li>
+          <li><a href="/products?category=elevation-tiles">Elevation Tiles</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Newsletter</h3>
+        <p class="footer__newsletter-text">New collections and showroom events — occasional updates, no spam.</p>
+        <form class="footer__newsletter-form" data-newsletter-form novalidate>
+          <label class="sr-only" for="newsletter-email">Email address</label>
+          <input class="footer__newsletter-input" id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="Your email" required>
+          <button class="btn btn--primary btn--sm" type="submit">Subscribe</button>
+        </form>
+        <p class="footer__newsletter-note" data-newsletter-note>We respect your privacy.</p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p class="footer__copy">© <span data-year>2026</span> <strong>{{ brand_name }}</strong>. All rights reserved.</p>
+        <div class="footer__legal">
+          <a href="/contact">Privacy</a>
+          <a href="/contact">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="float-actions">
+    <a class="float-btn float-btn--whatsapp pulse-soft" href="https://wa.me/9940718307?text=Hello%20Chalukya%20Tiles%2C%20I%20would%20like%20to%20know%20more%20about%20your%20collections." target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+    </a>
+    <button class="float-btn float-btn--review" type="button" data-review-open aria-label="Write a review">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    </button>
+    <button class="float-btn float-btn--scrolltop" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 15.4 12 10.8l4.6 4.6L18 14l-6-6-6 6z"/></svg>
+    </button>
+  </div>
+
+  <div class="review-modal" data-review-modal hidden>
+    <div class="review-modal__backdrop" data-review-close></div>
+    <div class="review-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+      <div class="review-modal__head">
+        <h2 id="review-modal-title">Write a review</h2>
+        <button type="button" class="review-modal__x" data-review-close aria-label="Close">×</button>
+      </div>
+      <form class="review-form" data-review-form novalidate>
+        <label class="review-field"><span>Name *</span><input name="name" required minlength="2" maxlength="120"></label>
+        <label class="review-field"><span>Rating *</span>
+          <select name="rating" required>
+            <option value="5">5 — Excellent</option>
+            <option value="4">4 — Very good</option>
+            <option value="3">3 — Good</option>
+            <option value="2">2 — Fair</option>
+            <option value="1">1 — Poor</option>
+          </select>
+        </label>
+        <label class="review-field"><span>Title</span><input name="title" maxlength="200" placeholder="Optional short title"></label>
+        <label class="review-field"><span>Your feedback *</span><textarea name="message" required minlength="10" rows="4" placeholder="Share your experience with Chalukya Tiles"></textarea></label>
+        <div class="review-form-row">
+          <label class="review-field"><span>Email</span><input name="email" type="email" maxlength="180"></label>
+          <label class="review-field"><span>Phone</span><input name="phone" maxlength="40"></label>
+        </div>
+        <p class="review-form__status" data-review-status hidden></p>
+        <button type="submit" class="btn btn--primary">Submit review</button>
+        <p class="review-form__hint">Reviews appear after admin approval.</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js?v172-review" defer></script>
+  <script src="/static/js/navbar.js?v152-mobile-nav" defer></script>
+  <script src="/static/js/main.js?v172-review" defer></script>
+  <script src="/static/js/reviews.js?v172" defer></script>
+</body>
+</html>

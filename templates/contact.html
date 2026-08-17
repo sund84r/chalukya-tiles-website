@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact Chalukya Tiles — visit our floor tiles showroom, call, WhatsApp or send an enquiry online.">
+  <meta name="keywords" content="contact tile showroom, prestige tiles contact, floor tiles enquiry">
+  <meta name="author" content="Chalukya Tiles">
+  <meta name="theme-color" content="#002147">
+  <meta property="og:title" content="Contact | Chalukya Tiles">
+  <meta property="og:description" content="Get in touch for samples, pricing and showroom visits.">
+  <meta property="og:type" content="website">
+  <title>{{ page_title }} | {{ brand_name }} — {{ brand_tagline }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/navbar.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/contact.css?v151-fonts">
+  <link rel="stylesheet" href="/static/css/footer.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/animations.css?v151-fonts">
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+</head>
+<body data-page="contact">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="loader" data-loader aria-busy="true" aria-live="polite" role="status">
+    <div class="loader__brand">{{ brand_name }}</div>
+    <div class="loader__bar" aria-hidden="true"><span class="loader__bar-fill"></span></div>
+    <span class="sr-only">Loading website</span>
+  </div>
+
+  <header class="site-header site-header--solid" data-header>
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="nav__brand" href="/" aria-label="{{ brand_name }} home">
+          <img class="nav__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="160" height="48" decoding="async">
+</a>
+        <div class="nav__menu" role="menubar">
+          <a class="nav__link" href="/" data-nav-link="home" role="menuitem">Home</a>
+          <a class="nav__link" href="/about" data-nav-link="about" role="menuitem">About</a>
+          <a class="nav__link" href="/products" data-nav-link="products" role="menuitem">Products</a>
+          <a class="nav__link" href="/gallery" data-nav-link="gallery" role="menuitem">Concept Gallery</a>
+          <a class="nav__link" href="/testimonials" data-nav-link="testimonials" role="menuitem">Testimonials</a>
+          <a class="nav__link is-active" href="/contact" data-nav-link="contact" role="menuitem">Contact</a>
+        </div>
+        <a class="btn btn--primary btn--sm nav__cta" href="#contact-form">Send Message</a>
+        <button class="nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+        </button>
+      </nav>
+    </div>
+    <div class="nav__drawer" id="mobile-nav" data-nav-drawer aria-hidden="true">
+      <div class="nav__drawer-overlay" data-nav-overlay tabindex="-1"></div>
+      <div class="nav__drawer-panel" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <a class="nav__drawer-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav__drawer-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav__drawer-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav__drawer-link" href="/gallery" data-nav-link="gallery">Concept Gallery</a>
+        <a class="nav__drawer-link" href="/testimonials" data-nav-link="testimonials">Testimonials</a>
+        <a class="nav__drawer-link is-active" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="btn btn--primary nav__drawer-cta" href="#contact-form">Send Message</a>
+        <p class="nav__drawer-meta">Call us: <a href="tel:+919940718307">99407 18307</a></p>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="main page-enter">
+    <section class="page-hero" aria-labelledby="contact-hero-title">
+      <div class="container">
+        <p class="eyebrow" data-animate="fade-up">Get In Touch</p>
+        <h1 class="heading-1 page-hero__title" id="contact-hero-title" data-animate="fade-up">Contact</h1>
+        <p class="lead page-hero__lead" data-animate="fade-up">
+          Visit the showroom, call our team, or send a message — we typically respond within one business day.
+        </p>
+        <nav class="page-hero__breadcrumb" aria-label="Breadcrumb" data-animate="fade-up">
+          <a href="/">Home</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">Contact</span>
+        </nav>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="contact-details-heading">
+      <div class="container">
+        <div class="contact-layout">
+          <!-- Info -->
+          <div class="contact-info" data-animate="fade-right">
+            <div class="contact-info__intro">
+              <p class="eyebrow">Showroom</p>
+              <h2 class="heading-2" id="contact-details-heading">{{ brand_name }}</h2>
+              <p class="lead">Flagship floor &amp; interior tiles gallery — samples, large-format displays and project advice.</p>
+            </div>
+
+            <ul class="contact-info__list">
+              <li class="contact-info-card">
+                <span class="contact-info-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"/></svg>
+                </span>
+                <div>
+                  <p class="contact-info-card__label">Address</p>
+                  <p class="contact-info-card__value">
+                    No:370, Sathy main road, Kurumbapalayam<br>
+                    Coimbatore, TN - 641 107
+                  </p>
+                </div>
+              </li>
+              <li class="contact-info-card">
+                <span class="contact-info-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.5 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+                </span>
+                <div>
+                  <p class="contact-info-card__label">Phone</p>
+                  <p class="contact-info-card__value">
+                    <a href="tel:+919940718307">99407 18307</a>
+                  </p>
+                </div>
+              </li>
+              <li class="contact-info-card">
+                <span class="contact-info-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z"/></svg>
+                </span>
+                <div>
+                  <p class="contact-info-card__label">Email</p>
+                  <p class="contact-info-card__value">
+                    <a href="mailto:chalukyatiles@gmail.com">chalukyatiles@gmail.com</a>
+                  </p>
+                </div>
+              </li>
+              <li class="contact-info-card">
+                <span class="contact-info-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+                </span>
+                <div>
+                  <p class="contact-info-card__label">WhatsApp</p>
+                  <p class="contact-info-card__value">
+                    <a href="https://wa.me/9940718307" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a>
+                  </p>
+                </div>
+              </li>
+              <li class="contact-info-card">
+                <span class="contact-info-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm1 7V3.5L18.5 9H15zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16zm0-6h5v1.5H8V10z"/></svg>
+                </span>
+                <div>
+                  <p class="contact-info-card__label">GSTIN</p>
+                  <p class="contact-info-card__value">33AAWFC0185C1ZL</p>
+                </div>
+              </li>
+              <li class="contact-info-card">
+                <span class="contact-info-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></svg>
+                </span>
+                <div>
+                  <p class="contact-info-card__label">Managing Director</p>
+                  <p class="contact-info-card__value">C. Venkatesan, MBA</p>
+                </div>
+              </li>
+            </ul>
+
+            <div class="contact-hours">
+              <h3 class="contact-hours__title">Business Hours</h3>
+              <div class="contact-hours__rows">
+                <div class="contact-hours__row">
+                  <span class="contact-hours__day">Monday – Saturday</span>
+                  <span class="contact-hours__time">10:00 AM – 8:00 PM</span>
+                </div>
+                <div class="contact-hours__row">
+                  <span class="contact-hours__day">Sunday</span>
+                  <span class="contact-hours__time">11:00 AM – 6:00 PM</span>
+                </div>
+                <div class="contact-hours__row">
+                  <span class="contact-hours__day">Public Holidays</span>
+                  <span class="contact-hours__time">By appointment</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <p class="contact-info-card__label mb-4">Social Media</p>
+              <div class="contact-social" aria-label="Social media links">
+                <a class="contact-social__link" href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v2H6v4h3v8h4v-8h3.1l.9-4H13V9c0-.6.4-1 1-1z"/></svg>
+                </a>
+                <a class="contact-social__link" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.5 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
+                </a>
+                <a class="contact-social__link" href="https://wa.me/9940718307" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+                </a>
+                <a class="contact-social__link" href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <div class="contact-form-panel" id="contact-form" data-animate="fade-left">
+            <div class="contact-form-panel__header">
+              <h2 class="heading-3" data-form-title>Send a Message</h2>
+              <p class="lead" data-form-lead>Fill in the form and our consultants will get back to you shortly.</p>
+            </div>
+
+            <div class="contact-form-panel__enquiry" data-enquiry-banner>
+              Enquiring about
+              <strong data-enquiry-product></strong>
+              <span data-enquiry-category></span>
+            </div>
+
+            <form class="form contact-form" data-contact-form novalidate>
+              <div class="form__row">
+                <div class="form__group">
+                  <label class="form__label" for="contact-name">
+                    Name <span class="required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    class="form__control"
+                    type="text"
+                    id="contact-name"
+                    name="name"
+                    autocomplete="name"
+                    required
+                    minlength="2"
+                    maxlength="120"
+                    placeholder="Your full name"
+                    aria-required="true"
+                    aria-describedby="error-name"
+                  >
+                  <p class="form__error" id="error-name" data-error></p>
+                </div>
+                <div class="form__group">
+                  <label class="form__label" for="contact-phone">
+                    Phone <span class="required" aria-hidden="true">*</span>
+                  </label>
+                  <input
+                    class="form__control"
+                    type="tel"
+                    id="contact-phone"
+                    name="phone"
+                    autocomplete="tel"
+                    required
+                    minlength="7"
+                    maxlength="40"
+                    placeholder="99407 18307"
+                    aria-required="true"
+                    aria-describedby="error-phone"
+                  >
+                  <p class="form__error" id="error-phone" data-error></p>
+                </div>
+              </div>
+
+              <div class="form__group">
+                <label class="form__label" for="contact-email">
+                  Email <span class="required" aria-hidden="true">*</span>
+                </label>
+                <input
+                  class="form__control"
+                  type="email"
+                  id="contact-email"
+                  name="email"
+                  autocomplete="email"
+                  required
+                  maxlength="180"
+                  placeholder="you@example.com"
+                  aria-required="true"
+                  aria-describedby="error-email"
+                >
+                <p class="form__error" id="error-email" data-error></p>
+              </div>
+
+              <div class="form__group">
+                <label class="form__label" for="contact-message">
+                  Message <span class="required" aria-hidden="true">*</span>
+                </label>
+                <textarea
+                  class="form__control form__control--textarea"
+                  id="contact-message"
+                  name="message"
+                  required
+                  minlength="10"
+                  maxlength="5000"
+                  placeholder="Tell us about your space, preferred finishes, or when you would like to visit…"
+                  aria-required="true"
+                  aria-describedby="error-message"
+                ></textarea>
+                <p class="form__error" id="error-message" data-error></p>
+              </div>
+
+              <p class="form__hint">Fields marked * are required. We never share your details with third parties.</p>
+
+              <div class="form__status" data-form-status aria-live="polite"></div>
+
+              <button class="btn btn--primary" type="submit">
+                <span>Send Message</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Map -->
+    <section class="section contact-map-section" aria-labelledby="map-heading">
+      <div class="container">
+        <header class="section__header section__header--center" data-animate="fade-up">
+          <p class="eyebrow">Location</p>
+          <h2 class="heading-2" id="map-heading">Find the Showroom</h2>
+          <p class="lead">Easy access from Coimbatore — parking available nearby.</p>
+        </header>
+
+        <div class="contact-map reveal-image" data-animate="fade-up">
+          <iframe
+            title="Chalukya Tiles showroom location on Google Maps"
+            src="https://www.google.com/maps?q=No+370+Sathy+Main+Road+Kurumbapalayam+Coimbatore+641107&output=embed"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+        <div class="contact-map__actions" data-animate="fade-up">
+          <a
+            class="btn btn--primary"
+            href="https://www.google.com/maps/search/?api=1&amp;query=No+370+Sathy+Main+Road+Kurumbapalayam+Coimbatore+641107"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Open in Google Maps</a>
+          <a class="btn btn--outline" href="https://wa.me/9940718307" target="_blank" rel="noopener noreferrer">WhatsApp Directions</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band" aria-labelledby="contact-cta-heading">
+      <div class="container" data-animate="scale">
+        <p class="eyebrow">Prefer a Call?</p>
+        <h2 class="heading-2" id="contact-cta-heading">Speak with a tile consultant</h2>
+        <p class="lead">We are happy to discuss sizes, finishes and project timelines over the phone.</p>
+        <div class="cta-band__actions">
+          <a class="btn btn--primary btn--lg" href="tel:+919940718307">Call 99407 18307</a>
+          <a class="btn btn--ghost btn--lg" href="/products">Browse Products</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer__main">
+      <div class="footer__brand">
+        <a class="footer__logo" href="/">
+          <img class="footer__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="64" height="64" decoding="async">
+</a>
+        <p class="footer__tagline">Premium floor and interior tiles for homes, hospitality and commercial spaces.</p>
+        <div class="footer__social" aria-label="Social media">
+          <a class="footer__social-link" href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v2H6v4h3v8h4v-8h3.1l.9-4H13V9c0-.6.4-1 1-1z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.5 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://wa.me/9940718307" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/gallery">Concept Gallery</a></li>
+          <li><a href="/testimonials">Testimonials</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Products</h3>
+        <ul class="footer__links">
+          <li><a href="/products?category=vitrified-tiles">Vitrified Tiles</a></li>
+          <li><a href="/products?category=marble-finish">Marble Finish</a></li>
+          <li><a href="/products?category=wooden-finish">Wooden Finish</a></li>
+          <li><a href="/products?category=bathroom-tiles">Bathroom Tiles</a></li>
+          <li><a href="/products?category=outdoor-tiles">Outdoor Tiles</a></li>
+          <li><a href="/products?category=elevation-tiles">Elevation Tiles</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Newsletter</h3>
+        <p class="footer__newsletter-text">New collections and showroom events — occasional updates, no spam.</p>
+        <form class="footer__newsletter-form" data-newsletter-form novalidate>
+          <label class="sr-only" for="newsletter-email">Email address</label>
+          <input class="footer__newsletter-input" id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="Your email" required>
+          <button class="btn btn--primary btn--sm" type="submit">Subscribe</button>
+        </form>
+        <p class="footer__newsletter-note" data-newsletter-note>We respect your privacy.</p>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p class="footer__copy">© <span data-year>2026</span> <strong>{{ brand_name }}</strong>. All rights reserved.</p>
+        <div class="footer__legal">
+          <a href="/contact">Privacy</a>
+          <a href="/contact">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="float-actions">
+    <a class="float-btn float-btn--whatsapp pulse-soft" href="https://wa.me/9940718307?text=Hello%20Chalukya%20Tiles%2C%20I%20would%20like%20to%20know%20more%20about%20your%20collections." target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+    </a>
+    <button class="float-btn float-btn--review" type="button" data-review-open aria-label="Write a review">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    </button>
+    <button class="float-btn float-btn--scrolltop" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 15.4 12 10.8l4.6 4.6L18 14l-6-6-6 6z"/></svg>
+    </button>
+  </div>
+
+  <div class="review-modal" data-review-modal hidden>
+    <div class="review-modal__backdrop" data-review-close></div>
+    <div class="review-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+      <div class="review-modal__head">
+        <h2 id="review-modal-title">Write a review</h2>
+        <button type="button" class="review-modal__x" data-review-close aria-label="Close">×</button>
+      </div>
+      <form class="review-form" data-review-form novalidate>
+        <label class="review-field"><span>Name *</span><input name="name" required minlength="2" maxlength="120"></label>
+        <label class="review-field"><span>Rating *</span>
+          <select name="rating" required>
+            <option value="5">5 — Excellent</option>
+            <option value="4">4 — Very good</option>
+            <option value="3">3 — Good</option>
+            <option value="2">2 — Fair</option>
+            <option value="1">1 — Poor</option>
+          </select>
+        </label>
+        <label class="review-field"><span>Title</span><input name="title" maxlength="200" placeholder="Optional short title"></label>
+        <label class="review-field"><span>Your feedback *</span><textarea name="message" required minlength="10" rows="4" placeholder="Share your experience with Chalukya Tiles"></textarea></label>
+        <div class="review-form-row">
+          <label class="review-field"><span>Email</span><input name="email" type="email" maxlength="180"></label>
+          <label class="review-field"><span>Phone</span><input name="phone" maxlength="40"></label>
+        </div>
+        <p class="review-form__status" data-review-status hidden></p>
+        <button type="submit" class="btn btn--primary">Submit review</button>
+        <p class="review-form__hint">Reviews appear after admin approval.</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js?v172-review" defer></script>
+  <script src="/static/js/navbar.js?v152-mobile-nav" defer></script>
+  <script src="/static/js/contact.js?v151-fonts" defer></script>
+  <script src="/static/js/main.js?v172-review" defer></script>
+  <script src="/static/js/reviews.js?v172" defer></script>
+</body>
+</html>

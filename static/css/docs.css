@@ -1,0 +1,268 @@
+/* ==========================================================================
+   Chalukya Tiles — docs.css
+   Long-form project documentation layout (TOC + article).
+   ========================================================================== */
+
+.docs-layout {
+  display: grid;
+  gap: var(--space-10);
+  align-items: start;
+}
+
+@media (min-width: 1000px) {
+  .docs-layout {
+    grid-template-columns: 15rem 1fr;
+    gap: var(--space-12);
+  }
+}
+
+.docs-toc {
+  position: sticky;
+  top: calc(var(--header-height) + var(--space-4));
+  padding: var(--space-5);
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--fs-sm);
+}
+
+.docs-toc__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--color-stone);
+  margin-bottom: var(--space-4);
+}
+
+.docs-toc ol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.docs-toc a {
+  color: var(--color-charcoal);
+  text-decoration: none;
+  display: block;
+  padding: 0.25rem 0;
+  border-left: 2px solid transparent;
+  padding-left: var(--space-3);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.docs-toc a:hover {
+  color: var(--color-highlight-dark);
+  border-left-color: var(--color-highlight);
+}
+
+.docs-content h2 {
+  margin-top: var(--space-12);
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  scroll-margin-top: calc(var(--header-height) + var(--space-4));
+}
+
+.docs-content h2:first-of-type {
+  margin-top: 0;
+  border-top: none;
+  padding-top: 0;
+}
+
+.docs-content h3 {
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-lg);
+  scroll-margin-top: calc(var(--header-height) + var(--space-4));
+}
+
+.docs-content p,
+.docs-content li {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+}
+
+.docs-content p + p {
+  margin-top: var(--space-4);
+}
+
+.docs-content ul,
+.docs-content ol {
+  margin: var(--space-4) 0;
+  padding-left: var(--space-6);
+}
+
+.docs-content ul {
+  list-style: disc;
+}
+
+.docs-content ol {
+  list-style: decimal;
+}
+
+.docs-content li + li {
+  margin-top: var(--space-2);
+}
+
+.docs-content strong {
+  color: var(--color-charcoal);
+  font-weight: var(--fw-semibold);
+}
+
+.docs-content code {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.85em;
+  background: var(--color-stone-pale);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+  color: var(--color-charcoal);
+}
+
+.docs-content pre {
+  margin: var(--space-5) 0;
+  padding: var(--space-5);
+  background: var(--color-charcoal);
+  color: var(--color-stone-light);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-size: var(--fs-xs);
+  line-height: 1.55;
+}
+
+.docs-content pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.docs-table-wrap {
+  overflow-x: auto;
+  margin: var(--space-5) 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  min-width: 32rem;
+}
+
+.docs-table th,
+.docs-table td {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.docs-table th {
+  background: var(--color-bg-alt);
+  font-weight: var(--fw-semibold);
+  color: var(--color-charcoal);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.docs-table td {
+  color: var(--color-text-muted);
+}
+
+.docs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-callout {
+  margin: var(--space-6) 0;
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(47, 125, 225, 0.4);
+  background: var(--color-highlight-soft);
+}
+
+.docs-callout p {
+  color: var(--color-charcoal);
+  margin: 0;
+}
+
+.docs-callout strong {
+  color: var(--color-highlight-dark);
+}
+
+.docs-grid-2 {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+  margin: var(--space-6) 0;
+}
+
+@media (min-width: 640px) {
+  .docs-grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.docs-card {
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: var(--shadow-xs);
+}
+
+.docs-card h3 {
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-md);
+}
+
+.docs-card p {
+  margin: 0;
+}
+
+.docs-badge {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-highlight-dark);
+  background: var(--color-highlight-soft);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-3);
+}
+
+.docs-diagram {
+  margin: var(--space-6) 0;
+  padding: var(--space-6);
+  background: var(--color-charcoal);
+  color: var(--color-stone-light);
+  border-radius: var(--radius-lg);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.docs-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.docs-content .btn {
+  margin-right: var(--space-2);
+  margin-top: var(--space-2);
+}

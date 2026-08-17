@@ -1,0 +1,14 @@
+# Chalukya Tiles — robots.txt
+User-agent: *
+Allow: /
+
+# Disallow API docs / health from aggressive crawling (optional)
+Disallow: /api/docs
+Disallow: /api/redoc
+Disallow: /api/openapi.json
+
+# Admin panel (private)
+Disallow: /admin
+Disallow: /admin/
+
+Sitemap: /sitemap.xml

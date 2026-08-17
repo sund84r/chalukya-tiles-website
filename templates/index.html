@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chalukya Tiles — premium floor tiles and interior tiles showroom. Vitrified, ceramic, marble finish, wooden finish, bathroom, kitchen and outdoor collections.">
+  <meta name="keywords" content="floor tiles, interior tiles, vitrified tiles, ceramic tiles, marble finish, wooden finish, bathroom tiles, showroom">
+  <meta name="author" content="Chalukya Tiles">
+  <meta name="theme-color" content="#002147">
+  <meta property="og:title" content="Chalukya Tiles | Floor & Interior Tiles Showroom">
+  <meta property="og:description" content="Discover premium tile collections crafted for modern living. Visit our showroom.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_IN">
+  <title>{{ page_title }} | {{ brand_name }} — {{ brand_tagline }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/navbar.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/hero.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/footer.css?v176-oxford">
+  <link rel="stylesheet" href="/static/css/animations.css?v151-fonts">
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="{{ site_url }}/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HomeAndConstructionBusiness",
+    "name": "{{ brand_name }}",
+    "description": "Premium floor tiles and interior tiles showroom.",
+    "url": "{{ site_url }}/",
+    "telephone": "+91-99407-18307",
+    "email": "chalukyatiles@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "No:370, Sathy main road, Kurumbapalayam",
+      "addressLocality": "Coimbatore",
+      "addressRegion": "Tamil Nadu",
+      "postalCode": "641107",
+      "addressCountry": "IN"
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+        "opens": "10:00",
+        "closes": "20:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Sunday",
+        "opens": "11:00",
+        "closes": "18:00"
+      }
+    ],
+    "priceRange": "$$"
+  }
+  </script>
+</head>
+<body data-page="home">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- Loading screen -->
+  <div class="loader" data-loader aria-busy="true" aria-live="polite" role="status">
+    <div class="loader__brand">{{ brand_name }}</div>
+    <div class="loader__bar" aria-hidden="true">
+      <span class="loader__bar-fill"></span>
+    </div>
+    <span class="sr-only">Loading website</span>
+  </div>
+
+  <!-- Header / Navbar -->
+  <header class="site-header site-header--transparent" data-header>
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="nav__brand" href="/" aria-label="{{ brand_name }} home">
+          <img class="nav__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="160" height="48" decoding="async">
+</a>
+
+        <div class="nav__menu" role="menubar">
+          <a class="nav__link is-active" href="/" data-nav-link="home" role="menuitem">Home</a>
+          <a class="nav__link" href="/about" data-nav-link="about" role="menuitem">About</a>
+          <a class="nav__link" href="/products" data-nav-link="products" role="menuitem">Products</a>
+          <a class="nav__link" href="/gallery" data-nav-link="gallery" role="menuitem">Concept Gallery</a>
+          <a class="nav__link" href="/testimonials" data-nav-link="testimonials" role="menuitem">Testimonials</a>
+          <a class="nav__link" href="/contact" data-nav-link="contact" role="menuitem">Contact</a>
+        </div>
+
+        <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+
+        <button
+          class="nav__toggle"
+          type="button"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+          aria-label="Open menu"
+        >
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+          <span class="nav__toggle-bar"></span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="nav__drawer" id="mobile-nav" data-nav-drawer aria-hidden="true">
+      <div class="nav__drawer-overlay" data-nav-overlay tabindex="-1"></div>
+      <div class="nav__drawer-panel" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+        <a class="nav__drawer-link is-active" href="/" data-nav-link="home">Home</a>
+        <a class="nav__drawer-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav__drawer-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav__drawer-link" href="/gallery" data-nav-link="gallery">Concept Gallery</a>
+        <a class="nav__drawer-link" href="/testimonials" data-nav-link="testimonials">Testimonials</a>
+        <a class="nav__drawer-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="btn btn--primary nav__drawer-cta" href="/contact">Book Showroom Visit</a>
+        <p class="nav__drawer-meta">
+          Call us:
+          <a href="tel:+919940718307">99407 18307</a>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="main page-enter">
+    <!-- Hero -->
+    <section class="hero" data-hero aria-label="Showroom introduction">
+      <div class="hero__media" data-parallax="0.2">
+        <img
+          class="hero__poster"
+          src="/static/images/hero-poster.svg"
+          alt="Elegant tile showroom interior with premium floor displays"
+          width="1920"
+          height="1080"
+          fetchpriority="high"
+        >
+        <!-- Optional: place a compressed MP4 at static/videos/showroom.mp4 -->
+        <video
+          class="hero__video"
+          data-hero-video
+          data-src="/static/videos/showroom.mp4"
+          muted
+          loop
+          playsinline
+          preload="none"
+          poster="/static/images/hero-poster.svg"
+          aria-hidden="true"
+        ></video>
+      </div>
+      <div class="hero__overlay" aria-hidden="true"></div>
+
+      <div class="container hero__content">
+        <div class="hero__brand" data-animate="scale">
+          <img
+            class="hero__logo"
+            src="/static/icons/logo-chalukya-hero.png?v=175"
+            alt="Chalukya Tiles"
+            width="520"
+            height="175"
+            decoding="async"
+            fetchpriority="high"
+          >
+</div>
+        <p class="eyebrow hero__eyebrow delay-1" data-animate="fade-up">Premium Floor &amp; Interior Tiles</p>
+        <h1 class="hero__title delay-2" data-animate="fade-up">
+          <span class="hero__title-line">Crafted Surfaces</span>
+          <span class="hero__title-line hero__title-line--typing">
+            <span class="hero__title-for">for</span>
+            <span
+              class="hero__title-accent hero__typing"
+              data-typing
+              data-typing-phrases="Modern Homes|Luxury Spaces|Timeless Interiors"
+            ><span data-typing-text>Modern Homes</span></span>
+          </span>
+        </h1>
+        <p class="hero__subtitle delay-3" data-animate="fade-up">
+          Experience an exclusive collection of vitrified, ceramic, marble and wooden-finish tiles
+          curated for architects, designers and discerning homeowners.
+        </p>
+        <div class="hero__actions delay-4" data-animate="fade-up">
+          <a class="btn btn--primary btn--lg" href="/products">Explore Collections</a>
+          <a class="btn btn--ghost btn--lg" href="/gallery">View Concept Gallery</a>
+        </div>
+        <a class="hero__scroll" href="#featured" aria-label="Scroll to featured products">
+          <span class="hero__scroll-icon" aria-hidden="true"></span>
+          Scroll
+        </a>
+      </div>
+    </section>
+
+    <!-- Trust strip -->
+    <section class="trust-strip" aria-label="Company highlights">
+      <div class="container">
+        <div class="trust-strip__grid">
+          <div class="trust-strip__item" data-animate="fade-up">
+            <span
+              class="trust-strip__value counter"
+              data-counter-target="25"
+              data-counter-suffix="+"
+            >0+</span>
+            <span class="trust-strip__label">Years Experience</span>
+          </div>
+          <div class="trust-strip__item delay-1" data-animate="fade-up">
+            <span
+              class="trust-strip__value counter"
+              data-counter-target="2500"
+              data-counter-suffix="+"
+            >0+</span>
+            <span class="trust-strip__label">Projects Completed</span>
+          </div>
+          <div class="trust-strip__item delay-2" data-animate="fade-up">
+            <span
+              class="trust-strip__value counter"
+              data-counter-target="800"
+              data-counter-suffix="+"
+            >0+</span>
+            <span class="trust-strip__label">Tile Designs</span>
+          </div>
+          <div class="trust-strip__item delay-3" data-animate="fade-up">
+            <span
+              class="trust-strip__value counter"
+              data-counter-target="98"
+              data-counter-suffix="%"
+            >0%</span>
+            <span class="trust-strip__label">Client Satisfaction</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {% if collection_videos %}
+    <!-- Collection videos (admin uploads) — mid-down homepage -->
+    <section class="section collection-video-section" id="collections-video" aria-labelledby="collections-video-heading">
+      <div class="container">
+        <header class="section__header section__header--center" data-animate="fade-up">
+          <p class="eyebrow">New Collections</p>
+          <h2 class="heading-2" id="collections-video-heading">Watch Our Latest Collections</h2>
+          <p class="lead">Explore new arrivals and showroom highlights filmed for Chalukya Tiles.</p>
+          <hr class="divider divider--gold" aria-hidden="true">
+        </header>
+        <div class="collection-video-grid">
+          {% for video in collection_videos %}
+          <article class="collection-video-card" data-animate="fade-up">
+            <div class="collection-video-card__player">
+              <video
+                controls
+                playsinline
+                preload="metadata"
+                {% if video.poster_path %}poster="{{ video.poster_path }}"{% else %}poster="/static/images/hero-poster.svg"{% endif %}
+                src="{{ video.video_path }}"
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div class="collection-video-card__body">
+              <h3 class="collection-video-card__title">{{ video.title }}</h3>
+              {% if video.description %}
+              <p class="collection-video-card__text">{{ video.description }}</p>
+              {% endif %}
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Featured products -->
+    <section class="section" id="featured" aria-labelledby="featured-heading">
+      <div class="container">
+        <header class="section__header section__header--center" data-animate="fade-up">
+          <p class="eyebrow">Curated Selection</p>
+          <h2 class="heading-2" id="featured-heading">Featured Products</h2>
+          <p class="lead">Signature finishes from our showroom floor — designed to elevate every space.</p>
+          <hr class="divider divider--gold" aria-hidden="true">
+        </header>
+
+        <div class="featured-grid">
+          {% if featured_tiles %}
+          {% for tile in featured_tiles %}
+          <article class="card{% if not loop.first %} delay-{{ loop.index0 }}{% endif %}" data-animate="fade-up">
+            <div class="card__media">
+              <img
+                src="{{ tile.image_path or '/static/images/product-vitrified.svg' }}"
+                alt="{{ tile.name }}"
+                width="800"
+                height="600"
+                loading="lazy"
+              >
+            </div>
+            <div class="card__body">
+              <h3 class="card__title">{{ tile.name }}</h3>
+              <p class="card__text">
+                {% if tile.description %}{{ tile.description }}{% elif tile.colour %}{{ tile.colour }}{% else %}Featured from our showroom{% endif %}
+              </p>
+              <div class="card__meta">
+                {% if tile.size_label %}<span>Size: {{ tile.size_label }}</span>{% endif %}
+                {% if tile.finish %}<span>Finish: {{ tile.finish }}</span>{% endif %}
+                {% if tile.kind == 'concept' %}<span>Concept Gallery</span>{% endif %}
+              </div>
+              <span class="badge badge--gold product-card__finish">{{ tile.badge or tile.material_category or tile.category or 'Featured' }}</span>
+            </div>
+            <div class="card__footer">
+              <a class="btn btn--outline btn--sm" href="{{ tile.link or '/products' }}">View Details</a>
+            </div>
+          </article>
+          {% endfor %}
+          {% else %}
+          <p class="lead text-center" data-animate="fade-up">Post inventory (or concept gallery items) in Admin to feature them here.</p>
+          {% endif %}
+        </div>
+
+        <div class="text-center mt-8" data-animate="fade-up">
+          <a class="btn btn--primary" href="/products">Browse All Products</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why choose us -->
+    <section class="section section--alt" id="why-us" aria-labelledby="why-heading">
+      <div class="container">
+        <header class="section__header section__header--center" data-animate="fade-up">
+          <p class="eyebrow">The Chalukya Difference</p>
+          <h2 class="heading-2" id="why-heading">Why Choose Us</h2>
+          <p class="lead">A showroom experience built on craftsmanship, curation and care.</p>
+        </header>
+
+        <div class="features-grid">
+          <article class="feature-card" data-animate="fade-up">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 2 3 7v2h18V7L12 2zm-7 9v8h2v-8H5zm5 0v8h4v-8h-4zm7 0v8h2v-8h-2zM3 21h18v1H3v-1z"/></svg>
+            </div>
+            <h3 class="feature-card__title">Premium Collections</h3>
+            <p class="feature-card__text">Handpicked ranges from leading manufacturers — only surfaces that meet our quality standard.</p>
+          </article>
+
+          <article class="feature-card delay-1" data-animate="fade-up">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></svg>
+            </div>
+            <h3 class="feature-card__title">Expert Guidance</h3>
+            <p class="feature-card__text">Design consultants help you match size, finish and tone to light, layout and lifestyle.</p>
+          </article>
+
+          <article class="feature-card delay-2" data-animate="fade-up">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+            </div>
+            <h3 class="feature-card__title">Assured Quality</h3>
+            <p class="feature-card__text">ISO-aligned sourcing, shade consistency checks and durable finishes for high-traffic spaces.</p>
+          </article>
+
+          <article class="feature-card delay-3" data-animate="fade-up">
+            <div class="feature-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"/></svg>
+            </div>
+            <h3 class="feature-card__title">Immersive Showroom</h3>
+            <p class="feature-card__text">Life-size room sets so you can see how tiles feel under real lighting before you decide.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Latest collections = Admin → New Arrivals (active tiles) -->
+    <section class="section" id="collections" aria-labelledby="collections-heading">
+      <div class="container">
+        <header class="section__header section__header--center" data-animate="fade-up">
+          <p class="eyebrow">New Arrivals</p>
+          <h2 class="heading-2" id="collections-heading">Latest Collections</h2>
+          <p class="lead">Fresh uploads from our showroom floor — updated when Admin posts New Arrivals.</p>
+        </header>
+
+        <div class="collections-grid">
+          {% if new_arrivals %}
+          {% for tile in new_arrivals %}
+          <a
+            class="collection-card{% if loop.index0 % 3 == 1 %} delay-1{% elif loop.index0 % 3 == 2 %} delay-2{% endif %}"
+            href="{{ tile.link or '/contact' }}"
+            data-animate="{% if loop.first %}scale{% else %}fade-up{% endif %}"
+          >
+            <div class="collection-card__media">
+              <img
+                src="{{ tile.image_path or '/static/images/product-vitrified.svg' }}"
+                alt="{{ tile.name }}"
+                width="800"
+                height="600"
+                loading="lazy"
+              >
+            </div>
+            <div class="collection-card__overlay" aria-hidden="true"></div>
+            <div class="collection-card__body">
+              <h3 class="collection-card__title">{{ tile.name }}</h3>
+              <p class="collection-card__meta">{{ tile.meta or tile.material_category or 'New arrival' }}</p>
+            </div>
+          </a>
+          {% endfor %}
+          {% else %}
+          <p class="lead text-center collections-grid__empty" data-animate="fade-up">
+            Upload tiles in Admin → <strong>New Arrivals</strong> and set them active to show them here.
+          </p>
+          {% endif %}
+        </div>
+
+        {% if new_arrivals %}
+        <div class="text-center mt-8" data-animate="fade-up">
+          <a class="btn btn--outline" href="/contact">Enquire about new arrivals</a>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Gallery preview -->
+    <section class="section section--alt" id="gallery-preview" aria-labelledby="gallery-preview-heading">
+      <div class="container">
+        <header class="section__header section__header--center" data-animate="fade-up">
+          <p class="eyebrow">Inspiration</p>
+          <h2 class="heading-2" id="gallery-preview-heading">Gallery Preview</h2>
+          <p class="lead">A glimpse of installations and showroom moments.</p>
+        </header>
+
+        <div class="gallery-preview" data-animate="fade-up">
+          {% if gallery_preview_items %}
+          {% for g in gallery_preview_items %}
+          <a class="gallery-preview__item" href="{{ g.link or '/gallery' }}" aria-label="{{ g.title or g.name or 'Concept gallery' }}">
+            <img src="{{ g.image_path or '/static/images/hero-poster.svg' }}" alt="{{ g.title or g.name or 'Concept' }}" width="800" height="600" loading="lazy">
+          </a>
+          {% endfor %}
+          {% else %}
+          <p class="lead text-center">Upload Concept Gallery pictures in Admin to preview them here.</p>
+          {% endif %}
+        </div>
+
+        <div class="text-center mt-8" data-animate="fade-up">
+          <a class="btn btn--outline" href="/gallery">Open Full Gallery</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customer reviews -->
+    <section class="section" id="reviews" aria-labelledby="reviews-heading">
+      <div class="container">
+        <header class="section__header section__header--center" data-animate="fade-up">
+          <p class="eyebrow">Voices of Trust</p>
+          <h2 class="heading-2" id="reviews-heading">Customer Reviews</h2>
+          <p class="lead">What homeowners, builders and designers say about {{ brand_name }}.</p>
+        </header>
+
+        <div
+          class="reviews-slider"
+          data-slider
+          data-autoplay="true"
+          data-interval="6500"
+          aria-label="Customer reviews carousel"
+          data-animate="fade-up"
+        >
+          <div class="reviews-slider__viewport">
+            <div class="reviews-slider__track" data-slider-track>
+              {% if home_reviews %}
+              {% for rev in home_reviews %}
+              <div class="reviews-slider__slide" data-slider-slide>
+                <blockquote class="review-card">
+                  {% set stars = '★' * (rev.rating or 5) %}{% set empty = '☆' * (5 - (rev.rating or 5)) %}
+                  <div class="stars" aria-label="Rated {{ rev.rating or 5 }} out of 5">{{ stars }}{{ empty }}</div>
+                  <p class="review-card__quote">
+                    “{% if rev.title %}<strong>{{ rev.title }}</strong> — {% endif %}{{ rev.message }}”
+                  </p>
+                  <footer>
+                    <cite class="review-card__author">{{ rev.name }}</cite>
+                    <p class="review-card__role">{% if rev.is_featured %}Featured review{% else %}Customer{% endif %}</p>
+                  </footer>
+                </blockquote>
+              </div>
+              {% endfor %}
+              {% else %}
+              <div class="reviews-slider__slide" data-slider-slide>
+                <blockquote class="review-card">
+                  <div class="stars" aria-label="Rated 5 out of 5">★★★★★</div>
+                  <p class="review-card__quote">
+                    “Be the first to share your experience. Use the pen button to write a review — approved feedback appears here.”
+                  </p>
+                  <footer>
+                    <cite class="review-card__author">{{ brand_name }}</cite>
+                    <p class="review-card__role">We look forward to your visit</p>
+                  </footer>
+                </blockquote>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="reviews-slider__controls">
+            <button class="reviews-slider__btn" type="button" data-slider-prev aria-label="Previous review">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4L10.8 12z"/></svg>
+            </button>
+            <div class="reviews-slider__dots" data-slider-dots></div>
+            <button class="reviews-slider__btn" type="button" data-slider-next aria-label="Next review">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.6 7.4 13.2 12l-4.6 4.6L10 18l6-6z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="text-center mt-8" data-animate="fade-up">
+          <a class="btn btn--soft" href="/testimonials">Read All Testimonials</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location -->
+    <section class="section section--alt" id="location" aria-labelledby="location-heading">
+      <div class="container">
+        <header class="section__header" data-animate="fade-right">
+          <p class="eyebrow">Visit Us</p>
+          <h2 class="heading-2" id="location-heading">Our Showroom</h2>
+          <p class="lead">Step into a curated space of textures, tones and large-format displays.</p>
+        </header>
+
+        <div class="location-grid">
+          <div class="location-card" data-animate="fade-right">
+            <h3 class="heading-4">{{ brand_name }}</h3>
+            <p class="text-muted text-sm mt-4">Flagship Floor &amp; Interior Tiles Showroom</p>
+            <ul class="location-card__list">
+              <li class="location-card__item">
+                <span class="location-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5S10.6 6.5 12 6.5s2.5 1.1 2.5 2.5S13.4 11.5 12 11.5z"/></svg>
+                </span>
+                <div>
+                  <p class="location-card__label">Address</p>
+                  <p class="location-card__value">No:370, Sathy main road, Kurumbapalayam<br>Coimbatore, TN - 641 107</p>
+                </div>
+              </li>
+              <li class="location-card__item">
+                <span class="location-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.5 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+                </span>
+                <div>
+                  <p class="location-card__label">Phone</p>
+                  <p class="location-card__value"><a href="tel:+919940718307">99407 18307</a></p>
+                </div>
+              </li>
+              <li class="location-card__item">
+                <span class="location-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z"/></svg>
+                </span>
+                <div>
+                  <p class="location-card__label">Email</p>
+                  <p class="location-card__value"><a href="mailto:chalukyatiles@gmail.com">chalukyatiles@gmail.com</a></p>
+                </div>
+              </li>
+              <li class="location-card__item">
+                <span class="location-card__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2zm1 11h-4V7h2v4h2v2z"/></svg>
+                </span>
+                <div>
+                  <p class="location-card__label">Hours</p>
+                  <p class="location-card__value">Mon–Sat: 10:00 AM – 8:00 PM<br>Sunday: 11:00 AM – 6:00 PM</p>
+                </div>
+              </li>
+            </ul>
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a class="btn btn--primary btn--sm" href="/contact">Get Directions</a>
+              <a class="btn btn--outline btn--sm" href="https://wa.me/9940718307" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            </div>
+          </div>
+
+          <div class="location-map reveal-image" data-animate="fade-left" aria-label="Map showing showroom location">
+            <iframe
+              title="Chalukya Tiles showroom location map"
+              src="https://www.google.com/maps?q=No+370+Sathy+Main+Road+Kurumbapalayam+Coimbatore+641107&output=embed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="cta-band" aria-labelledby="cta-heading">
+      <div class="container" data-animate="scale">
+        <p class="eyebrow">Begin Your Project</p>
+        <h2 class="heading-2" id="cta-heading">Ready to transform your floors?</h2>
+        <p class="lead">Book a private showroom consultation or send us your project details today.</p>
+        <div class="cta-band__actions">
+          <a class="btn btn--primary btn--lg" href="/contact">Contact Us</a>
+          <a class="btn btn--ghost btn--lg" href="/products">Explore Products</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer__main">
+      <div class="footer__brand">
+        <a class="footer__logo" href="/">
+          <img class="footer__logo-img" src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="64" height="64" decoding="async">
+</a>
+        <p class="footer__tagline">
+          Premium floor and interior tiles for homes, hospitality and commercial spaces.
+          Visit our showroom to experience finishes in person.
+        </p>
+        <div class="footer__social" aria-label="Social media">
+          <a class="footer__social-link" href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v2H6v4h3v8h4v-8h3.1l.9-4H13V9c0-.6.4-1 1-1z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3zm-5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.5 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://wa.me/9940718307" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+          </a>
+          <a class="footer__social-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/gallery">Concept Gallery</a></li>
+          <li><a href="/testimonials">Testimonials</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="footer__col-title">Products</h3>
+        <ul class="footer__links">
+          <li><a href="/products">Vitrified Tiles</a></li>
+          <li><a href="/products">Ceramic Tiles</a></li>
+          <li><a href="/products">Wooden Finish</a></li>
+          <li><a href="/products">Marble Finish</a></li>
+          <li><a href="/products">Bathroom Tiles</a></li>
+          <li><a href="/products">Outdoor Tiles</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="footer__col-title">Newsletter</h3>
+        <p class="footer__newsletter-text">New collections and showroom events — occasional updates, no spam.</p>
+        <form class="footer__newsletter-form" data-newsletter-form novalidate>
+          <label class="sr-only" for="newsletter-email">Email address</label>
+          <input
+            class="footer__newsletter-input"
+            id="newsletter-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="Your email"
+            required
+          >
+          <button class="btn btn--primary btn--sm" type="submit">Subscribe</button>
+        </form>
+        <p class="footer__newsletter-note" data-newsletter-note>We respect your privacy.</p>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p class="footer__copy">
+          © <span data-year>2026</span> <strong>{{ brand_name }}</strong>. All rights reserved.
+        </p>
+        <div class="footer__legal">
+          <a href="/contact">Privacy</a>
+          <a href="/contact">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating actions -->
+  <div class="float-actions">
+    <a
+      class="float-btn float-btn--whatsapp pulse-soft"
+      href="https://wa.me/9940718307?text=Hello%20Chalukya%20Tiles%2C%20I%20would%20like%20to%20know%20more%20about%20your%20collections."
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Chat on WhatsApp"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2c-5.5 0-9.96 4.45-9.96 9.94 0 1.75.46 3.45 1.34 4.95L2 22l5.26-1.38a9.93 9.93 0 0 0 4.78 1.22h.01c5.5 0 9.96-4.46 9.96-9.95A9.94 9.94 0 0 0 12.04 2zm5.8 14.25c-.24.68-1.4 1.25-1.93 1.33-.5.08-1.13.11-1.82-.11-.42-.14-.96-.31-1.65-.61-2.9-1.26-4.79-4.2-4.94-4.39-.14-.2-1.2-1.6-1.2-3.05s.76-2.16 1.03-2.46c.27-.3.59-.37.79-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.14.07.14.12.31.02.5-.1.2-.14.31-.28.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.17-.2.7-.81.88-1.09.19-.28.37-.23.62-.14.26.1 1.63.77 1.91.91.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+    </a>
+    <button class="float-btn float-btn--review" type="button" data-review-open aria-label="Write a review">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+    </button>
+    <button class="float-btn float-btn--scrolltop" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 15.4 12 10.8l4.6 4.6L18 14l-6-6-6 6z"/></svg>
+    </button>
+  </div>
+
+  <div class="review-modal" data-review-modal hidden>
+    <div class="review-modal__backdrop" data-review-close></div>
+    <div class="review-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+      <div class="review-modal__head">
+        <h2 id="review-modal-title">Write a review</h2>
+        <button type="button" class="review-modal__x" data-review-close aria-label="Close">×</button>
+      </div>
+      <form class="review-form" data-review-form novalidate>
+        <label class="review-field"><span>Name *</span><input name="name" required minlength="2" maxlength="120"></label>
+        <label class="review-field"><span>Rating *</span>
+          <select name="rating" required>
+            <option value="5">5 — Excellent</option>
+            <option value="4">4 — Very good</option>
+            <option value="3">3 — Good</option>
+            <option value="2">2 — Fair</option>
+            <option value="1">1 — Poor</option>
+          </select>
+        </label>
+        <label class="review-field"><span>Title</span><input name="title" maxlength="200" placeholder="Optional short title"></label>
+        <label class="review-field"><span>Your feedback *</span><textarea name="message" required minlength="10" rows="4" placeholder="Share your experience with Chalukya Tiles"></textarea></label>
+        <div class="review-form-row">
+          <label class="review-field"><span>Email</span><input name="email" type="email" maxlength="180"></label>
+          <label class="review-field"><span>Phone</span><input name="phone" maxlength="40"></label>
+        </div>
+        <p class="review-form__status" data-review-status hidden></p>
+        <button type="submit" class="btn btn--primary">Submit review</button>
+        <p class="review-form__hint">Reviews appear after admin approval.</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js?v172-review" defer></script>
+  <script src="/static/js/navbar.js?v152-mobile-nav" defer></script>
+  <script src="/static/js/slider.js?v151-fonts" defer></script>
+  <script src="/static/js/main.js?v172-review" defer></script>
+  <script src="/static/js/reviews.js?v172" defer></script>
+</body>
+</html>

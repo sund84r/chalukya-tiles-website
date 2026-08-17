@@ -1,0 +1,96 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments (never commit)
+.venv/
+venv/
+ENV/
+env/
+
+# Environment / secrets (never commit)
+.env
+.env.local
+.env.*.local
+.env.production
+secrets/
+*.pem
+*.key
+*.p12
+
+# IDE / Editor (personal; avoid machine-specific conflicts)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Database — runtime only (schema lives in database/*.py)
+database/*.db
+database/*.db-journal
+database/*.db-wal
+database/*.db-shm
+database/*.sqlite
+database/*.sqlite3
+
+# Logs & runtime
+*.log
+logs/
+*.pid
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# Uploaded media — keep folder structure via .gitkeep only
+uploads/
+media/uploads/
+static/uploads/tiles/*
+!static/uploads/tiles/.gitkeep
+static/uploads/videos/*
+!static/uploads/videos/.gitkeep
+static/uploads/posters/*
+!static/uploads/posters/.gitkeep
+static/uploads/gallery/*
+!static/uploads/gallery/.gitkeep
+static/uploads/inventory/*
+!static/uploads/inventory/.gitkeep
+
+# Optional large local media (keep README placeholders)
+static/videos/*
+!static/videos/README.md
+
+# Grok / session tooling (if present)
+.grok/

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin Login | {{ brand_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/admin.css?v178-brand-corner">
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+</head>
+<body class="admin-login-body">
+  <main class="admin-login">
+    <div class="admin-login__card">
+      <div class="admin-login__brand">
+        <img src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="200" height="68">
+<h1>Admin Panel</h1>
+        <p>Chalukya Tiles — media, sales &amp; customer analytics</p>
+      </div>
+      <form class="admin-login__form" id="admin-login-form" novalidate>
+        <label class="admin-field">
+          <span>Username</span>
+          <input type="text" name="username" autocomplete="username" required placeholder="admin">
+        </label>
+        <label class="admin-field">
+          <span>Password</span>
+          <input type="password" name="password" autocomplete="current-password" required placeholder="••••••••">
+        </label>
+        <p class="admin-form-error" id="login-error" hidden></p>
+        <button class="admin-btn admin-btn--primary" type="submit">Sign in</button>
+      </form>
+      <p class="admin-login__hint">Default: <code>admin</code> / <code>chalukya@2026</code> (change via env vars in production)</p>
+      <a class="admin-login__back" href="/">← Back to website</a>
+    </div>
+  </main>
+  <script src="/static/js/admin.js?v150" defer></script>
+</body>
+</html>

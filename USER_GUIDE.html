@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Chalukya Tiles complete user guide — how to run, architecture, tech stack, admin panel, features, and usage.">
+  <meta name="robots" content="noindex">
+  <title>Chalukya Tiles — Complete User Guide (v1.5.0)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/user-guide.css">
+  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <header class="ug-header">
+    <div class="ug-wrap ug-header__inner">
+      <div class="ug-brand">
+        <img src="/static/icons/logo-chalukya.png?v=174" alt="Chalukya Tiles" width="140" height="42">
+        <div>
+          <strong>Complete User Guide</strong>
+          <span>Website · Admin · Architecture · Runbook · v1.5.0</span>
+        </div>
+      </div>
+      <nav class="ug-header__links" aria-label="Quick links">
+        <a href="#run">Run in VS Code</a>
+        <a href="#admin">Admin</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#stack">Tech stack</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="ug-hero">
+    <div class="ug-wrap">
+      <p class="ug-eyebrow">Chalukya Tiles Showroom Website</p>
+      <h1>User guide, architecture &amp; build handbook</h1>
+      <p class="ug-lead">
+        Everything done to build and operate this project — categorized for owners, developers, and staff.
+        Covers public website pages, admin panel, media uploads, analytics tables, tech stack, and how to run from VS Code.
+      </p>
+      <div class="ug-badges">
+        <span>FastAPI</span>
+        <span>HTML / CSS / Vanilla JS</span>
+        <span>SQLite</span>
+        <span>Admin panel</span>
+        <span>Coimbatore showroom</span>
+      </div>
+      <p class="ug-path">
+        <strong>Project folder:</strong>
+        <code>C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1</code>
+      </p>
+      <p class="ug-path">
+        <strong>This file:</strong>
+        <code>USER_GUIDE.html</code> (open in browser or via server at <code>/user-guide</code>)
+      </p>
+    </div>
+  </div>
+
+  <div class="ug-layout ug-wrap">
+    <aside class="ug-toc" aria-label="Contents">
+      <p class="ug-toc__title">Contents</p>
+      <ol>
+        <li><a href="#overview">1. Project overview</a></li>
+        <li><a href="#run">2. How to run (VS Code)</a></li>
+        <li><a href="#urls">3. Important URLs</a></li>
+        <li><a href="#stack">4. Tech stack</a></li>
+        <li><a href="#architecture">5. Architecture</a></li>
+        <li><a href="#structure">6. Folder structure</a></li>
+        <li><a href="#public">7. Public website</a></li>
+        <li><a href="#admin">8. Admin panel guide</a></li>
+        <li><a href="#media">9. Media &amp; uploads</a></li>
+        <li><a href="#data">10. Data &amp; analytics</a></li>
+        <li><a href="#api">11. API reference</a></li>
+        <li><a href="#database">12. Database schema</a></li>
+        <li><a href="#frontend">13. Frontend system</a></li>
+        <li><a href="#security">14. Security &amp; SEO</a></li>
+        <li><a href="#brand">15. Brand details</a></li>
+        <li><a href="#checklist">16. Launch checklist</a></li>
+        <li><a href="#troubleshoot">17. Troubleshooting</a></li>
+        <li><a href="#versions">18. Version history</a></li>
+      </ol>
+    </aside>
+
+    <main class="ug-main">
+      <!-- 1 -->
+      <section id="overview">
+        <h2>1. Project overview</h2>
+        <p>
+          <strong>Chalukya Tiles</strong> is a premium floor &amp; interior tiles showroom website for a Coimbatore business.
+          It is a full-stack marketing site with a private admin console for media, leads, sales, customers, and form queries.
+        </p>
+        <div class="ug-cards">
+          <article>
+            <h3>Public site</h3>
+            <p>Home, About, Products, Gallery, Testimonials, Contact — mobile-first, SEO-friendly, accessible.</p>
+          </article>
+          <article>
+            <h3>Admin console</h3>
+            <p>Login-protected dashboard: upload tiles &amp; videos, track sales/leads/customers, manage contact queries.</p>
+          </article>
+          <article>
+            <h3>Backend API</h3>
+            <p>FastAPI stores form submissions and admin data in SQLite; serves HTML via Jinja2 templates.</p>
+          </article>
+        </div>
+        <table>
+          <thead><tr><th>Item</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Product name</td><td>Chalukya Tiles — Floor &amp; Interior Tiles Showroom</td></tr>
+            <tr><td>Version</td><td>1.5.0</td></tr>
+            <tr><td>Type</td><td>SSR website + JSON API + Admin panel</td></tr>
+            <tr><td>Memory file</td><td><code>PROJECT_MEMORY.md</code> (update every session)</td></tr>
+            <tr><td>Living docs on site</td><td><code>/docs</code> and this <code>USER_GUIDE.html</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 2 -->
+      <section id="run">
+        <h2>2. How to run in VS Code</h2>
+        <h3>2.1 One-time setup</h3>
+        <ol class="ug-steps">
+          <li>Open VS Code → <strong>File → Open Folder</strong> → select
+            <code>C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1</code></li>
+          <li>Open the integrated terminal: <kbd>Ctrl</kbd> + <kbd>`</kbd> (backtick)</li>
+          <li>Run the commands in the next block (copy–paste into the terminal).</li>
+        </ol>
+
+        <h3>2.2 Terminal commands (copy–paste)</h3>
+        <p class="ug-note">Use these in the VS Code terminal (PowerShell). Prefer calling the venv Python directly if activation is blocked.</p>
+
+        <pre class="ug-code"><code># 1) Go to project folder
+cd C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1
+
+# 2) Create virtual environment (only if .venv is missing)
+C:\Users\Admin\AppData\Local\Python\pythoncore-3.14-64\python.exe -m venv .venv
+
+# 3) Install dependencies
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+# 4) Start the website (development with auto-reload)
+.\.venv\Scripts\python.exe -m uvicorn app:app --reload --host 127.0.0.1 --port 8000</code></pre>
+
+        <h3>2.3 Alternative: activate venv then run</h3>
+        <pre class="ug-code"><code>cd C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn app:app --reload --host 127.0.0.1 --port 8000</code></pre>
+        <p class="ug-note">If PowerShell blocks activation:</p>
+        <pre class="ug-code"><code>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</code></pre>
+
+        <h3>2.4 After the server starts</h3>
+        <ul>
+          <li>Terminal shows: <code>Uvicorn running on http://127.0.0.1:8000</code></li>
+          <li>Open a browser → <strong>http://127.0.0.1:8000</strong></li>
+          <li>Stop server anytime: click the terminal, press <kbd>Ctrl</kbd> + <kbd>C</kbd></li>
+        </ul>
+
+        <h3>2.5 Production-style run (no reload)</h3>
+        <pre class="ug-code"><code>.\.venv\Scripts\python.exe -m uvicorn app:app --host 0.0.0.0 --port 8000 --workers 2</code></pre>
+      </section>
+
+      <!-- 3 -->
+      <section id="urls">
+        <h2>3. Important URLs</h2>
+        <table>
+          <thead><tr><th>What</th><th>URL</th></tr></thead>
+          <tbody>
+            <tr><td>Home</td><td><code>http://127.0.0.1:8000/</code></td></tr>
+            <tr><td>Products</td><td><code>http://127.0.0.1:8000/products</code></td></tr>
+            <tr><td>Concept Gallery</td><td><code>http://127.0.0.1:8000/gallery</code></td></tr>
+            <tr><td>Contact</td><td><code>http://127.0.0.1:8000/contact</code></td></tr>
+            <tr><td>Project docs (site)</td><td><code>http://127.0.0.1:8000/docs</code></td></tr>
+            <tr><td><strong>This user guide</strong></td><td><code>http://127.0.0.1:8000/user-guide</code></td></tr>
+            <tr><td><strong>Admin login</strong></td><td><code>http://127.0.0.1:8000/admin/login</code></td></tr>
+            <tr><td><strong>Admin dashboard</strong></td><td><code>http://127.0.0.1:8000/admin</code></td></tr>
+            <tr><td>API Swagger</td><td><code>http://127.0.0.1:8000/api/docs</code></td></tr>
+            <tr><td>Health check</td><td><code>http://127.0.0.1:8000/api/health</code></td></tr>
+          </tbody>
+        </table>
+        <div class="ug-callout">
+          <strong>Default admin login</strong><br>
+          Username: <code>admin</code><br>
+          Password: <code>chalukya@2026</code><br>
+          Change via environment variables <code>ADMIN_USERNAME</code>, <code>ADMIN_PASSWORD</code>, <code>ADMIN_SECRET</code> before production.
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section id="stack">
+        <h2>4. Tech stack (categorized)</h2>
+
+        <h3>4.1 Frontend</h3>
+        <table>
+          <thead><tr><th>Technology</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>HTML5</td><td>Semantic page structure (Jinja2 templates)</td></tr>
+            <tr><td>CSS3</td><td>Modular stylesheets, design tokens, responsive layout</td></tr>
+            <tr><td>Vanilla JavaScript (ES6+)</td><td>Navbar, filters, lightbox, forms, admin UI — no frameworks</td></tr>
+            <tr><td>Google Fonts</td><td>Inter + Poppins</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Strict exclusions:</strong> React, Vue, Angular, Bootstrap, jQuery — not used.</p>
+
+        <h3>4.2 Backend</h3>
+        <table>
+          <thead><tr><th>Technology</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>Python 3.11–3.14</td><td>Runtime</td></tr>
+            <tr><td>FastAPI</td><td>HTTP routes, validation, OpenAPI docs</td></tr>
+            <tr><td>Uvicorn</td><td>ASGI server</td></tr>
+            <tr><td>Jinja2</td><td>Server-side HTML templates</td></tr>
+            <tr><td>Pydantic v2</td><td>Request body validation</td></tr>
+            <tr><td>python-multipart</td><td>File uploads (images / videos)</td></tr>
+            <tr><td>itsdangerous + Starlette sessions</td><td>Admin login cookies</td></tr>
+          </tbody>
+        </table>
+
+        <h3>4.3 Database &amp; storage</h3>
+        <table>
+          <thead><tr><th>Technology</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>SQLite</td><td><code>database/showroom.db</code> — contacts, enquiries, tiles, sales, leads, customers, videos, admin users</td></tr>
+            <tr><td>File system uploads</td><td><code>static/uploads/tiles|videos|posters/</code></td></tr>
+            <tr><td>MySQL-ready design</td><td>Swap <code>get_connection()</code> in <code>database/db.py</code> later</td></tr>
+          </tbody>
+        </table>
+
+        <h3>4.4 Tooling / platform</h3>
+        <ul>
+          <li>Windows + VS Code compatible</li>
+          <li>Virtual environment: <code>.venv</code></li>
+          <li>Dependencies: <code>requirements.txt</code></li>
+          <li>Project memory: <code>PROJECT_MEMORY.md</code></li>
+        </ul>
+      </section>
+
+      <!-- 5 -->
+      <section id="architecture">
+        <h2>5. Architecture</h2>
+        <pre class="ug-diagram"><code>Browser (public visitors)
+  │
+  ├─ GET HTML pages ──► FastAPI (app.py) ──► Jinja2 templates/
+  ├─ GET /static/*   ──► StaticFiles (CSS, JS, images, uploads)
+  └─ POST /api/contact|enquiry ──► api/enquiry.py ──► database/db.py ──► SQLite
+
+Browser (admin staff)
+  │
+  ├─ GET /admin/login, /admin ──► admin HTML + session cookie
+  └─ /api/admin/* ──► api/admin.py ──► db + static/uploads/
+
+Data flow (tile upload example)
+  Admin form ─► multipart POST /api/admin/tiles
+            ─► save file to static/uploads/tiles/
+            ─► insert row into tiles table
+            ─► public /products and /gallery render from DB</code></pre>
+
+        <h3>5.1 Design patterns used</h3>
+        <ul>
+          <li><strong>SSR pages</strong> — HTML generated on the server (fast first paint, good SEO)</li>
+          <li><strong>Modular CSS/JS</strong> — one file per feature area</li>
+          <li><strong>JSON APIs</strong> — forms and admin use Fetch + JSON/multipart</li>
+          <li><strong>Session auth</strong> — admin routes require logged-in cookie</li>
+          <li><strong>Repository helpers</strong> — all SQL in <code>database/db.py</code></li>
+        </ul>
+      </section>
+
+      <!-- 6 -->
+      <section id="structure">
+        <h2>6. Folder structure</h2>
+        <pre class="ug-code"><code>website_tiles1/
+├── USER_GUIDE.html          ← this handbook (also at /user-guide)
+├── PROJECT_MEMORY.md        ← permanent session memory
+├── README.md
+├── app.py                   ← FastAPI entry: pages, SEO, admin HTML routes
+├── requirements.txt
+├── api/
+│   ├── enquiry.py           ← public contact / enquiry API
+│   └── admin.py             ← admin login, CRUD, uploads
+├── database/
+│   ├── db.py                ← schema, helpers, seed admin + demo analytics
+│   └── showroom.db          ← runtime SQLite (created on first run)
+├── templates/               ← public + admin HTML pages
+├── static/
+│   ├── css/                 ← main, navbar, hero, products, gallery, admin, …
+│   ├── js/                  ← main, navbar, gallery, contact, admin, …
+│   ├── images/              ← default SVG placeholders
+│   ├── icons/               ← logo, favicon
+│   ├── videos/              ← optional hero showroom.mp4
+│   └── uploads/             ← admin uploads (tiles, videos, posters)
+└── assets/                  ← private brand sources (not public)</code></pre>
+      </section>
+
+      <!-- 7 -->
+      <section id="public">
+        <h2>7. Public website — pages &amp; uses</h2>
+        <table>
+          <thead><tr><th>Page</th><th>Path</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>Home</td><td><code>/</code></td><td>Hero, trust stats, <strong>collection videos</strong>, featured tiles, collections, gallery preview, reviews CTA</td></tr>
+            <tr><td>About</td><td><code>/about</code></td><td>Brand story, MD, mission, showroom context</td></tr>
+            <tr><td>Products</td><td><code>/products</code></td><td>Catalogue filters + <strong>admin-uploaded tiles</strong> + built-in placeholder cards</td></tr>
+            <tr><td>Concept Gallery</td><td><code>/gallery</code></td><td>Masonry gallery, lightbox; includes uploaded tiles under Showroom</td></tr>
+            <tr><td>Testimonials</td><td><code>/testimonials</code></td><td>Customer ratings &amp; quotes</td></tr>
+            <tr><td>Contact</td><td><code>/contact</code></td><td>Contact form + product enquiry deep-links</td></tr>
+            <tr><td>Docs</td><td><code>/docs</code></td><td>In-site technical documentation</td></tr>
+            <tr><td>User guide</td><td><code>/user-guide</code></td><td>This full handbook</td></tr>
+            <tr><td>404</td><td>any missing page</td><td>Branded not-found page</td></tr>
+          </tbody>
+        </table>
+        <h3>Visitor journey</h3>
+        <ol>
+          <li>Land on Home → explore collections / video</li>
+          <li>Browse Products → filter by category → Enquire</li>
+          <li>Contact form or enquiry → stored in SQLite → visible in Admin → Queries</li>
+          <li>Call / WhatsApp using site phone links</li>
+        </ol>
+      </section>
+
+      <!-- 8 -->
+      <section id="admin">
+        <h2>8. Admin panel guide</h2>
+        <p>URL: <code>/admin</code> after login at <code>/admin/login</code>.</p>
+
+        <h3>8.1 Dashboard</h3>
+        <ul>
+          <li>Sales total &amp; this month</li>
+          <li>Leads count (and new)</li>
+          <li>Queries total (contact + enquiries)</li>
+          <li>Customers, tile media, videos</li>
+          <li>Recent sales, leads, and queries tables</li>
+        </ul>
+
+        <h3>8.2 Tile Media (upload products)</h3>
+        <p>Required fields when uploading a tile image:</p>
+        <ul>
+          <li><strong>Tile name</strong> — display name (e.g. Carrara Luxe)</li>
+          <li><strong>Model number</strong> — e.g. CT-MRB-1200</li>
+          <li><strong>Colour</strong> — e.g. White / Grey</li>
+          <li><strong>Material category</strong> — Vitrified, Marble Finish, Bathroom, etc.</li>
+          <li><strong>Image file</strong> — JPG / PNG / WebP</li>
+        </ul>
+        <p>Optional: size, finish, description. Tiles appear on <strong>Products</strong>, <strong>Concept Gallery</strong>, and Home featured (latest).</p>
+
+        <h3>8.3 Collection Videos</h3>
+        <ul>
+          <li>Upload MP4 / WebM (+ optional poster image)</li>
+          <li>Set <strong>Active = Yes</strong> to show on homepage</li>
+          <li>Placement: <strong>mid-down homepage</strong> — after trust counters, before Featured Products</li>
+        </ul>
+
+        <h3>8.4 Sales / Leads / Customers / Queries</h3>
+        <table>
+          <thead><tr><th>Section</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>Sales</td><td>Record invoices, amounts, products, status (completed / pending / cancelled)</td></tr>
+            <tr><td>Leads</td><td>Track potential customers from walk-in, WhatsApp, website, phone</td></tr>
+            <tr><td>Customers</td><td>Master list of clients (name, phone, city, address)</td></tr>
+            <tr><td>Queries</td><td>Inbox for website contact forms and product enquiries; update status</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 9 -->
+      <section id="media">
+        <h2>9. Media &amp; uploads</h2>
+        <table>
+          <thead><tr><th>Type</th><th>Where stored</th><th>How added</th><th>Where shown</th></tr></thead>
+          <tbody>
+            <tr><td>Tile photos</td><td><code>static/uploads/tiles/</code></td><td>Admin → Tile Media</td><td>Products, Gallery, Home featured</td></tr>
+            <tr><td>Collection videos</td><td><code>static/uploads/videos/</code></td><td>Admin → Collection Videos</td><td>Home mid section</td></tr>
+            <tr><td>Video posters</td><td><code>static/uploads/posters/</code></td><td>Admin (optional)</td><td>Video poster frame</td></tr>
+            <tr><td>Placeholder SVGs</td><td><code>static/images/</code></td><td>Built-in / manual replace</td><td>Default catalogue art</td></tr>
+            <tr><td>Logo / favicon</td><td><code>static/icons/</code></td><td>Manual</td><td>Navbar, footer, tab icon</td></tr>
+          </tbody>
+        </table>
+        <p class="ug-note">There is no public visitor upload. Only authenticated admin can upload media.</p>
+      </section>
+
+      <!-- 10 -->
+      <section id="data">
+        <h2>10. Data &amp; analytics (what the admin tracks)</h2>
+        <div class="ug-cards">
+          <article>
+            <h3>Sales</h3>
+            <p>Invoice number, customer, product, quantity, amount (₹), date, status. Dashboard sums totals.</p>
+          </article>
+          <article>
+            <h3>Leads</h3>
+            <p>Prospect pipeline: source, interest, status (new → contacted → qualified → won/lost).</p>
+          </article>
+          <article>
+            <h3>Queries</h3>
+            <p>Website inbox: contact messages + product enquiries from the public forms.</p>
+          </article>
+          <article>
+            <h3>Customers</h3>
+            <p>Saved client directory for follow-up and sales linkage.</p>
+          </article>
+        </div>
+        <p>Demo sample sales/leads/customers are seeded on first DB init so the dashboard is not empty.</p>
+      </section>
+
+      <!-- 11 -->
+      <section id="api">
+        <h2>11. API reference (summary)</h2>
+        <h3>Public</h3>
+        <table>
+          <thead><tr><th>Method</th><th>Path</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>POST</td><td><code>/api/contact</code></td><td>Contact form → SQLite</td></tr>
+            <tr><td>POST</td><td><code>/api/enquiry</code></td><td>Product enquiry → SQLite</td></tr>
+            <tr><td>GET</td><td><code>/api/health</code></td><td>Health / version</td></tr>
+            <tr><td>GET</td><td><code>/api/docs</code></td><td>Swagger UI</td></tr>
+          </tbody>
+        </table>
+        <h3>Admin (login required)</h3>
+        <table>
+          <thead><tr><th>Area</th><th>Paths</th></tr></thead>
+          <tbody>
+            <tr><td>Auth</td><td><code>POST /api/admin/login</code>, <code>/logout</code>, <code>GET /me</code></td></tr>
+            <tr><td>Dashboard</td><td><code>GET /api/admin/dashboard</code></td></tr>
+            <tr><td>Tiles</td><td><code>GET/POST /api/admin/tiles</code>, <code>PATCH/DELETE …/tiles/{id}</code></td></tr>
+            <tr><td>Videos</td><td><code>GET/POST /api/admin/videos</code>, <code>PATCH/DELETE …/videos/{id}</code></td></tr>
+            <tr><td>Sales</td><td><code>GET/POST /api/admin/sales</code>, <code>DELETE …/sales/{id}</code></td></tr>
+            <tr><td>Leads</td><td><code>GET/POST /api/admin/leads</code>, <code>PATCH/DELETE …/leads/{id}</code></td></tr>
+            <tr><td>Customers</td><td><code>GET/POST /api/admin/customers</code>, <code>PATCH/DELETE …/customers/{id}</code></td></tr>
+            <tr><td>Queries</td><td><code>GET /api/admin/queries</code> + status/delete for contact &amp; enquiry</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 12 -->
+      <section id="database">
+        <h2>12. Database schema (tables)</h2>
+        <table>
+          <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>admin_users</code></td><td>Admin login credentials (hashed passwords)</td></tr>
+            <tr><td><code>contact_messages</code></td><td>General contact form</td></tr>
+            <tr><td><code>enquiries</code></td><td>Product / showroom enquiries</td></tr>
+            <tr><td><code>tiles</code></td><td>Uploaded tile catalogue (name, model, colour, category, image path…)</td></tr>
+            <tr><td><code>collection_videos</code></td><td>Homepage collection videos</td></tr>
+            <tr><td><code>sales</code></td><td>Sales analytics</td></tr>
+            <tr><td><code>leads</code></td><td>Lead pipeline</td></tr>
+            <tr><td><code>customers</code></td><td>Customer master data</td></tr>
+          </tbody>
+        </table>
+        <p>File: <code>database/showroom.db</code> · Logic: <code>database/db.py</code> · Auto-created on server start.</p>
+      </section>
+
+      <!-- 13 -->
+      <section id="frontend">
+        <h2>13. Frontend system</h2>
+        <h3>CSS modules (<code>static/css/</code>)</h3>
+        <ul>
+          <li><code>main.css</code> — tokens, layout, forms, about/testimonials</li>
+          <li><code>navbar.css</code>, <code>footer.css</code>, <code>hero.css</code>, <code>products.css</code>, <code>gallery.css</code>, <code>contact.css</code>, <code>animations.css</code>, <code>docs.css</code>, <code>admin.css</code>, <code>user-guide.css</code></li>
+        </ul>
+        <h3>JS modules (<code>static/js/</code>)</h3>
+        <ul>
+          <li><code>main.js</code> — loader, scroll-top, animations, product filters</li>
+          <li><code>navbar.js</code>, <code>slider.js</code>, <code>gallery.js</code>, <code>contact.js</code>, <code>api.js</code>, <code>admin.js</code></li>
+        </ul>
+        <h3>Theme tokens</h3>
+        <ul>
+          <li>Primary white, navy secondary <code>#0b1f4a</code>, accent blue <code>#2f7de1</code></li>
+          <li>Fonts: Inter + Poppins</li>
+        </ul>
+      </section>
+
+      <!-- 14 -->
+      <section id="security">
+        <h2>14. Security &amp; SEO</h2>
+        <ul>
+          <li>Security headers: <code>X-Content-Type-Options</code>, <code>X-Frame-Options</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code></li>
+          <li>Admin session cookie (12h), password hashed with PBKDF2</li>
+          <li><code>robots.txt</code> disallows <code>/admin</code></li>
+          <li>Sitemap at <code>/sitemap.xml</code> — set real <code>SITE_URL</code> in <code>app.py</code> or env</li>
+          <li>Home JSON-LD business schema</li>
+          <li>Accessibility: skip link, ARIA, keyboard lightbox, reduced-motion</li>
+        </ul>
+      </section>
+
+      <!-- 15 -->
+      <section id="brand">
+        <h2>15. Brand details</h2>
+        <table>
+          <thead><tr><th>Field</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Brand</td><td>Chalukya Tiles</td></tr>
+            <tr><td>Phone / WhatsApp</td><td>99407 18307 (+91 9940718307)</td></tr>
+            <tr><td>Email</td><td>chalukyatiles@gmail.com</td></tr>
+            <tr><td>Address</td><td>No:370, Sathy main road, Kurumbapalayam, Coimbatore, TN 641 107</td></tr>
+            <tr><td>GSTIN</td><td>33AAWFC0185C1ZL</td></tr>
+            <tr><td>Managing Director</td><td>C. Venkatesan, MBA</td></tr>
+            <tr><td>Logo</td><td><code>static/icons/logo-chalukya.png?v=174</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 16 -->
+      <section id="checklist">
+        <h2>16. Launch checklist</h2>
+        <ol>
+          <li>Change admin password / set <code>ADMIN_SECRET</code></li>
+          <li>Set production <code>SITE_URL</code></li>
+          <li>Upload real tile photos via Admin → Tile Media</li>
+          <li>Upload collection video(s) for homepage</li>
+          <li>Verify contact form &amp; enquiries appear in Admin → Queries</li>
+          <li>Back up <code>database/showroom.db</code> and <code>static/uploads/</code></li>
+          <li>Deploy behind HTTPS reverse proxy (Nginx / Caddy / IIS)</li>
+        </ol>
+      </section>
+
+      <!-- 17 -->
+      <section id="troubleshoot">
+        <h2>17. Troubleshooting</h2>
+        <table>
+          <thead><tr><th>Problem</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><code>Activate.ps1</code> security error</td>
+              <td>Run with <code>.\.venv\Scripts\python.exe -m uvicorn …</code> instead of activating</td>
+            </tr>
+            <tr>
+              <td>Port 8000 in use</td>
+              <td>Use <code>--port 8001</code> or stop the other process</td>
+            </tr>
+            <tr>
+              <td>Module not found: fastapi</td>
+              <td><code>.\.venv\Scripts\python.exe -m pip install -r requirements.txt</code></td>
+            </tr>
+            <tr>
+              <td>Uploaded tile not on site</td>
+              <td>Ensure tile is Active; hard-refresh browser (<kbd>Ctrl</kbd>+<kbd>F5</kbd>)</td>
+            </tr>
+            <tr>
+              <td>Video not on home</td>
+              <td>Mark video Active = Yes; section only shows when active videos exist</td>
+            </tr>
+            <tr>
+              <td>Forgot admin password</td>
+              <td>Delete admin row or DB and restart (re-seeds default), or set env vars before first seed</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 18 -->
+      <section id="versions">
+        <h2>18. Version history (highlights)</h2>
+        <table>
+          <thead><tr><th>Version</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>1.0.x – 1.1.x</td><td>Full public site + project memory + /docs</td></tr>
+            <tr><td>1.2.x – 1.3.x</td><td>Rebrand to Chalukya Tiles, logo polish</td></tr>
+            <tr><td>1.4.x</td><td>Theme experiments; settled on blue + white, Inter/Poppins</td></tr>
+            <tr><td><strong>1.5.0</strong></td><td>Admin panel, analytics tables, tile media upload, collection videos, this user guide</td></tr>
+          </tbody>
+        </table>
+        <p>Full history lives in <code>PROJECT_MEMORY.md</code>.</p>
+      </section>
+
+      <footer class="ug-footer">
+        <p>
+          <strong>Chalukya Tiles</strong> — Complete User Guide v1.5.0<br>
+          File path: <code>C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1\USER_GUIDE.html</code><br>
+          Maintainers: update this file + <code>PROJECT_MEMORY.md</code> when architecture changes.
+        </p>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
