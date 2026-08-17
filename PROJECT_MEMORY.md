@@ -9,16 +9,21 @@
 
 **Name:** Chalukya Tiles — Floor & Interior Tiles Showroom  
 **Workspace:** `C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1`  
+**GitHub:** https://github.com/sund84r/chalukya-tiles-website (private, account **sund84r**)  
+**Branch:** `main` (tracks `origin/main`)  
 **Type:** Full-stack marketing / showroom website (SSR HTML + JSON API)  
 **Goal:** Premium, modern, mobile-first, SEO-friendly, accessible, fast-loading website for a floor tiles and interior tiles showroom. Production-ready and easy to maintain.
 
 **Brand:** Chalukya Tiles  
-**Logo:** `static/icons/logo-chalukya.png`  
+**Logo:** `static/icons/logo-chalukya.png` (source: official “logo final.png”; navy mark + cyan accent; no CSS recolour)  
+**Theme:** White + light Oxford blue (`#002147` family) — product cards pure white so tile photos stay true  
 **Phone / WhatsApp:** 99407 18307 (`+919940718307`)  
 **Email:** chalukyatiles@gmail.com  
 **Address:** No:370, Sathy main road, Kurumbapalayam, Coimbatore, TN - 641 107  
 **GSTIN:** 33AAWFC0185C1ZL  
 **MD:** C. Venkatesan, MBA
+
+**Deploy note (2026-08):** Owner has a **domain** but **no host yet**. Domain alone cannot serve this FastAPI app. Needs a VPS/PaaS. SQLite can live on the **same host** first; separate MySQL later is optional. Cannot run as static-only without a major rewrite (admin, products, forms, reviews all need DB).
 
 ---
 
@@ -29,12 +34,15 @@
 | Frontend | HTML5, CSS3, Vanilla JS (ES6+) | No React/Vue/Angular/Bootstrap/jQuery |
 | Backend | Python, FastAPI | Uvicorn ASGI server |
 | Templates | Jinja2 | Served by FastAPI |
-| Database | SQLite (`database/showroom.db`) | Schema designed for MySQL migration |
+| Database | SQLite (`database/showroom.db`) | Runtime file gitignored; MySQL-ready design |
 | Validation | Pydantic v2 | API request models |
 | Fonts | Google Fonts — Inter + Poppins | Linked from templates |
-| Platform | Windows (VS Code compatible) | Works elsewhere too |
+| Platform | Windows local + GitHub remote | VS Code; clone anywhere |
+| VCS | Git + GitHub CLI | Logged in as **sund84r** |
 
 **Strict exclusions:** React, Vue, Angular, Bootstrap, jQuery, unnecessary libraries.
+
+**Git ignores (do not commit):** `.venv/`, `.env*`, `database/*.db`, uploaded media under `static/uploads/**` (keep `.gitkeep` + README only).
 
 ---
 
@@ -45,8 +53,9 @@ website_tiles1/
 ├── PROJECT_MEMORY.md          # This file — permanent memory
 ├── app.py                     # FastAPI entry, pages, SEO, 404, security headers
 ├── requirements.txt
-├── README.md
+├── README.md                  # Run + clone + git workflow notes
 ├── .gitignore
+├── .gitattributes             # LF normalization (fewer Windows merge issues)
 ├── templates/
 │   ├── index.html             # Home
 │   ├── about.html
@@ -138,11 +147,14 @@ Browser
 
 | Item | Priority | Notes |
 |------|----------|--------|
-| Real product photography via Admin → Tile Media | High | Upload real WebP/JPEG; optional keep SVG placeholders |
-| Collection videos via Admin → Collection Videos | Medium | Appear mid-down on homepage |
-| Production `SITE_URL` + `ADMIN_SECRET` + change admin password | High | Before launch |
-| MySQL migration | Optional | Swap `get_connection()` in `database/db.py` |
-| Email notification on form submit | Optional | Currently store-only |
+| Buy/configure **host** (VPS recommended) + point domain DNS | High | Domain exists; app not public until host runs uvicorn |
+| Production `SITE_URL` + `ADMIN_SECRET` + change admin password | High | Before public launch |
+| Real inventory photos (Post in website) + Concept Gallery + New Arrivals | High | Content via Admin |
+| Collection videos via Admin | Medium | Homepage mid-section |
+| Backup `showroom.db` + `static/uploads/` regularly | High | Not on GitHub |
+| Sync USER_GUIDE.html / docs.html to v1.6.12+ features | Medium | Docs lag behind admin/reviews |
+| MySQL migration | Optional | After host; SQLite fine for first deploy |
+| Email on form/review submit | Optional | Currently store-only |
 | Multi-language | Optional | Not started |
 
 ---
@@ -272,7 +284,8 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 
 **Version:** `1.6.12`  
 **App version string:** `1.6.12` in FastAPI metadata / health  
-**Memory schema version:** `1.6` (inventory, finance, exports, logs, charts, Concept Gallery, reviews)
+**Memory schema version:** `1.6` (inventory, finance, exports, logs, charts, Concept Gallery, reviews, GitHub)  
+**Last memory update:** 2026-08-17 (GitHub + deploy guidance + branding/theme)
 
 | Version | Date | Notes |
 |---------|------|--------|
@@ -294,15 +307,36 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 | 1.6.7 | 2026-08-14 | Concept Gallery admin uploads only (no static templates) |
 | 1.6.8 | 2026-08-14 | Products inventory-only; home shuffle products+concepts; public reviews FAB + admin moderation |
 | 1.6.9 | 2026-08-14 | Home Latest Collections / New Arrivals driven by Admin → New Arrivals (active tiles) |
-| 1.6.10 | 2026-08-17 | New official logo (logo final.png); natural colours; brand text “Chalukya Tiles” sitewide |
-| 1.6.11 | 2026-08-17 | Premium ivory·walnut·sage theme; logo no white plate; remove duplicate top-bar brand text |
-| 1.6.12 | 2026-08-17 | White + light Oxford blue sitewide; tile cards pure white for true product colour |
+| 1.6.10 | 2026-08-17 | New official logo (logo final.png); natural colours |
+| 1.6.11 | 2026-08-17 | Tried ivory·walnut·sage theme; logo no white plate; remove duplicate nav brand text |
+| 1.6.12 | 2026-08-17 | Final theme: white + light Oxford blue; tile cards pure white; GitHub private repo live |
 
 ---
 
 ## Session log (append-only style)
 
-### Session — initial build (Modules 1–11)
+### Session — GitHub + domain/host guidance (2026-08-17)
+- **GitHub private repo:** https://github.com/sund84r/chalukya-tiles-website  
+  - Owner account: **sund84r** (personal GitHub; not chalukyatiles@gmail.com for git auth)  
+  - Local path remains `website_tiles1`; remote `origin` → that repo; branch `main`  
+  - Clean baseline commits: ignore venv/DB/uploads media; `.gitattributes` LF; upload `.gitkeep`s  
+  - GitHub CLI installed; authenticated as sund84r (device flow); `git push -u origin main` succeeded  
+- **Git identity (local repo):** user.name `sund84r`, email `sund84r@users.noreply.github.com`  
+- **What stays local only:** `database/showroom.db`, `static/uploads/*` binaries, `.venv/`  
+- **Domain:** Owner has a domain but **no host** yet  
+  - Domain alone cannot run FastAPI  
+  - Cannot “go live without DB” — products, admin, forms, reviews require SQLite (or later MySQL)  
+  - Recommendation: small VPS + SQLite on same server first; optional MySQL later; point domain A record to VPS  
+  - Not suitable for GitHub Pages / pure static hosting as currently built  
+- README updated with clone + solo `main` workflow (pull → edit → commit → push; no force-push)
+
+### Session — admin brand corner polish (post v1.6.12)
+- Admin sidebar **top-left brand area** full white panel (logo + ADMIN text)  
+- Logo: no plate on PNG itself; sits on white corner  
+- **ADMIN** label colour `#150f3e` (matches logo deep navy)  
+- Cache bumps: `admin.css?v178-brand-corner` (and prior oxford/logo versions)
+
+### Session — white + light Oxford blue (v1.6.12)
 - Scaffolded full FastAPI + vanilla frontend showroom site
 - SQLite contact + enquiry APIs
 - All public pages + polish (404, robots, sitemap, security headers)
@@ -535,9 +569,21 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 |------|-------------|
 | Login | GET `/admin/login` |
 | Dashboard UI | GET `/admin` |
-| Admin API | `/api/admin/login`, `/logout`, `/me`, `/dashboard`, `/tiles`, `/videos`, `/sales`, `/leads`, `/customers`, `/queries` |
-| Uploads | `static/uploads/tiles|videos|posters/` |
+| Admin API | `/api/admin/*` — tiles, videos, concept-gallery, inventory, sales, returns, purchases, leads, customers, queries, reviews, analytics, logs, backup/export |
+| Uploads | `static/uploads/{tiles,videos,posters,gallery,inventory}/` |
 | Auth | Starlette sessions (`chalukya_admin_session`) |
+| Default login | `admin` / `chalukya@2026` (change before production) |
+
+### Public content sources (admin-driven)
+
+| Surface | Source |
+|---------|--------|
+| Products page | Inventory with `show_on_website=1` only |
+| Home Featured | Shuffle posted inventory + concept gallery |
+| Home Latest Collections / New Arrivals | Active `tiles` (Admin → New Arrivals) |
+| Concept Gallery page | Active `concept_gallery` only |
+| Home + Testimonials reviews | Approved rows in `reviews` (pending until moderated) |
+| Home videos | Active collection videos |
 
 ---
 
@@ -549,6 +595,7 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 4. **CONTINUE PROMPT:** Regenerate at session end for clean handoff.
 5. **Stack:** HTML5 / CSS3 / Vanilla JS ES6+ only on frontend; FastAPI + Jinja2 + SQLite backend; modular `static/css/` and `static/js/`; no inline CSS or inline JS.
 6. **Scope:** Module-by-module for large work; keep architecture modular.
+7. **Git:** Prefer single `main` branch; `pull` before work; never force-push `main` casually; never commit secrets/DB/uploads binaries.
 
 ---
 
@@ -560,35 +607,37 @@ Copy everything below into a **new conversation** to resume work:
 You are continuing work on the Chalukya Tiles floor & interior tiles showroom website.
 
 Workspace: C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1
-Read PROJECT_MEMORY.md first and treat it as the permanent project memory. Update it at the end of every module/session (never discard useful history). Also maintain templates/docs.html, USER_GUIDE.html, and GET /docs + /user-guide so documentation stays accurate.
+GitHub (private): https://github.com/sund84r/chalukya-tiles-website — account sund84r, branch main.
+Read PROJECT_MEMORY.md first and treat it as permanent project memory. Update it at the end of every module/session (never discard useful history). Keep templates/docs.html, USER_GUIDE.html, GET /docs + /user-guide in sync when architecture changes.
 
-Stack (strict): HTML5, CSS3, Vanilla JS ES6+ only on frontend — no React/Vue/Angular/Bootstrap/jQuery. Backend: Python FastAPI + Jinja2. Database: SQLite in database/ (MySQL-ready via database/db.py). Modular CSS under static/css/, modular JS under static/js/. No inline CSS or inline JS.
+Stack (strict): HTML5, CSS3, Vanilla JS ES6+ only — no React/Vue/Angular/Bootstrap/jQuery. Backend: Python FastAPI + Jinja2. Database: SQLite database/showroom.db (gitignored; MySQL-ready). Modular static/css + static/js. No inline CSS/JS.
 
-Brand: Chalukya Tiles. Logo: static/icons/logo-chalukya.png. Phone/WhatsApp: 99407 18307. Email: chalukyatiles@gmail.com. Address: No:370, Sathy main road, Kurumbapalayam, Coimbatore, TN 641 107. GSTIN: 33AAWFC0185C1ZL. MD: C. Venkatesan, MBA. Theme: elegant blue + white; fonts Inter + Poppins. Version: 1.6.8.
+Brand: Chalukya Tiles. Logo: static/icons/logo-chalukya.png (official final logo; keep natural colours). Theme: white + light Oxford blue (#002147 family); product/media cards pure white + object-fit contain for true tile colour. Nav/footer: logo only (no extra “Chalukya Tiles” text beside mark). Admin sidebar: white top-left brand corner + ADMIN text #150f3e. Phone/WhatsApp 99407 18307. Email chalukyatiles@gmail.com. Address Coimbatore Kurumbapalayam. Version: 1.6.12.
 
-What exists: Full public site + Admin panel + USER_GUIDE.html.
-Public pages: /, /about, /products, /gallery (Concept Gallery uploads only), /testimonials, /contact, /docs, /user-guide, 404.
-Products page = inventory with Post-in-website only. Home shuffles few products + concept gallery. Pen FAB under WhatsApp → POST /api/review (pending).
-Admin: /admin/login, /admin — dashboard, inventory, New Arrivals, Collection Videos, Concept Gallery, sales/returns/purchases, leads, queries, customers, Reviews & Ratings, logs/backup.
-APIs: POST /api/contact, /api/enquiry, /api/review; /api/admin/* (incl. reviews moderate); GET /api/health.
-Uploads: static/uploads/{tiles,videos,posters,gallery,inventory}/. SEO + security headers.
+What exists: Full public site + full Admin + USER_GUIDE.
+Public: /, /about, /products (posted inventory only), /gallery (concept uploads only), /testimonials (approved reviews), /contact, /docs, /user-guide, 404.
+Home: collection videos, featured shuffle (inventory+concepts), New Arrivals from tiles table, gallery preview, reviews slider, pen FAB → POST /api/review.
+Admin: dashboard, inventory, New Arrivals, Collection Videos, Concept Gallery, sales/returns/purchases, leads, queries, customers, Reviews & Ratings, logs/backup/export.
+DB: SQLite required for products/admin/forms/reviews — not a static site. Domain exists; no host yet — needs VPS/PaaS to go live; SQLite can stay on same server first.
 
-Default admin: admin / chalukya@2026 (change via ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_SECRET env).
+Default admin: admin / chalukya@2026 (CHANGE before public). Env: ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_SECRET, SITE_URL.
 
-Run (this Windows host often blocks 8000 — use 8001 or 8002):
+Run (Windows; prefer 8002 if 8000 blocked):
   cd C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1
   .\.venv\Scripts\Activate.ps1
   python -m uvicorn app:app --reload --host 0.0.0.0 --port 8002
-Open: http://127.0.0.1:8002  Admin: /admin  Guide: /user-guide
+Open: http://127.0.0.1:8002  Admin: /admin  Repo: github.com/sund84r/chalukya-tiles-website
+
+Git hygiene: pull before work; commit + push main; never commit .venv, .env, showroom.db, upload binaries.
 
 Suggested next tasks:
-1) Upload real inventory photos (Post in website) + Concept Gallery + collection videos
-2) Approve customer reviews in Admin → Reviews & Ratings
-3) Set production SITE_URL + ADMIN_SECRET + change password
-4) Optional email notifications on form/review submit
-5) Sync USER_GUIDE.html / docs.html with v1.6.8 features if needed
+1) Choose host (VPS recommended) + deploy + point domain DNS + HTTPS
+2) Change admin password + ADMIN_SECRET + production SITE_URL
+3) Upload real inventory/concepts/new arrivals/videos; backup DB + uploads
+4) Sync USER_GUIDE / docs with v1.6.12 features
+5) Optional: email on form/review; MySQL later
 
-Rules: Work module-by-module if large; keep architecture modular; update PROJECT_MEMORY.md before ending; refresh CONTINUE PROMPT; keep /docs and USER_GUIDE in sync with major architecture changes.
+Rules: Module-by-module if large; modular architecture; update PROJECT_MEMORY.md before ending; refresh CONTINUE PROMPT; keep /docs and USER_GUIDE in sync with major changes.
 
 User request: [PASTE USER REQUEST HERE]
 ```
