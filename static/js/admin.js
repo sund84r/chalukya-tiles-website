@@ -23,7 +23,16 @@
     "data-tools": "Backup / Export / Import",
     "app-logs": "Application Logs",
     "user-logs": "User Logs",
+    users: "User Management",
   };
+
+  let currentAdmin = {
+    id: null,
+    username: "",
+    is_superadmin: false,
+    permissions: {},
+  };
+  let permissionModules = [];
 
   // Expose toast/api for admin-biz.js
   window.ChalukyaAdmin = window.ChalukyaAdmin || {};
@@ -247,7 +256,50 @@
       }
     });
 
+    function canAccess(moduleKey) {
+      if (currentAdmin.is_superadmin) return true;
+      if (moduleKey === "users") return false;
+      return Number((currentAdmin.permissions || {})[moduleKey] || 0) === 1;
+    }
+
+    function applyNavPermissions() {
+      navItems.forEach((btn) => {
+        const key = btn.getAttribute("data-admin-nav");
+        const allowed = canAccess(key);
+        btn.hidden = !allowed;
+        if (btn.hasAttribute("data-admin-super-only")) {
+          btn.hidden = !currentAdmin.is_superadmin;
+        }
+      });
+      // Hide empty group labels when all siblings hidden
+      document.querySelectorAll(".admin-nav__group").forEach((group) => {
+        let el = group.nextElementSibling;
+        let any = false;
+        while (el && !el.classList.contains("admin-nav__group")) {
+          if (
+            el.classList.contains("admin-nav__item") &&
+            !el.hidden
+          ) {
+            any = true;
+          }
+          el = el.nextElementSibling;
+        }
+        group.hidden = !any;
+      });
+    }
+
+    function firstAllowedPanel() {
+      const order = Object.keys(TITLES);
+      for (const key of order) {
+        if (canAccess(key)) return key;
+      }
+      return "dashboard";
+    }
+
     function showPanel(name) {
+      if (!canAccess(name)) {
+        name = firstAllowedPanel();
+      }
       panels.forEach((p) => {
         const active = p.getAttribute("data-admin-panel") === name;
         p.classList.toggle("is-active", active);
@@ -266,7 +318,7 @@
       if (dashTools) {
         const onDashboard =
           name === "dashboard" || name === "inv-overview";
-        dashTools.hidden = !onDashboard;
+        dashTools.hidden = !onDashboard || !canAccess(name);
       }
 
       // On mobile, close menu after choosing a section
@@ -307,7 +359,23 @@
     }
 
     bindForms();
-    showPanel("dashboard");
+
+    api("/api/admin/me")
+      .then((data) => {
+        currentAdmin = data.user || currentAdmin;
+        permissionModules = data.modules || [];
+        const nameEl = document.querySelector("[data-admin-username]");
+        if (nameEl && currentAdmin.username) {
+          nameEl.textContent = currentAdmin.username;
+        }
+        applyNavPermissions();
+        renderCreatePermGrid();
+        showPanel(firstAllowedPanel());
+      })
+      .catch((ex) => {
+        toast(ex.message || "Session error", "error");
+        showPanel("dashboard");
+      });
   }
 
   function loadSection(name) {
@@ -320,8 +388,203 @@
     if (name === "queries") return loadQueries();
     if (name === "customers") return loadCustomers();
     if (name === "reviews") return loadReviews();
+    if (name === "users") return loadUsers();
     if (window.ChalukyaAdminBiz && typeof window.ChalukyaAdminBiz.load === "function") {
       return window.ChalukyaAdminBiz.load(name);
+    }
+  }
+
+  function renderPermCheckboxes(container, selected) {
+    if (!container) return;
+    const sel = selected || {};
+    const mods = permissionModules.length
+      ? permissionModules
+      : Object.keys(TITLES)
+          .filter((k) => k !== "users")
+          .map((k) => ({ key: k, label: TITLES[k] }));
+    container.innerHTML = mods
+      .map(
+        (m) => `<label class="admin-perm-item">
+          <input type="checkbox" name="perm_${esc(m.key)}" value="${esc(m.key)}" ${
+          Number(sel[m.key]) === 1 ? "checked" : ""
+        }>
+          <span>${esc(m.label)}</span>
+        </label>`
+      )
+      .join("");
+  }
+
+  function readPermCheckboxes(container) {
+    const out = {};
+    if (!container) return out;
+    container.querySelectorAll('input[type="checkbox"]').forEach((box) => {
+      out[box.value] = box.checked ? 1 : 0;
+    });
+    return out;
+  }
+
+  function renderCreatePermGrid() {
+    renderPermCheckboxes(document.querySelector("[data-user-perm-grid]"), {});
+  }
+
+  function permTagsHtml(user) {
+    if (user.is_superadmin) {
+      return '<span class="admin-perm-tag">All access</span>';
+    }
+    const perms = user.permissions || {};
+    const labels = (permissionModules.length
+      ? permissionModules
+      : Object.keys(TITLES).map((k) => ({ key: k, label: TITLES[k] }))
+    ).filter((m) => Number(perms[m.key]) === 1);
+    if (!labels.length) {
+      return '<span class="admin-muted">No tabs</span>';
+    }
+    return `<div class="admin-perm-tags">${labels
+      .map((m) => `<span class="admin-perm-tag">${esc(m.label)}</span>`)
+      .join("")}</div>`;
+  }
+
+  async function loadUsers() {
+    if (!currentAdmin.is_superadmin) {
+      toast("Only the main admin can manage users", "error");
+      return;
+    }
+    try {
+      const data = await api("/api/admin/users");
+      permissionModules = data.modules || permissionModules;
+      renderCreatePermGrid();
+      const body = document.querySelector("[data-users-table]");
+      if (!body) return;
+      const items = data.items || [];
+      body.innerHTML = items.length
+        ? items
+            .map((u) => {
+              const isSelf = Number(u.id) === Number(currentAdmin.id);
+              const superU = !!u.is_superadmin;
+              return `<tr data-user-row="${u.id}">
+              <td><strong>${esc(u.username)}</strong></td>
+              <td>${superU ? '<span class="admin-status admin-status--won">superadmin</span>' : "staff"}</td>
+              <td>${
+                Number(u.is_active) === 1
+                  ? '<span class="admin-status admin-status--approved">active</span>'
+                  : '<span class="admin-status admin-status--rejected">disabled</span>'
+              }</td>
+              <td>${permTagsHtml(u)}</td>
+              <td class="admin-row-actions">
+                ${
+                  superU
+                    ? isSelf
+                      ? `<button type="button" class="admin-btn admin-btn--outline admin-btn--sm" data-user-pw="${u.id}">Change password</button>`
+                      : `<span class="admin-muted">Protected</span>`
+                    : `<button type="button" class="admin-btn admin-btn--outline admin-btn--sm" data-user-edit="${u.id}">Edit access</button>
+                       <button type="button" class="admin-btn admin-btn--outline admin-btn--sm" data-user-toggle="${u.id}" data-active="${u.is_active}">${
+                         Number(u.is_active) === 1 ? "Disable" : "Enable"
+                       }</button>
+                       <button type="button" class="admin-btn admin-btn--danger admin-btn--sm" data-user-delete="${u.id}">Delete</button>`
+                }
+              </td>
+            </tr>
+            ${
+              superU
+                ? ""
+                : `<tr data-user-editor="${u.id}" hidden><td colspan="5">
+              <div class="admin-user-edit">
+                <p class="admin-help">Tick tabs for <strong>${esc(u.username)}</strong></p>
+                <div class="admin-perm-grid" data-edit-perms="${u.id}"></div>
+                <label class="admin-field"><span>New password (optional)</span><input type="password" data-edit-password="${u.id}" minlength="6" placeholder="Leave blank to keep"></label>
+                <button type="button" class="admin-btn admin-btn--primary admin-btn--sm" data-user-save="${u.id}">Save</button>
+              </div>
+            </td></tr>`
+            }`;
+            })
+            .join("")
+        : `<tr><td colspan="5" class="admin-empty">No users yet</td></tr>`;
+
+      items.forEach((u) => {
+        if (u.is_superadmin) return;
+        renderPermCheckboxes(
+          document.querySelector(`[data-edit-perms="${u.id}"]`),
+          u.permissions || {}
+        );
+      });
+
+      body.querySelectorAll("[data-user-edit]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-user-edit");
+          const row = document.querySelector(`[data-user-editor="${id}"]`);
+          if (row) row.hidden = !row.hidden;
+        });
+      });
+
+      body.querySelectorAll("[data-user-save]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-user-save");
+          const grid = document.querySelector(`[data-edit-perms="${id}"]`);
+          const pw = document.querySelector(`[data-edit-password="${id}"]`);
+          const payload = { permissions: readPermCheckboxes(grid) };
+          if (pw && pw.value.trim()) payload.password = pw.value.trim();
+          try {
+            await api(`/api/admin/users/${id}`, {
+              method: "PATCH",
+              body: JSON.stringify(payload),
+            });
+            toast("User permissions saved", "success");
+            loadUsers();
+          } catch (ex) {
+            toast(ex.message, "error");
+          }
+        });
+      });
+
+      body.querySelectorAll("[data-user-toggle]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-user-toggle");
+          const active = Number(btn.getAttribute("data-active")) === 1 ? 0 : 1;
+          try {
+            await api(`/api/admin/users/${id}`, {
+              method: "PATCH",
+              body: JSON.stringify({ is_active: active }),
+            });
+            toast(active ? "User enabled" : "User disabled", "success");
+            loadUsers();
+          } catch (ex) {
+            toast(ex.message, "error");
+          }
+        });
+      });
+
+      body.querySelectorAll("[data-user-delete]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          if (!window.confirm("Delete this staff user permanently?")) return;
+          try {
+            await api(`/api/admin/users/${btn.getAttribute("data-user-delete")}`, {
+              method: "DELETE",
+            });
+            toast("User deleted", "success");
+            loadUsers();
+          } catch (ex) {
+            toast(ex.message, "error");
+          }
+        });
+      });
+
+      body.querySelectorAll("[data-user-pw]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const pw = window.prompt("New password for your admin account (min 6 chars):");
+          if (!pw) return;
+          try {
+            await api(`/api/admin/users/${btn.getAttribute("data-user-pw")}`, {
+              method: "PATCH",
+              body: JSON.stringify({ password: pw }),
+            });
+            toast("Password updated", "success");
+          } catch (ex) {
+            toast(ex.message, "error");
+          }
+        });
+      });
+    } catch (ex) {
+      toast(ex.message, "error");
     }
   }
 
@@ -1022,6 +1285,41 @@
       reviewsRefresh.addEventListener("click", () => {
         loadReviews();
         toast("Reviews refreshed", "success");
+      });
+    }
+
+    const usersRefresh = document.querySelector("[data-users-refresh]");
+    if (usersRefresh && !usersRefresh.dataset.bound) {
+      usersRefresh.dataset.bound = "1";
+      usersRefresh.addEventListener("click", () => {
+        loadUsers();
+        toast("Users refreshed", "success");
+      });
+    }
+
+    const userForm = document.getElementById("admin-user-form");
+    if (userForm && !userForm.dataset.bound) {
+      userForm.dataset.bound = "1";
+      userForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fd = new FormData(userForm);
+        const username = String(fd.get("username") || "").trim();
+        const password = String(fd.get("password") || "");
+        const permissions = readPermCheckboxes(
+          document.querySelector("[data-user-perm-grid]")
+        );
+        try {
+          await api("/api/admin/users", {
+            method: "POST",
+            body: JSON.stringify({ username, password, permissions }),
+          });
+          userForm.reset();
+          renderCreatePermGrid();
+          toast("Staff user created", "success");
+          loadUsers();
+        } catch (ex) {
+          toast(ex.message, "error");
+        }
       });
     }
 

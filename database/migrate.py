@@ -228,6 +228,39 @@ def migrate(conn: sqlite3.Connection) -> dict[str, Any]:
     )
     report["steps"].append("new_tables")
 
+    # --- admin_users: roles + permissions JSON ---
+    if _table_exists(conn, "admin_users"):
+        _add_col(conn, "admin_users", "role", "VARCHAR(40) NOT NULL DEFAULT 'user'")
+        _add_col(conn, "admin_users", "is_active", "INTEGER NOT NULL DEFAULT 1")
+        _add_col(conn, "admin_users", "permissions", "TEXT NOT NULL DEFAULT '{}'")
+        _add_col(conn, "admin_users", "updated_at", "TEXT NULL")
+        # Promote bootstrap admin account to superadmin
+        import os
+
+        bootstrap = os.environ.get("ADMIN_USERNAME", "admin")
+        conn.execute(
+            """
+            UPDATE admin_users
+            SET role = 'superadmin', is_active = 1, permissions = '{}'
+            WHERE lower(username) = lower(?)
+            """,
+            (bootstrap,),
+        )
+        # If no superadmin exists, promote the oldest user
+        row = conn.execute(
+            "SELECT id FROM admin_users WHERE role = 'superadmin' LIMIT 1"
+        ).fetchone()
+        if not row:
+            first = conn.execute(
+                "SELECT id FROM admin_users ORDER BY id ASC LIMIT 1"
+            ).fetchone()
+            if first:
+                conn.execute(
+                    "UPDATE admin_users SET role = 'superadmin' WHERE id = ?",
+                    (first["id"],),
+                )
+        report["steps"].append("admin_users.roles_permissions")
+
     # --- Deduplicate customers (keep lowest id) ---
     if _table_exists(conn, "customers"):
         dups = conn.execute(

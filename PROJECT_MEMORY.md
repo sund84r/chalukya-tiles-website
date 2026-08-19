@@ -282,10 +282,10 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 
 ## Current project version
 
-**Version:** `1.6.12`  
-**App version string:** `1.6.12` in FastAPI metadata / health  
-**Memory schema version:** `1.6` (inventory, finance, exports, logs, charts, Concept Gallery, reviews, GitHub)  
-**Last memory update:** 2026-08-17 (GitHub + deploy guidance + branding/theme)
+**Version:** `1.6.13`  
+**App version string:** `1.6.13` in FastAPI metadata / health  
+**Memory schema version:** `1.6` (inventory, finance, exports, logs, charts, Concept Gallery, reviews, GitHub, user management)  
+**Last memory update:** 2026-08-17 (Admin User Management + permissions)
 
 | Version | Date | Notes |
 |---------|------|--------|
@@ -310,10 +310,21 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 | 1.6.10 | 2026-08-17 | New official logo (logo final.png); natural colours |
 | 1.6.11 | 2026-08-17 | Tried ivory·walnut·sage theme; logo no white plate; remove duplicate nav brand text |
 | 1.6.12 | 2026-08-17 | Final theme: white + light Oxford blue; tile cards pure white; GitHub private repo live |
+| 1.6.13 | 2026-08-17 | Admin User Management: create staff users + checkbox tab permissions (superadmin only) |
 
 ---
 
 ## Session log (append-only style)
+
+### Session — Admin User Management (v1.6.13)
+- New System menu: **User Management** (visible only to **superadmin** / main `admin`)
+- Create staff users with username/password + **checkbox** permissions per admin tab (Sales, Customers, Inventory, logs, etc.)
+- Edit access / enable-disable / delete staff; cannot delete last superadmin or own account casually
+- API: `GET/POST/PATCH/DELETE /api/admin/users` (superadmin); session `require_admin` enforces module permissions on other APIs
+- Sidebar hides tabs the user cannot open; Application + User logs record create/update/delete
+- DB: `admin_users.role`, `is_active`, `permissions` (JSON) via migrate; bootstrap `admin` promoted to `superadmin`
+- Files: `database/db.py`, `migrate.py`, `api/admin.py`, `templates/admin.html`, `static/js/admin.js`, `admin.css`
+- Smoke: staff with sales+customers → sales 200, tiles 403, users 403
 
 ### Session — GitHub + domain/host guidance (2026-08-17)
 - **GitHub private repo:** https://github.com/sund84r/chalukya-tiles-website  

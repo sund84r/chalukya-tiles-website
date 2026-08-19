@@ -1202,6 +1202,62 @@ body.admin-body {
   align-items: center;
 }
 
+.admin-help--tight {
+  margin-top: 0.5rem;
+}
+
+.admin-perm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.45rem 0.75rem;
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem;
+  background: #f4f7fb;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+}
+
+.admin-perm-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--admin-text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-perm-item input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--admin-primary);
+}
+
+.admin-perm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  max-width: 22rem;
+}
+
+.admin-perm-tag {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: #e8eef8;
+  color: #0a2540;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.admin-user-edit {
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  background: #fff;
+}
+
 .admin-status--new,
 .admin-status--pending {
   background: #fff4df;

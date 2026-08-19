@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/admin.css?v178-brand-corner">
+  <link rel="stylesheet" href="/static/css/admin.css?v179-users">
   <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
 </head>
 <body class="admin-body" data-admin-app data-admin-user="{{ admin_user.username }}">
@@ -80,6 +80,9 @@
         </button>
         <button type="button" class="admin-nav__item" data-admin-nav="user-logs">
           <span class="admin-nav__text">User Logs</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="users" data-admin-super-only hidden>
+          <span class="admin-nav__text">User Management</span>
         </button>
       </nav>
       <div class="admin-sidebar__foot">
@@ -1025,9 +1028,51 @@
           </div>
         </div>
       </section>
+
+      <!-- User management (superadmin only) -->
+      <section class="admin-panel" data-admin-panel="users" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Create staff user</h2>
+          </div>
+          <p class="admin-help">
+            Only the main <strong>admin</strong> can create users and tick which menu tabs they may open.
+            Actions are written to Application Logs and User Logs.
+          </p>
+          <form id="admin-user-form" class="admin-form" novalidate>
+            <div class="admin-form-row">
+              <label class="admin-field"><span>Username *</span><input name="username" required minlength="2" maxlength="80" autocomplete="off"></label>
+              <label class="admin-field"><span>Password *</span><input name="password" type="password" required minlength="6" autocomplete="new-password"></label>
+            </div>
+            <p class="admin-help admin-help--tight"><strong>Tab access</strong> (checkboxes)</p>
+            <div class="admin-perm-grid" data-user-perm-grid></div>
+            <button type="submit" class="admin-btn admin-btn--primary">Create user</button>
+          </form>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Staff users</h2>
+            <button type="button" class="admin-btn admin-btn--outline admin-btn--sm" data-users-refresh>Refresh</button>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Permissions</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody data-users-table></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
-  <script src="/static/js/admin.js?v172-review" defer></script>
+  <script src="/static/js/admin.js?v179-users" defer></script>
   <script src="/static/js/admin-biz.js?v170" defer></script>
   <script src="/static/js/admin-charts.js?v170" defer></script>
 </body>

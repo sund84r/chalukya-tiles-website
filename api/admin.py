@@ -36,15 +36,112 @@ MAX_VIDEO_BYTES = 120 * 1024 * 1024  # 120 MB
 
 
 # ---------------------------------------------------------------------------
-# Auth helpers
+# Auth helpers + permission gates
 # ---------------------------------------------------------------------------
 
+def _resolve_api_modules(path: str) -> Optional[tuple[str, ...]]:
+    """Map /api/admin/* paths to required permission module keys."""
+    if path in ("/api/admin/login", "/api/admin/logout", "/api/admin/me"):
+        return None
+    if path.startswith("/api/admin/users"):
+        return ("__superadmin__",)
+    if path.startswith("/api/admin/logs/app") or path.startswith("/api/admin/logs/cli"):
+        # CLI dump may be either log type; require either log permission
+        if "kind=user" in path:
+            return ("user-logs",)
+        return ("app-logs", "user-logs")
+    if path.startswith("/api/admin/logs/user"):
+        return ("user-logs",)
+    if path.startswith("/api/admin/backup") or path.startswith("/api/admin/export") or path.startswith("/api/admin/import"):
+        return ("data-tools",)
+    if path.startswith("/api/admin/reviews"):
+        return ("reviews",)
+    if path.startswith("/api/admin/concept-gallery"):
+        return ("concept-gallery",)
+    if path.startswith("/api/admin/tiles"):
+        return ("tiles",)
+    if path.startswith("/api/admin/videos"):
+        return ("videos",)
+    if path.startswith("/api/admin/inventory"):
+        return ("inventory", "inventory-add", "inv-overview")
+    if path.startswith("/api/admin/customers"):
+        return ("customers",)
+    if path.startswith("/api/admin/leads") or path.startswith("/api/admin/reminders"):
+        return ("leads",)
+    if (
+        path.startswith("/api/admin/queries")
+        or path.startswith("/api/admin/contacts")
+        or "/enquiry" in path
+    ):
+        return ("queries",)
+    if path.startswith("/api/admin/returns") or "sales-return" in path:
+        return ("sales-returns",)
+    if path.startswith("/api/admin/purchases"):
+        return ("purchases",)
+    if path.startswith("/api/admin/sales"):
+        return ("sales",)
+    if path.startswith("/api/admin/dashboard") or path.startswith("/api/admin/analytics"):
+        return ("dashboard", "inv-overview")
+    # Default: any logged-in staff
+    return None
+
+
 def require_admin(request: Request) -> dict[str, Any]:
-    user = request.session.get("admin_user")
-    if not user:
+    session_user = request.session.get("admin_user")
+    if not session_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Admin login required",
+        )
+    fresh = database.get_admin_user(int(session_user["id"]))
+    if not fresh or not fresh.get("is_active"):
+        request.session.clear()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Admin session expired or account disabled",
+        )
+    user = {
+        "id": fresh["id"],
+        "username": fresh["username"],
+        "role": fresh["role"],
+        "is_superadmin": fresh["is_superadmin"],
+        "permissions": fresh["permissions"],
+    }
+    request.session["admin_user"] = user
+
+    path = request.url.path
+    needed = _resolve_api_modules(path)
+    # /logs/cli?kind=user|app|both — path has no query string
+    if path.startswith("/api/admin/logs/cli"):
+        kind = (request.query_params.get("kind") or "app").lower()
+        if kind == "user":
+            needed = ("user-logs",)
+        elif kind == "both":
+            needed = ("app-logs", "user-logs")
+        else:
+            needed = ("app-logs",)
+    if needed is None:
+        return user
+    if needed == ("__superadmin__",):
+        if not user.get("is_superadmin"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Only the main admin can manage users",
+            )
+        return user
+    if not database.user_has_permission(user, *needed):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission for this section",
+        )
+    return user
+
+
+def require_superadmin(user: dict = Depends(require_admin)) -> dict[str, Any]:
+    if not user.get("is_superadmin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the main admin can manage users",
         )
     return user
 
@@ -172,11 +269,20 @@ async def admin_login(request: Request, payload: LoginRequest) -> dict[str, Any]
     request.session["csrf"] = secrets.token_hex(16)
     client = request.client.host if request.client else None
     database.log_user(user["username"], "login", ip=client)
-    database.log_app(f"Admin login: {user['username']}", source="auth")
+    database.log_app(
+        f"Admin login: {user['username']} ({user.get('role', 'user')})",
+        source="auth",
+    )
     return {
         "success": True,
         "message": "Logged in",
-        "user": {"id": user["id"], "username": user["username"]},
+        "user": {
+            "id": user["id"],
+            "username": user["username"],
+            "role": user.get("role"),
+            "is_superadmin": bool(user.get("is_superadmin")),
+            "permissions": user.get("permissions") or {},
+        },
     }
 
 
@@ -188,7 +294,157 @@ async def admin_logout(request: Request) -> dict[str, Any]:
 
 @router.get("/me")
 async def admin_me(user: dict = Depends(require_admin)) -> dict[str, Any]:
-    return {"success": True, "user": user}
+    return {
+        "success": True,
+        "user": user,
+        "modules": [
+            {"key": k, "label": lab} for k, lab in database.ADMIN_PERMISSION_MODULES
+        ],
+    }
+
+
+# ---------------------------------------------------------------------------
+# User management (superadmin only)
+# ---------------------------------------------------------------------------
+
+class AdminUserCreate(BaseModel):
+    username: str = Field(..., min_length=2, max_length=80)
+    password: str = Field(..., min_length=6, max_length=200)
+    permissions: dict[str, int] = Field(default_factory=dict)
+
+
+class AdminUserUpdate(BaseModel):
+    password: Optional[str] = Field(default=None, min_length=6, max_length=200)
+    permissions: Optional[dict[str, int]] = None
+    is_active: Optional[int] = Field(default=None, ge=0, le=1)
+
+
+@router.get("/users")
+async def admin_list_users(_user: dict = Depends(require_superadmin)) -> dict[str, Any]:
+    return {
+        "success": True,
+        "items": database.list_admin_users(),
+        "modules": [
+            {"key": k, "label": lab} for k, lab in database.ADMIN_PERMISSION_MODULES
+        ],
+    }
+
+
+@router.post("/users", status_code=status.HTTP_201_CREATED)
+async def admin_create_user(
+    payload: AdminUserCreate,
+    request: Request,
+    user: dict = Depends(require_superadmin),
+) -> dict[str, Any]:
+    try:
+        row_id = database.create_admin_user(
+            username=payload.username,
+            password=payload.password,
+            permissions=payload.permissions,
+            role="user",
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    client = request.client.host if request.client else None
+    database.log_user(
+        user["username"],
+        "user.create",
+        entity_type="admin_user",
+        entity_id=row_id,
+        detail=payload.username.strip(),
+        ip=client,
+    )
+    database.log_app(
+        f"Admin user created: {payload.username.strip()} by {user['username']}",
+        source="users",
+    )
+    return {
+        "success": True,
+        "message": "User created",
+        "id": row_id,
+        "item": database.get_admin_user(row_id),
+    }
+
+
+@router.patch("/users/{user_id}")
+async def admin_update_user(
+    user_id: int,
+    payload: AdminUserUpdate,
+    request: Request,
+    user: dict = Depends(require_superadmin),
+) -> dict[str, Any]:
+    target = database.get_admin_user(user_id)
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found")
+    if target.get("is_superadmin") and user_id != user["id"]:
+        # Allow editing other superadmin only for is_active? Safer: only self password for superadmin
+        if payload.permissions is not None or payload.is_active is not None:
+            if payload.is_active == 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Cannot deactivate a superadmin account here",
+                )
+    fields: dict[str, Any] = {}
+    if payload.password is not None:
+        fields["password"] = payload.password
+    if payload.permissions is not None and not target.get("is_superadmin"):
+        fields["permissions"] = payload.permissions
+    if payload.is_active is not None and not target.get("is_superadmin"):
+        fields["is_active"] = payload.is_active
+    try:
+        ok = database.update_admin_user(user_id, **fields)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not ok:
+        raise HTTPException(status_code=400, detail="Nothing to update")
+    client = request.client.host if request.client else None
+    database.log_user(
+        user["username"],
+        "user.update",
+        entity_type="admin_user",
+        entity_id=user_id,
+        detail=str(fields.keys()),
+        ip=client,
+    )
+    database.log_app(
+        f"Admin user updated id={user_id} by {user['username']}",
+        source="users",
+        detail=str(list(fields.keys())),
+    )
+    return {"success": True, "message": "User updated", "item": database.get_admin_user(user_id)}
+
+
+@router.delete("/users/{user_id}")
+async def admin_delete_user(
+    user_id: int,
+    request: Request,
+    user: dict = Depends(require_superadmin),
+) -> dict[str, Any]:
+    if user_id == user["id"]:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    target = database.get_admin_user(user_id)
+    if not target:
+        raise HTTPException(status_code=404, detail="User not found")
+    try:
+        ok = database.delete_admin_user(user_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not ok:
+        raise HTTPException(status_code=404, detail="User not found")
+    client = request.client.host if request.client else None
+    database.log_user(
+        user["username"],
+        "user.delete",
+        entity_type="admin_user",
+        entity_id=user_id,
+        detail=target.get("username"),
+        ip=client,
+    )
+    database.log_app(
+        f"Admin user deleted: {target.get('username')} by {user['username']}",
+        source="users",
+    )
+    return {"success": True, "message": "User deleted"}
 
 
 # ---------------------------------------------------------------------------

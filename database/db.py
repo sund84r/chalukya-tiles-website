@@ -103,6 +103,29 @@ INVENTORY_SUBCATEGORIES: dict[str, tuple[str, ...]] = {
 DEFAULT_ADMIN_USER = os.environ.get("ADMIN_USERNAME", "admin")
 DEFAULT_ADMIN_PASS = os.environ.get("ADMIN_PASSWORD", "chalukya@2026")
 
+# Admin panel permission keys (checkbox modules). Superadmin bypasses these.
+ADMIN_PERMISSION_MODULES: list[tuple[str, str]] = [
+    ("dashboard", "Overview & stats"),
+    ("inv-overview", "Inventory overview"),
+    ("sales", "Sales"),
+    ("sales-returns", "Sales Return"),
+    ("purchases", "Purchase"),
+    ("leads", "Leads"),
+    ("queries", "Queries"),
+    ("customers", "Customer Details"),
+    ("reviews", "Reviews & Ratings"),
+    ("inventory", "Inventory / Stock"),
+    ("inventory-add", "Add Inventory"),
+    ("tiles", "New Arrivals"),
+    ("videos", "Collection Videos"),
+    ("concept-gallery", "Concept Gallery"),
+    ("data-tools", "Backup / Export / Import"),
+    ("app-logs", "Application Logs"),
+    ("user-logs", "User Logs"),
+]
+
+ADMIN_PERMISSION_KEYS = [k for k, _ in ADMIN_PERMISSION_MODULES]
+
 
 def utc_now_iso() -> str:
     """Return current UTC time as ISO 8601 string (MySQL-friendly)."""
@@ -194,12 +217,16 @@ CREATE TABLE IF NOT EXISTS enquiries (
     status          VARCHAR(40)   NOT NULL DEFAULT 'new'
 );
 
--- Admin users
+-- Admin users (role + permissions JSON added via migrate)
 CREATE TABLE IF NOT EXISTS admin_users (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     username      VARCHAR(80)  NOT NULL UNIQUE,
     password_hash VARCHAR(200) NOT NULL,
-    created_at    TEXT         NOT NULL
+    role          VARCHAR(40)  NOT NULL DEFAULT 'user',
+    is_active     INTEGER      NOT NULL DEFAULT 1,
+    permissions   TEXT         NOT NULL DEFAULT '{}',
+    created_at    TEXT         NOT NULL,
+    updated_at    TEXT         NULL
 );
 
 -- Tile media catalogue (admin uploads)
@@ -304,13 +331,23 @@ def ensure_upload_dirs() -> None:
 def _seed_admin(conn: sqlite3.Connection) -> None:
     row = conn.execute("SELECT id FROM admin_users WHERE username = ?", (DEFAULT_ADMIN_USER,)).fetchone()
     if row:
+        conn.execute(
+            """
+            UPDATE admin_users
+            SET role = 'superadmin', is_active = 1
+            WHERE id = ?
+            """,
+            (row["id"],),
+        )
         return
+    now = utc_now_iso()
     conn.execute(
         """
-        INSERT INTO admin_users (username, password_hash, created_at)
-        VALUES (?, ?, ?)
+        INSERT INTO admin_users (
+            username, password_hash, role, is_active, permissions, created_at, updated_at
+        ) VALUES (?, ?, 'superadmin', 1, '{}', ?, ?)
         """,
-        (DEFAULT_ADMIN_USER, hash_password(DEFAULT_ADMIN_PASS), utc_now_iso()),
+        (DEFAULT_ADMIN_USER, hash_password(DEFAULT_ADMIN_PASS), now, now),
     )
 
 
@@ -389,21 +426,192 @@ def init_db() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Admin auth
+# Admin auth + user management
 # ---------------------------------------------------------------------------
+
+def _parse_permissions(raw: Any) -> dict[str, int]:
+    import json
+
+    if isinstance(raw, dict):
+        data = raw
+    else:
+        try:
+            data = json.loads(raw or "{}")
+        except (TypeError, ValueError, json.JSONDecodeError):
+            data = {}
+    out: dict[str, int] = {}
+    for key in ADMIN_PERMISSION_KEYS:
+        out[key] = 1 if int(data.get(key) or 0) == 1 else 0
+    return out
+
+
+def _serialize_permissions(perms: Optional[dict[str, Any]]) -> str:
+    import json
+
+    clean = _parse_permissions(perms or {})
+    return json.dumps(clean)
+
+
+def _admin_row_to_dict(row: Any, *, include_hash: bool = False) -> dict[str, Any]:
+    role = (row["role"] if "role" in row.keys() else "user") or "user"
+    is_super = role == "superadmin"
+    perms = _parse_permissions(row["permissions"] if "permissions" in row.keys() else "{}")
+    if is_super:
+        perms = {k: 1 for k in ADMIN_PERMISSION_KEYS}
+    data = {
+        "id": int(row["id"]),
+        "username": row["username"],
+        "role": role,
+        "is_superadmin": is_super,
+        "is_active": int(row["is_active"] if "is_active" in row.keys() else 1),
+        "permissions": perms,
+        "created_at": row["created_at"],
+        "updated_at": row["updated_at"] if "updated_at" in row.keys() else None,
+    }
+    if include_hash:
+        data["password_hash"] = row["password_hash"]
+    return data
+
+
+def get_admin_user(user_id: int) -> Optional[dict[str, Any]]:
+    with get_db() as conn:
+        row = conn.execute("SELECT * FROM admin_users WHERE id = ?", (user_id,)).fetchone()
+    if not row:
+        return None
+    return _admin_row_to_dict(row)
+
+
+def get_admin_user_by_username(username: str) -> Optional[dict[str, Any]]:
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT * FROM admin_users WHERE lower(username) = lower(?)",
+            (username.strip(),),
+        ).fetchone()
+    if not row:
+        return None
+    return _admin_row_to_dict(row)
+
 
 def authenticate_admin(username: str, password: str) -> Optional[dict[str, Any]]:
     """Return admin user dict if credentials match, else None."""
     with get_db() as conn:
         row = conn.execute(
-            "SELECT id, username, password_hash, created_at FROM admin_users WHERE username = ?",
+            "SELECT * FROM admin_users WHERE lower(username) = lower(?)",
             (username.strip(),),
         ).fetchone()
     if not row:
         return None
     if not verify_password(password, row["password_hash"]):
         return None
-    return {"id": row["id"], "username": row["username"]}
+    user = _admin_row_to_dict(row)
+    if not user.get("is_active"):
+        return None
+    return {
+        "id": user["id"],
+        "username": user["username"],
+        "role": user["role"],
+        "is_superadmin": user["is_superadmin"],
+        "permissions": user["permissions"],
+    }
+
+
+def list_admin_users() -> list[dict[str, Any]]:
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT * FROM admin_users ORDER BY role DESC, username ASC"
+        ).fetchall()
+    return [_admin_row_to_dict(r) for r in rows]
+
+
+def create_admin_user(
+    *,
+    username: str,
+    password: str,
+    permissions: Optional[dict[str, Any]] = None,
+    role: str = "user",
+) -> int:
+    uname = username.strip()
+    if not uname:
+        raise ValueError("Username required")
+    if len(password) < 6:
+        raise ValueError("Password must be at least 6 characters")
+    role = "superadmin" if role == "superadmin" else "user"
+    now = utc_now_iso()
+    with get_db() as conn:
+        exists = conn.execute(
+            "SELECT id FROM admin_users WHERE lower(username) = lower(?)",
+            (uname,),
+        ).fetchone()
+        if exists:
+            raise ValueError("Username already exists")
+        cur = conn.execute(
+            """
+            INSERT INTO admin_users (
+                username, password_hash, role, is_active, permissions, created_at, updated_at
+            ) VALUES (?, ?, ?, 1, ?, ?, ?)
+            """,
+            (
+                uname,
+                hash_password(password),
+                role,
+                "{}" if role == "superadmin" else _serialize_permissions(permissions),
+                now,
+                now,
+            ),
+        )
+        return int(cur.lastrowid)
+
+
+def update_admin_user(user_id: int, **fields: Any) -> bool:
+    allowed = {"password", "permissions", "is_active", "role"}
+    updates: dict[str, Any] = {}
+    for key, val in fields.items():
+        if key not in allowed or val is None:
+            continue
+        if key == "password":
+            if len(str(val)) < 6:
+                raise ValueError("Password must be at least 6 characters")
+            updates["password_hash"] = hash_password(str(val))
+        elif key == "permissions":
+            updates["permissions"] = _serialize_permissions(val)
+        elif key == "is_active":
+            updates["is_active"] = 1 if int(val) == 1 else 0
+        elif key == "role":
+            updates["role"] = "superadmin" if val == "superadmin" else "user"
+            if updates["role"] == "superadmin":
+                updates["permissions"] = "{}"
+    if not updates:
+        return False
+    updates["updated_at"] = utc_now_iso()
+    cols = ", ".join(f"{k} = ?" for k in updates)
+    values = list(updates.values()) + [user_id]
+    with get_db() as conn:
+        cur = conn.execute(f"UPDATE admin_users SET {cols} WHERE id = ?", values)
+        return cur.rowcount > 0
+
+
+def delete_admin_user(user_id: int) -> bool:
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT id, role FROM admin_users WHERE id = ?", (user_id,)
+        ).fetchone()
+        if not row:
+            return False
+        if row["role"] == "superadmin":
+            count = conn.execute(
+                "SELECT COUNT(*) AS c FROM admin_users WHERE role = 'superadmin'"
+            ).fetchone()["c"]
+            if int(count) <= 1:
+                raise ValueError("Cannot delete the last superadmin")
+        cur = conn.execute("DELETE FROM admin_users WHERE id = ?", (user_id,))
+        return cur.rowcount > 0
+
+
+def user_has_permission(user: dict[str, Any], *modules: str) -> bool:
+    if user.get("is_superadmin") or user.get("role") == "superadmin":
+        return True
+    perms = user.get("permissions") or {}
+    return any(int(perms.get(m) or 0) == 1 for m in modules)
 
 
 # ---------------------------------------------------------------------------
