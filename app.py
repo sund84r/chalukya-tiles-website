@@ -409,15 +409,21 @@ async def user_guide() -> HTMLResponse:
 # ---------------------------------------------------------------------------
 
 
-@app.get("/admin/login", response_class=HTMLResponse, tags=["admin"], include_in_schema=False)
+@app.get("/login", response_class=HTMLResponse, tags=["admin"], include_in_schema=False)
 async def admin_login_page(request: Request) -> HTMLResponse:
     if admin_user_from_request(request):
         return RedirectResponse(url="/admin", status_code=302)
     return render_page(
         request,
         "admin_login.html",
-        page_title="Admin Login",
+        page_title="Login",
     )
+
+
+@app.get("/admin/login", include_in_schema=False)
+async def admin_login_legacy_redirect() -> RedirectResponse:
+    """Old URL → /login."""
+    return RedirectResponse(url="/login", status_code=302)
 
 
 @app.get("/admin", response_class=HTMLResponse, tags=["admin"], include_in_schema=False)
@@ -425,7 +431,7 @@ async def admin_login_page(request: Request) -> HTMLResponse:
 async def admin_dashboard_page(request: Request):
     user = admin_user_from_request(request)
     if not user:
-        return RedirectResponse(url="/admin/login", status_code=302)
+        return RedirectResponse(url="/login", status_code=302)
     return render_page(
         request,
         "admin.html",

@@ -637,6 +637,23 @@ body.admin-body {
     var(--admin-bg);
 }
 
+/* Permission gating: never show denied tabs */
+.admin-nav__item[hidden],
+.admin-nav__item.is-denied,
+.admin-nav__group[hidden] {
+  display: none !important;
+}
+
+.admin-sidebar.is-perms-loading .admin-nav {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.admin-sidebar.is-perms-ready .admin-nav {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .admin-nav__item {
   appearance: none;
   border: 0;

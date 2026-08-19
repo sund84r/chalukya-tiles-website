@@ -152,6 +152,15 @@
     const backdrop = document.querySelector("[data-admin-backdrop]");
     const menuBtn = document.querySelector("[data-admin-menu]");
 
+    // Hide all menu items until permissions load (no flash of forbidden tabs)
+    if (sidebar) sidebar.classList.add("is-perms-loading");
+    navItems.forEach((btn) => {
+      btn.hidden = true;
+    });
+    document.querySelectorAll(".admin-nav__group").forEach((g) => {
+      g.hidden = true;
+    });
+
     const STORAGE_KEY = "chalukya_admin_sidebar_open";
 
     function isMobile() {
@@ -265,11 +274,14 @@
     function applyNavPermissions() {
       navItems.forEach((btn) => {
         const key = btn.getAttribute("data-admin-nav");
-        const allowed = canAccess(key);
-        btn.hidden = !allowed;
+        let allowed = canAccess(key);
         if (btn.hasAttribute("data-admin-super-only")) {
-          btn.hidden = !currentAdmin.is_superadmin;
+          allowed = !!currentAdmin.is_superadmin;
         }
+        btn.hidden = !allowed;
+        btn.setAttribute("aria-hidden", allowed ? "false" : "true");
+        btn.classList.toggle("is-denied", !allowed);
+        if (!allowed) btn.classList.remove("is-active");
       });
       // Hide empty group labels when all siblings hidden
       document.querySelectorAll(".admin-nav__group").forEach((group) => {
@@ -285,7 +297,20 @@
           el = el.nextElementSibling;
         }
         group.hidden = !any;
+        group.setAttribute("aria-hidden", any ? "false" : "true");
       });
+      // Hide panels the user cannot open
+      panels.forEach((p) => {
+        const key = p.getAttribute("data-admin-panel");
+        if (!canAccess(key)) {
+          p.hidden = true;
+          p.classList.remove("is-active");
+        }
+      });
+      if (sidebar) {
+        sidebar.classList.remove("is-perms-loading");
+        sidebar.classList.add("is-perms-ready");
+      }
     }
 
     function firstAllowedPanel() {
@@ -342,7 +367,7 @@
         } catch (_) {
           /* still redirect */
         }
-        window.location.href = "/admin/login";
+        window.location.href = "/login";
       });
     }
 
@@ -674,7 +699,7 @@
       }
     } catch (ex) {
       if (String(ex.message || "").toLowerCase().includes("login")) {
-        window.location.href = "/admin/login";
+        window.location.href = "/login";
         return;
       }
       toast(ex.message, "error");
