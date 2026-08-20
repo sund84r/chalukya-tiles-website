@@ -143,7 +143,15 @@
   margin-inline: 0;
   margin-left: auto;
   margin-bottom: 0;
-  text-shadow: none;
+  /* Black outline / border around white letters */
+  -webkit-text-stroke: 1px #000000;
+  paint-order: stroke fill;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     0 0 2px #000;
   width: 100%;
   text-transform: uppercase;
 }
@@ -190,7 +198,13 @@
   min-height: 1.2em;
   color: #ffffff;
   white-space: nowrap;
-  text-shadow: none;
+  -webkit-text-stroke: 0.85px #000000;
+  paint-order: stroke fill;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
 }
 
 .hero__typing [data-typing-text] {
@@ -204,7 +218,7 @@
 
 .hero .typing-caret {
   background: #ffffff;
-  box-shadow: none;
+  box-shadow: 0 0 0 1px #000000;
 }
 
 .hero__actions,
