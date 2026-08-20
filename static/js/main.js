@@ -557,6 +557,46 @@
   }
 
   /* ======================================================================
+     WhatsApp deep-link — open native app on phones
+     ====================================================================== */
+  function initWhatsAppDeepLink() {
+    const links = document.querySelectorAll(
+      'a[href*="api.whatsapp.com"], a[href*="wa.me"], a.float-btn--whatsapp'
+    );
+    if (!links.length) return;
+
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+    links.forEach((link) => {
+      // Ensure country-code form for India (+91)
+      try {
+        const url = new URL(link.href, window.location.origin);
+        if (url.hostname.includes("wa.me")) {
+          const parts = url.pathname.replace(/^\//, "").split("?")[0];
+          if (parts && !parts.startsWith("91") && parts.length === 10) {
+            url.pathname = "/91" + parts;
+            link.href = url.toString();
+          }
+        }
+      } catch (_) {
+        /* ignore bad URLs */
+      }
+
+      if (!isMobile) return;
+
+      // Same-tab navigation triggers WhatsApp app more reliably than target=_blank
+      link.addEventListener(
+        "click",
+        (e) => {
+          e.preventDefault();
+          window.location.href = link.href;
+        },
+        { passive: false }
+      );
+    });
+  }
+
+  /* ======================================================================
      Boot
      ====================================================================== */
   function boot() {
@@ -570,6 +610,7 @@
     initNewsletter();
     initYear();
     initProductFilters();
+    initWhatsAppDeepLink();
   }
 
   if (document.readyState === "loading") {

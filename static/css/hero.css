@@ -33,14 +33,22 @@
   object-position: 55% 45%;
 }
 
-/* Mobile: wide photo + tall viewport — avoid extreme crop / broken framing */
+/* Mobile: show the FULL wide hero photo (no crop) */
 @media (max-width: 767px) {
   .hero {
-    /* Shorter than full phone height so cover doesn't zoom past the scene */
-    min-height: min(100dvh, 72vw + 14rem);
-    min-height: min(100svh, 72vw + 14rem);
-    height: min(100dvh, 72vw + 14rem);
-    max-height: 100dvh;
+    /* Match photo aspect (~1802×872) so the entire image fits the frame */
+    min-height: 0;
+    max-height: none;
+    height: auto;
+    aspect-ratio: 1802 / 872;
+    /* Floor so headline still has room on very narrow phones */
+    min-height: max(calc(100vw * 872 / 1802), 13.5rem);
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
   }
 
   .hero__media[data-parallax] {
@@ -49,12 +57,11 @@
 
   .hero__video,
   .hero__poster {
-    /* Show more of the wide kitchen; bias slightly toward counter/text area */
-    object-fit: cover;
-    object-position: 58% 42%;
-    /* Extra scale safety against subpixel gaps */
-    min-width: 100%;
-    min-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* entire photo visible */
+    object-position: center center;
+    background-color: #0a0a0a;
   }
 }
 
@@ -123,14 +130,14 @@
   backdrop-filter: none;
 }
 
-/* Mobile: keep copy inside the frame, avoid overflow / cut-off */
+/* Mobile: keep copy inside the photo frame */
 @media (max-width: 767px) {
   .hero__content,
   .hero__content--right {
     top: auto;
-    bottom: max(1.5rem, env(safe-area-inset-bottom, 0px) + 1.25rem);
-    right: 1.15rem;
-    left: 1.15rem;
+    bottom: max(0.85rem, env(safe-area-inset-bottom, 0px) + 0.65rem);
+    right: 0.85rem;
+    left: 0.85rem;
     width: auto;
     max-width: none;
     transform: none;
@@ -141,17 +148,34 @@
   .hero__title {
     max-width: none;
     width: 100%;
-    font-size: clamp(1.35rem, 6.2vw, 1.85rem);
+    font-size: clamp(1.15rem, 5.4vw, 1.55rem);
   }
 
   .hero__title-line--typing {
-    margin-top: 0.4em;
+    margin-top: 0.3em;
     font-size: 0.78em;
   }
 
   .hero__typing {
-    min-width: min(15ch, 100%);
+    min-width: min(14ch, 100%);
     white-space: normal;
+  }
+
+  /* Softer right wash on short mobile hero */
+  .hero__overlay {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.05) 0%,
+        rgba(0, 0, 0, 0.12) 45%,
+        rgba(0, 0, 0, 0.4) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.2) 0%,
+        transparent 35%,
+        rgba(0, 0, 0, 0.35) 100%
+      );
   }
 }
 
