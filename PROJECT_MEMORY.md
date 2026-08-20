@@ -16,8 +16,8 @@
 
 **Brand:** Chalukya Tiles  
 **Logo:** `static/icons/logo-chalukya.png` (source: official “logo final.png”; navy mark + cyan accent; no CSS recolour)  
-**Theme:** Luxury **black + shine gold** (marble showroom); product media stays champagne-light so tile photos stay true  
-**Home hero:** `static/images/hero-luxury.jpg` (full-bleed showroom; Chalukya logo removed from hero)  
+**Theme:** White + light Oxford blue (`#002147` family); product media light so tile photos stay true  
+**Home hero:** `static/images/hero-luxury.jpg` full-bleed; logo removed; headline block positioned on the **table** in the photo (~60–63% down)  
 **Phone / WhatsApp:** 99407 18307 (`+919940718307`)  
 **Email:** chalukyatiles@gmail.com  
 **Address:** No:370, Sathy main road, Kurumbapalayam, Coimbatore, TN - 641 107  
@@ -283,8 +283,8 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 
 ## Current project version
 
-**Version:** `1.6.14`  
-**App version string:** `1.6.14` in FastAPI metadata / health  
+**Version:** `1.6.15`  
+**App version string:** `1.6.15` in FastAPI metadata / health  
 **Memory schema version:** `1.6` (inventory, finance, exports, logs, charts, Concept Gallery, reviews, GitHub, user management)  
 **Last memory update:** 2026-08-17 (Admin User Management + permissions)
 
