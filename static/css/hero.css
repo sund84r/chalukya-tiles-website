@@ -43,7 +43,7 @@
   pointer-events: none;
 }
 
-/* Dark overlay for readable flat white text (no text glow) */
+/* Lighter overlay — brighter photo, still readable white text on the right */
 .hero__overlay {
   position: absolute;
   inset: 0;
@@ -52,22 +52,22 @@
   background:
     radial-gradient(
       ellipse at 62% 48%,
-      transparent 12%,
-      rgba(0, 0, 0, 0.28) 48%,
-      rgba(0, 0, 0, 0.7) 100%
+      transparent 18%,
+      rgba(0, 0, 0, 0.14) 52%,
+      rgba(0, 0, 0, 0.42) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(0, 0, 0, 0.18) 0%,
-      rgba(0, 0, 0, 0.22) 45%,
-      rgba(0, 0, 0, 0.48) 100%
+      rgba(0, 0, 0, 0.06) 0%,
+      rgba(0, 0, 0, 0.1) 42%,
+      rgba(0, 0, 0, 0.32) 100%
     ),
     linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.5) 0%,
-      rgba(0, 0, 0, 0.2) 30%,
-      rgba(0, 0, 0, 0.3) 60%,
-      rgba(0, 0, 0, 0.62) 100%
+      rgba(0, 0, 0, 0.28) 0%,
+      rgba(0, 0, 0, 0.08) 32%,
+      rgba(0, 0, 0, 0.14) 58%,
+      rgba(0, 0, 0, 0.38) 100%
     );
   -webkit-backdrop-filter: none;
   backdrop-filter: none;

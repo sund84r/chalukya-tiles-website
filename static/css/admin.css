@@ -123,11 +123,19 @@ html.admin-menu-open {
 
 .admin-login__back {
   display: block;
-  margin-top: 1rem;
+  margin-top: 1.1rem;
   text-align: center;
-  color: var(--admin-primary);
+  color: var(--admin-muted);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+.admin-login__back:hover {
+  color: var(--admin-primary);
+  text-decoration: underline;
 }
 
 /* --------------------------------------------------------------------------
