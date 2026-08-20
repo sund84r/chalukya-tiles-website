@@ -2,7 +2,7 @@
 
 A modern, premium, production-ready website for a floor tiles and interior tiles showroom.
 
-**Stack:** FastAPI (Python) · HTML5 · CSS3 · Vanilla JavaScript (ES6+)  
+**Stack:** Flask (Python / WSGI) · HTML5 · CSS3 · Vanilla JavaScript (ES6+) · SQLite  
 **No** React, Vue, Angular, Bootstrap, or jQuery.
 
 ---
@@ -34,11 +34,11 @@ cd path\to\chalukya-tiles-website
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python -m uvicorn app:app --reload --host 127.0.0.1 --port 8002
+flask --app app run --host 127.0.0.1 --port 8002
 ```
 
 Open **http://127.0.0.1:8002**  
-Admin panel: **http://127.0.0.1:8002/admin**  
+Admin panel: **http://127.0.0.1:8002/admin** (login at `/login`)  
 User guide: **http://127.0.0.1:8002/user-guide** (file: `USER_GUIDE.html`)  
 Default login: `admin` / `chalukya@2026` — **change before production**
 
@@ -56,7 +56,7 @@ cd chalukya-tiles-website
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python -m uvicorn app:app --reload --host 127.0.0.1 --port 8002
+flask --app app run --host 127.0.0.1 --port 8002
 ```
 
 SQLite database (`database/showroom.db`) and uploaded media are **local-only** (gitignored). They are created at runtime / via Admin.
@@ -210,19 +210,25 @@ Product enquiry payload may also include `product_name` and `product_category`.
 
 ## Production
 
-```powershell
-# Example (no reload)
-uvicorn app:app --host 0.0.0.0 --port 8000 --workers 2
+Linux (Gunicorn WSGI):
+
+```bash
+export APP_ENV=production
+export ADMIN_SECRET='your-long-random-secret'
+export SITE_URL=https://www.your-domain.com
+export ALLOWED_HOSTS=your-domain.com,www.your-domain.com
+gunicorn -w 2 -b 0.0.0.0:8000 "app:app"
 ```
+
+Local Windows: use `flask --app app run` (Gunicorn is for Linux hosts).
 
 Recommendations:
 
 - Reverse proxy with HTTPS (Nginx, Caddy, IIS + ARR)
-- Set a real `SITE_URL` in `app.py`
-- Back up `database/showroom.db` regularly
+- Set `APP_ENV`, `ADMIN_SECRET`, `SITE_URL`, `ALLOWED_HOSTS` (see `.env.example`)
+- Back up `database/showroom.db` and `static/uploads/` regularly
+- Change the default admin password before going public
 - Replace SVG placeholders with optimized WebP/JPEG
-- Add real map embed query for your exact address
-- Review CORS only if a separate frontend origin will call the API
 
 ---
 
@@ -231,11 +237,10 @@ Recommendations:
 | Role | Hex | Use |
 |------|-----|-----|
 | Primary | `#FFFFFF` | Backgrounds |
-| Secondary | `#1A1A1A` | Text, dark sections |
-| Accent | `#8A8680` | Muted UI |
-| Highlight | `#C4A574` | CTAs, accents |
+| Secondary / Oxford | `#002147` | Text, chrome |
+| Highlight | `#1a4a8a` | CTAs, accents |
 
-Fonts: **Inter** + **Poppins** (Google Fonts)
+Fonts: **Inter** (Google Fonts)
 
 ---
 

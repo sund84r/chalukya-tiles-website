@@ -4,28 +4,23 @@ Admin panel API — auth, dashboard, tiles media, videos, sales, leads, customer
 
 from __future__ import annotations
 
-import re
+import functools
 import secrets
 import time
 import uuid
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    File,
-    Form,
-    HTTPException,
-    Request,
-    UploadFile,
-    status,
-)
-from pydantic import BaseModel, Field
+from flask import Blueprint, Response, abort, g, jsonify, request, send_file, session
+from pydantic import BaseModel, Field, ValidationError
+from werkzeug.datastructures import FileStorage
 
+from api.exports import filename, rows_to_pdf, rows_to_xlsx
+from api.http_utils import ApiHTTPError, api_error, parse_json_model
 from database import db as database
 
-router = APIRouter(prefix="/api/admin", tags=["admin"])
+bp = Blueprint("admin_api", __name__, url_prefix="/api/admin")
+router = bp
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR / "static"
@@ -87,20 +82,14 @@ def _resolve_api_modules(path: str) -> Optional[tuple[str, ...]]:
     return None
 
 
-def require_admin(request: Request) -> dict[str, Any]:
-    session_user = request.session.get("admin_user")
+def _authenticate_admin() -> dict[str, Any]:
+    session_user = session.get("admin_user")
     if not session_user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Admin login required",
-        )
+        raise ApiHTTPError(401, "Admin login required")
     fresh = database.get_admin_user(int(session_user["id"]))
     if not fresh or not fresh.get("is_active"):
-        request.session.clear()
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Admin session expired or account disabled",
-        )
+        session.clear()
+        raise ApiHTTPError(401, "Admin session expired or account disabled")
     user = {
         "id": fresh["id"],
         "username": fresh["username"],
@@ -108,13 +97,13 @@ def require_admin(request: Request) -> dict[str, Any]:
         "is_superadmin": fresh["is_superadmin"],
         "permissions": fresh["permissions"],
     }
-    request.session["admin_user"] = user
+    session["admin_user"] = user
 
-    path = request.url.path
+    path = request.path
     needed = _resolve_api_modules(path)
     # /logs/cli?kind=user|app|both — path has no query string
     if path.startswith("/api/admin/logs/cli"):
-        kind = (request.query_params.get("kind") or "app").lower()
+        kind = (request.args.get("kind") or "app").lower()
         if kind == "user":
             needed = ("user-logs",)
         elif kind == "both":
@@ -125,26 +114,55 @@ def require_admin(request: Request) -> dict[str, Any]:
         return user
     if needed == ("__superadmin__",):
         if not user.get("is_superadmin"):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Only the main admin can manage users",
-            )
+            raise ApiHTTPError(403, "Only the main admin can manage users")
         return user
     if not database.user_has_permission(user, *needed):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission for this section",
-        )
+        raise ApiHTTPError(403, "You do not have permission for this section")
     return user
 
 
-def require_superadmin(user: dict = Depends(require_admin)) -> dict[str, Any]:
-    if not user.get("is_superadmin"):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the main admin can manage users",
-        )
-    return user
+def handle_api_errors(view: Callable[..., Any]) -> Callable[..., Any]:
+    @functools.wraps(view)
+    def wrapped(*args: Any, **kwargs: Any):
+        try:
+            return view(*args, **kwargs)
+        except ApiHTTPError as exc:
+            return api_error(exc.status_code, exc.detail)
+        except ValidationError as exc:
+            return api_error(422, exc.errors())
+
+    return wrapped
+
+
+def require_admin(view: Callable[..., Any]) -> Callable[..., Any]:
+    """Auth + permission gate; sets g.admin_user and injects user= kwarg."""
+
+    @functools.wraps(view)
+    def wrapped(*args: Any, **kwargs: Any):
+        try:
+            user = _authenticate_admin()
+            g.admin_user = user
+            kwargs["user"] = user
+            return view(*args, **kwargs)
+        except ApiHTTPError as exc:
+            return api_error(exc.status_code, exc.detail)
+        except ValidationError as exc:
+            return api_error(422, exc.errors())
+
+    return wrapped
+
+
+def require_superadmin(view: Callable[..., Any]) -> Callable[..., Any]:
+    """Must be stacked under @require_admin (outer)."""
+
+    @functools.wraps(view)
+    def wrapped(*args: Any, **kwargs: Any):
+        user = kwargs.get("user") or getattr(g, "admin_user", None)
+        if not user or not user.get("is_superadmin"):
+            return api_error(403, "Only the main admin can manage users")
+        return view(*args, **kwargs)
+
+    return wrapped
 
 
 class LoginRequest(BaseModel):
@@ -188,16 +206,16 @@ class CustomerCreate(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# File helpers
+# File / form helpers
 # ---------------------------------------------------------------------------
 
 def _safe_ext(filename: Optional[str], allowed: set[str]) -> str:
     name = (filename or "").strip().lower()
     ext = Path(name).suffix
     if ext not in allowed:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unsupported file type '{ext}'. Allowed: {', '.join(sorted(allowed))}",
+        raise ApiHTTPError(
+            400,
+            f"Unsupported file type '{ext}'. Allowed: {', '.join(sorted(allowed))}",
         )
     return ext
 
@@ -219,34 +237,69 @@ def _unlink_public(public_path: Optional[str]) -> None:
         pass
 
 
-async def _save_upload(
-    upload: UploadFile,
+def _save_upload(
+    upload: FileStorage,
     dest_dir: Path,
     allowed: set[str],
     max_bytes: int,
 ) -> str:
     dest_dir.mkdir(parents=True, exist_ok=True)
     ext = _safe_ext(upload.filename, allowed)
-    filename = f"{uuid.uuid4().hex}{ext}"
-    dest = dest_dir / filename
+    fname = f"{uuid.uuid4().hex}{ext}"
+    dest = dest_dir / fname
 
     size = 0
+    stream = upload.stream
     with dest.open("wb") as out:
         while True:
-            chunk = await upload.read(1024 * 1024)
+            chunk = stream.read(1024 * 1024)
             if not chunk:
                 break
             size += len(chunk)
             if size > max_bytes:
                 out.close()
                 dest.unlink(missing_ok=True)
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"File too large (max {max_bytes // (1024 * 1024)} MB)",
+                raise ApiHTTPError(
+                    400,
+                    f"File too large (max {max_bytes // (1024 * 1024)} MB)",
                 )
             out.write(chunk)
 
     return _public_static_path(dest)
+
+
+def _form_str(key: str, default: Optional[str] = None) -> Optional[str]:
+    if key not in request.form:
+        return default
+    return request.form.get(key)
+
+
+def _form_int(key: str, default: Optional[int] = None) -> Optional[int]:
+    raw = request.form.get(key)
+    if raw is None or raw == "":
+        return default
+    return int(raw)
+
+
+def _form_float(key: str, default: Optional[float] = None) -> Optional[float]:
+    raw = request.form.get(key)
+    if raw is None or raw == "":
+        return default
+    return float(raw)
+
+
+def _optional_file(key: str) -> Optional[FileStorage]:
+    f = request.files.get(key)
+    if f is None or not f.filename:
+        return None
+    return f
+
+
+def _require_file(key: str) -> FileStorage:
+    f = request.files.get(key)
+    if f is None or not f.filename:
+        raise ApiHTTPError(422, f"Missing required file: {key}")
+    return f
 
 
 # ---------------------------------------------------------------------------
@@ -259,11 +312,11 @@ _LOGIN_WINDOW_SEC = 15 * 60
 _LOGIN_MAX_ATTEMPTS = 8
 
 
-def _client_ip(request: Request) -> str:
+def _client_ip() -> str:
     forwarded = (request.headers.get("x-forwarded-for") or "").split(",")[0].strip()
     if forwarded:
         return forwarded
-    return request.client.host if request.client else "unknown"
+    return request.remote_addr or "unknown"
 
 
 def _login_throttle_check(ip: str) -> None:
@@ -272,9 +325,9 @@ def _login_throttle_check(ip: str) -> None:
     attempts = [t for t in _LOGIN_ATTEMPTS.get(ip, []) if t >= window_start]
     _LOGIN_ATTEMPTS[ip] = attempts
     if len(attempts) >= _LOGIN_MAX_ATTEMPTS:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Too many login attempts. Please wait 15 minutes and try again.",
+        raise ApiHTTPError(
+            429,
+            "Too many login attempts. Please wait 15 minutes and try again.",
         )
 
 
@@ -286,9 +339,11 @@ def _login_throttle_clear(ip: str) -> None:
     _LOGIN_ATTEMPTS.pop(ip, None)
 
 
-@router.post("/login")
-async def admin_login(request: Request, payload: LoginRequest) -> dict[str, Any]:
-    ip = _client_ip(request)
+@bp.post("/login")
+@handle_api_errors
+def admin_login() -> Any:
+    payload = parse_json_model(LoginRequest)
+    ip = _client_ip()
     _login_throttle_check(ip)
 
     user = database.authenticate_admin(payload.username, payload.password)
@@ -299,14 +354,11 @@ async def admin_login(request: Request, payload: LoginRequest) -> dict[str, Any]
             level="WARN",
             source="auth",
         )
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username or password",
-        )
+        raise ApiHTTPError(401, "Invalid username or password")
 
     _login_throttle_clear(ip)
-    request.session["admin_user"] = user
-    request.session["csrf"] = secrets.token_hex(16)
+    session["admin_user"] = user
+    session["csrf"] = secrets.token_hex(16)
     database.log_user(user["username"], "login", ip=ip)
     database.log_app(
         f"Admin login: {user['username']} ({user.get('role', 'user')})",
@@ -325,14 +377,16 @@ async def admin_login(request: Request, payload: LoginRequest) -> dict[str, Any]
     }
 
 
-@router.post("/logout")
-async def admin_logout(request: Request) -> dict[str, Any]:
-    request.session.clear()
+@bp.post("/logout")
+@handle_api_errors
+def admin_logout() -> Any:
+    session.clear()
     return {"success": True, "message": "Logged out"}
 
 
-@router.get("/me")
-async def admin_me(user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/me")
+@require_admin
+def admin_me(user: dict) -> Any:
     return {
         "success": True,
         "user": user,
@@ -358,8 +412,10 @@ class AdminUserUpdate(BaseModel):
     is_active: Optional[int] = Field(default=None, ge=0, le=1)
 
 
-@router.get("/users")
-async def admin_list_users(_user: dict = Depends(require_superadmin)) -> dict[str, Any]:
+@bp.get("/users")
+@require_admin
+@require_superadmin
+def admin_list_users(user: dict) -> Any:
     return {
         "success": True,
         "items": database.list_admin_users(),
@@ -369,12 +425,11 @@ async def admin_list_users(_user: dict = Depends(require_superadmin)) -> dict[st
     }
 
 
-@router.post("/users", status_code=status.HTTP_201_CREATED)
-async def admin_create_user(
-    payload: AdminUserCreate,
-    request: Request,
-    user: dict = Depends(require_superadmin),
-) -> dict[str, Any]:
+@bp.post("/users")
+@require_admin
+@require_superadmin
+def admin_create_user(user: dict) -> Any:
+    payload = parse_json_model(AdminUserCreate)
     try:
         row_id = database.create_admin_user(
             username=payload.username,
@@ -383,8 +438,8 @@ async def admin_create_user(
             role="user",
         )
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    client = request.client.host if request.client else None
+        raise ApiHTTPError(400, str(exc)) from exc
+    client = request.remote_addr
     database.log_user(
         user["username"],
         "user.create",
@@ -397,31 +452,32 @@ async def admin_create_user(
         f"Admin user created: {payload.username.strip()} by {user['username']}",
         source="users",
     )
-    return {
-        "success": True,
-        "message": "User created",
-        "id": row_id,
-        "item": database.get_admin_user(row_id),
-    }
+    return (
+        {
+            "success": True,
+            "message": "User created",
+            "id": row_id,
+            "item": database.get_admin_user(row_id),
+        },
+        201,
+    )
 
 
-@router.patch("/users/{user_id}")
-async def admin_update_user(
-    user_id: int,
-    payload: AdminUserUpdate,
-    request: Request,
-    user: dict = Depends(require_superadmin),
-) -> dict[str, Any]:
+@bp.patch("/users/<int:user_id>")
+@require_admin
+@require_superadmin
+def admin_update_user(user_id: int, user: dict) -> Any:
+    payload = parse_json_model(AdminUserUpdate)
     target = database.get_admin_user(user_id)
     if not target:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise ApiHTTPError(404, "User not found")
     if target.get("is_superadmin") and user_id != user["id"]:
         # Allow editing other superadmin only for is_active? Safer: only self password for superadmin
         if payload.permissions is not None or payload.is_active is not None:
             if payload.is_active == 0:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Cannot deactivate a superadmin account here",
+                raise ApiHTTPError(
+                    400,
+                    "Cannot deactivate a superadmin account here",
                 )
     fields: dict[str, Any] = {}
     if payload.password is not None:
@@ -433,10 +489,10 @@ async def admin_update_user(
     try:
         ok = database.update_admin_user(user_id, **fields)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        raise ApiHTTPError(400, str(exc)) from exc
     if not ok:
-        raise HTTPException(status_code=400, detail="Nothing to update")
-    client = request.client.host if request.client else None
+        raise ApiHTTPError(400, "Nothing to update")
+    client = request.remote_addr
     database.log_user(
         user["username"],
         "user.update",
@@ -453,24 +509,22 @@ async def admin_update_user(
     return {"success": True, "message": "User updated", "item": database.get_admin_user(user_id)}
 
 
-@router.delete("/users/{user_id}")
-async def admin_delete_user(
-    user_id: int,
-    request: Request,
-    user: dict = Depends(require_superadmin),
-) -> dict[str, Any]:
+@bp.delete("/users/<int:user_id>")
+@require_admin
+@require_superadmin
+def admin_delete_user(user_id: int, user: dict) -> Any:
     if user_id == user["id"]:
-        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+        raise ApiHTTPError(400, "Cannot delete your own account")
     target = database.get_admin_user(user_id)
     if not target:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise ApiHTTPError(404, "User not found")
     try:
         ok = database.delete_admin_user(user_id)
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        raise ApiHTTPError(400, str(exc)) from exc
     if not ok:
-        raise HTTPException(status_code=404, detail="User not found")
-    client = request.client.host if request.client else None
+        raise ApiHTTPError(404, "User not found")
+    client = request.remote_addr
     database.log_user(
         user["username"],
         "user.delete",
@@ -490,8 +544,9 @@ async def admin_delete_user(
 # Dashboard
 # ---------------------------------------------------------------------------
 
-@router.get("/dashboard")
-async def dashboard(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/dashboard")
+@require_admin
+def dashboard(user: dict) -> Any:
     stats = database.get_dashboard_stats()
     return {
         "success": True,
@@ -510,33 +565,29 @@ async def dashboard(_user: dict = Depends(require_admin)) -> dict[str, Any]:
 # Tiles media
 # ---------------------------------------------------------------------------
 
-@router.get("/tiles")
-async def admin_list_tiles(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/tiles")
+@require_admin
+def admin_list_tiles(user: dict) -> Any:
     return {"success": True, "items": database.list_tiles(limit=500)}
 
 
-@router.post("/tiles", status_code=status.HTTP_201_CREATED)
-async def admin_create_tile(
-    _user: dict = Depends(require_admin),
-    name: str = Form(...),
-    model_number: str = Form(...),
-    colour: str = Form(...),
-    material_category: str = Form(...),
-    pattern: Optional[str] = Form(default=""),
-    description: Optional[str] = Form(default=None),
-    size_label: Optional[str] = Form(default=None),
-    finish: Optional[str] = Form(default=None),
-    image: UploadFile = File(...),
-) -> dict[str, Any]:
-    name = name.strip()
-    model_number = model_number.strip()
-    colour = colour.strip()
-    material_category = material_category.strip()
-    pattern = (pattern or "").strip()
-    if not all([name, model_number, colour, material_category]):
-        raise HTTPException(status_code=400, detail="Name, model number, colour and category are required")
+@bp.post("/tiles")
+@require_admin
+def admin_create_tile(user: dict) -> Any:
+    name = (_form_str("name") or "").strip()
+    model_number = (_form_str("model_number") or "").strip()
+    colour = (_form_str("colour") or "").strip()
+    material_category = (_form_str("material_category") or "").strip()
+    pattern = (_form_str("pattern") or "").strip()
+    description = _form_str("description")
+    size_label = _form_str("size_label")
+    finish = _form_str("finish")
+    image = _require_file("image")
 
-    image_path = await _save_upload(
+    if not all([name, model_number, colour, material_category]):
+        raise ApiHTTPError(400, "Name, model number, colour and category are required")
+
+    image_path = _save_upload(
         image,
         database.UPLOAD_TILES_DIR,
         ALLOWED_IMAGE_EXT,
@@ -556,29 +607,28 @@ async def admin_create_tile(
         )
     except database.DuplicateError as exc:
         _unlink_public(image_path)
-        raise HTTPException(status_code=409, detail=exc.message) from exc
+        raise ApiHTTPError(409, exc.message) from exc
     tile = database.get_tile(row_id)
-    return {"success": True, "message": "Tile uploaded", "item": tile}
+    return {"success": True, "message": "Tile uploaded", "item": tile}, 201
 
 
-@router.patch("/tiles/{tile_id}")
-async def admin_update_tile(
-    tile_id: int,
-    _user: dict = Depends(require_admin),
-    name: Optional[str] = Form(default=None),
-    model_number: Optional[str] = Form(default=None),
-    colour: Optional[str] = Form(default=None),
-    pattern: Optional[str] = Form(default=None),
-    material_category: Optional[str] = Form(default=None),
-    description: Optional[str] = Form(default=None),
-    size_label: Optional[str] = Form(default=None),
-    finish: Optional[str] = Form(default=None),
-    is_active: Optional[int] = Form(default=None),
-    image: Optional[UploadFile] = File(default=None),
-) -> dict[str, Any]:
+@bp.patch("/tiles/<int:tile_id>")
+@require_admin
+def admin_update_tile(tile_id: int, user: dict) -> Any:
     existing = database.get_tile(tile_id)
     if not existing:
-        raise HTTPException(status_code=404, detail="Tile not found")
+        raise ApiHTTPError(404, "Tile not found")
+
+    name = _form_str("name")
+    model_number = _form_str("model_number")
+    colour = _form_str("colour")
+    pattern = _form_str("pattern")
+    material_category = _form_str("material_category")
+    description = _form_str("description")
+    size_label = _form_str("size_label")
+    finish = _form_str("finish")
+    is_active = _form_int("is_active")
+    image = _optional_file("image")
 
     fields: dict[str, Any] = {}
     for key, val in {
@@ -595,8 +645,8 @@ async def admin_update_tile(
         if val is not None and (key == "pattern" or str(val).strip() != ""):
             fields[key] = val if key == "is_active" else str(val).strip()
 
-    if image is not None and image.filename:
-        new_path = await _save_upload(
+    if image is not None:
+        new_path = _save_upload(
             image,
             database.UPLOAD_TILES_DIR,
             ALLOWED_IMAGE_EXT,
@@ -609,18 +659,16 @@ async def admin_update_tile(
         try:
             database.update_tile(tile_id, **fields)
         except database.DuplicateError as exc:
-            raise HTTPException(status_code=409, detail=exc.message) from exc
+            raise ApiHTTPError(409, exc.message) from exc
     return {"success": True, "message": "Tile updated", "item": database.get_tile(tile_id)}
 
 
-@router.delete("/tiles/{tile_id}")
-async def admin_delete_tile(
-    tile_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/tiles/<int:tile_id>")
+@require_admin
+def admin_delete_tile(tile_id: int, user: dict) -> Any:
     image_path = database.delete_tile(tile_id)
     if image_path is None:
-        raise HTTPException(status_code=404, detail="Tile not found")
+        raise ApiHTTPError(404, "Tile not found")
     _unlink_public(image_path)
     return {"success": True, "message": "Tile deleted"}
 
@@ -629,34 +677,36 @@ async def admin_delete_tile(
 # Collection videos
 # ---------------------------------------------------------------------------
 
-@router.get("/videos")
-async def admin_list_videos(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/videos")
+@require_admin
+def admin_list_videos(user: dict) -> Any:
     return {"success": True, "items": database.list_collection_videos(limit=100)}
 
 
-@router.post("/videos", status_code=status.HTTP_201_CREATED)
-async def admin_create_video(
-    _user: dict = Depends(require_admin),
-    title: str = Form(...),
-    description: Optional[str] = Form(default=None),
-    sort_order: int = Form(default=0),
-    is_active: int = Form(default=1),
-    video: UploadFile = File(...),
-    poster: Optional[UploadFile] = File(default=None),
-) -> dict[str, Any]:
-    title = title.strip()
-    if not title:
-        raise HTTPException(status_code=400, detail="Title is required")
+@bp.post("/videos")
+@require_admin
+def admin_create_video(user: dict) -> Any:
+    title = (_form_str("title") or "").strip()
+    description = _form_str("description")
+    sort_order = _form_int("sort_order", 0) or 0
+    is_active = _form_int("is_active", 1)
+    if is_active is None:
+        is_active = 1
+    video = _require_file("video")
+    poster = _optional_file("poster")
 
-    video_path = await _save_upload(
+    if not title:
+        raise ApiHTTPError(400, "Title is required")
+
+    video_path = _save_upload(
         video,
         database.UPLOAD_VIDEOS_DIR,
         ALLOWED_VIDEO_EXT,
         MAX_VIDEO_BYTES,
     )
     poster_path = None
-    if poster is not None and poster.filename:
-        poster_path = await _save_upload(
+    if poster is not None:
+        poster_path = _save_upload(
             poster,
             database.UPLOAD_POSTERS_DIR,
             ALLOWED_IMAGE_EXT,
@@ -675,21 +725,19 @@ async def admin_create_video(
         "success": True,
         "message": "Collection video uploaded",
         "item": database.get_collection_video(row_id),
-    }
+    }, 201
 
 
-@router.patch("/videos/{video_id}")
-async def admin_update_video(
-    video_id: int,
-    _user: dict = Depends(require_admin),
-    title: Optional[str] = Form(default=None),
-    description: Optional[str] = Form(default=None),
-    sort_order: Optional[int] = Form(default=None),
-    is_active: Optional[int] = Form(default=None),
-) -> dict[str, Any]:
+@bp.patch("/videos/<int:video_id>")
+@require_admin
+def admin_update_video(video_id: int, user: dict) -> Any:
     existing = database.get_collection_video(video_id)
     if not existing:
-        raise HTTPException(status_code=404, detail="Video not found")
+        raise ApiHTTPError(404, "Video not found")
+    title = _form_str("title")
+    description = _form_str("description")
+    sort_order = _form_int("sort_order")
+    is_active = _form_int("is_active")
     fields: dict[str, Any] = {}
     if title is not None and title.strip():
         fields["title"] = title.strip()
@@ -708,14 +756,12 @@ async def admin_update_video(
     }
 
 
-@router.delete("/videos/{video_id}")
-async def admin_delete_video(
-    video_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/videos/<int:video_id>")
+@require_admin
+def admin_delete_video(video_id: int, user: dict) -> Any:
     paths = database.delete_collection_video(video_id)
     if paths is None:
-        raise HTTPException(status_code=404, detail="Video not found")
+        raise ApiHTTPError(404, "Video not found")
     _unlink_public(paths.get("video_path"))
     _unlink_public(paths.get("poster_path"))
     return {"success": True, "message": "Video deleted"}
@@ -728,10 +774,9 @@ async def admin_delete_video(
 _GALLERY_CATS = {slug for slug, _ in database.CONCEPT_GALLERY_CATEGORIES}
 
 
-@router.get("/concept-gallery")
-async def admin_list_concept_gallery(
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.get("/concept-gallery")
+@require_admin
+def admin_list_concept_gallery(user: dict) -> Any:
     return {
         "success": True,
         "items": database.list_concept_gallery(limit=300),
@@ -742,26 +787,26 @@ async def admin_list_concept_gallery(
     }
 
 
-@router.post("/concept-gallery", status_code=status.HTTP_201_CREATED)
-async def admin_create_concept_gallery(
-    _user: dict = Depends(require_admin),
-    title: str = Form(...),
-    category: str = Form(...),
-    description: Optional[str] = Form(default=None),
-    sort_order: int = Form(default=0),
-    is_active: int = Form(default=1),
-    image: UploadFile = File(...),
-) -> dict[str, Any]:
-    title = title.strip()
-    cat = category.strip().lower()
+@bp.post("/concept-gallery")
+@require_admin
+def admin_create_concept_gallery(user: dict) -> Any:
+    title = (_form_str("title") or "").strip()
+    cat = (_form_str("category") or "").strip().lower()
+    description = _form_str("description")
+    sort_order = _form_int("sort_order", 0) or 0
+    is_active = _form_int("is_active", 1)
+    if is_active is None:
+        is_active = 1
+    image = _require_file("image")
+
     if not title:
-        raise HTTPException(status_code=400, detail="Title is required")
+        raise ApiHTTPError(400, "Title is required")
     if cat not in _GALLERY_CATS:
-        raise HTTPException(
-            status_code=400,
-            detail="Category must be living, bathroom, parking, elevation, or outdoor",
+        raise ApiHTTPError(
+            400,
+            "Category must be living, bathroom, parking, elevation, or outdoor",
         )
-    image_path = await _save_upload(
+    image_path = _save_upload(
         image,
         database.UPLOAD_GALLERY_DIR,
         ALLOWED_IMAGE_EXT,
@@ -776,7 +821,7 @@ async def admin_create_concept_gallery(
         is_active=is_active,
     )
     database.log_user(
-        _user.get("username", "admin"),
+        user.get("username", "admin"),
         "concept_gallery.create",
         entity_type="concept_gallery",
         entity_id=row_id,
@@ -786,28 +831,26 @@ async def admin_create_concept_gallery(
         "success": True,
         "message": "Concept gallery image uploaded",
         "item": database.get_concept_gallery(row_id),
-    }
+    }, 201
 
 
-@router.patch("/concept-gallery/{item_id}")
-async def admin_update_concept_gallery(
-    item_id: int,
-    _user: dict = Depends(require_admin),
-    title: Optional[str] = Form(default=None),
-    category: Optional[str] = Form(default=None),
-    description: Optional[str] = Form(default=None),
-    sort_order: Optional[int] = Form(default=None),
-    is_active: Optional[int] = Form(default=None),
-) -> dict[str, Any]:
+@bp.patch("/concept-gallery/<int:item_id>")
+@require_admin
+def admin_update_concept_gallery(item_id: int, user: dict) -> Any:
     if not database.get_concept_gallery(item_id):
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise ApiHTTPError(404, "Item not found")
+    title = _form_str("title")
+    category = _form_str("category")
+    description = _form_str("description")
+    sort_order = _form_int("sort_order")
+    is_active = _form_int("is_active")
     fields: dict[str, Any] = {}
     if title is not None and title.strip():
         fields["title"] = title.strip()
     if category is not None and category.strip():
         cat = category.strip().lower()
         if cat not in _GALLERY_CATS:
-            raise HTTPException(status_code=400, detail="Invalid category")
+            raise ApiHTTPError(400, "Invalid category")
         fields["category"] = cat
     if description is not None:
         fields["description"] = description.strip() or None
@@ -824,17 +867,15 @@ async def admin_update_concept_gallery(
     }
 
 
-@router.delete("/concept-gallery/{item_id}")
-async def admin_delete_concept_gallery(
-    item_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/concept-gallery/<int:item_id>")
+@require_admin
+def admin_delete_concept_gallery(item_id: int, user: dict) -> Any:
     path = database.delete_concept_gallery(item_id)
     if path is None:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise ApiHTTPError(404, "Item not found")
     _unlink_public(path)
     database.log_user(
-        _user.get("username", "admin"),
+        user.get("username", "admin"),
         "concept_gallery.delete",
         entity_type="concept_gallery",
         entity_id=item_id,
@@ -846,16 +887,16 @@ async def admin_delete_concept_gallery(
 # Sales
 # ---------------------------------------------------------------------------
 
-@router.get("/sales")
-async def admin_list_sales(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/sales")
+@require_admin
+def admin_list_sales(user: dict) -> Any:
     return {"success": True, "items": database.list_sales(limit=500)}
 
 
-@router.post("/sales", status_code=status.HTTP_201_CREATED)
-async def admin_create_sale(
-    payload: SaleCreate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/sales")
+@require_admin
+def admin_create_sale(user: dict) -> Any:
+    payload = parse_json_model(SaleCreate)
     row_id = database.insert_sale(
         invoice_no=payload.invoice_no.strip(),
         customer_name=payload.customer_name.strip(),
@@ -867,16 +908,14 @@ async def admin_create_sale(
         status=payload.status.strip() or "completed",
         notes=(payload.notes or "").strip() or None,
     )
-    return {"success": True, "message": "Sale recorded", "id": row_id}
+    return {"success": True, "message": "Sale recorded", "id": row_id}, 201
 
 
-@router.delete("/sales/{sale_id}")
-async def admin_delete_sale(
-    sale_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/sales/<int:sale_id>")
+@require_admin
+def admin_delete_sale(sale_id: int, user: dict) -> Any:
     if not database.delete_sale(sale_id):
-        raise HTTPException(status_code=404, detail="Sale not found")
+        raise ApiHTTPError(404, "Sale not found")
     return {"success": True, "message": "Sale deleted"}
 
 
@@ -884,16 +923,16 @@ async def admin_delete_sale(
 # Leads
 # ---------------------------------------------------------------------------
 
-@router.get("/leads")
-async def admin_list_leads(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/leads")
+@require_admin
+def admin_list_leads(user: dict) -> Any:
     return {"success": True, "items": database.list_leads(limit=500)}
 
 
-@router.post("/leads", status_code=status.HTTP_201_CREATED)
-async def admin_create_lead(
-    payload: LeadCreate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/leads")
+@require_admin
+def admin_create_lead(user: dict) -> Any:
+    payload = parse_json_model(LeadCreate)
     row_id = database.insert_lead(
         name=payload.name.strip(),
         phone=payload.phone.strip(),
@@ -903,15 +942,13 @@ async def admin_create_lead(
         status=payload.status.strip() or "new",
         notes=(payload.notes or "").strip() or None,
     )
-    return {"success": True, "message": "Lead created", "id": row_id}
+    return {"success": True, "message": "Lead created", "id": row_id}, 201
 
 
-@router.patch("/leads/{lead_id}")
-async def admin_update_lead(
-    lead_id: int,
-    payload: LeadCreate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.patch("/leads/<int:lead_id>")
+@require_admin
+def admin_update_lead(lead_id: int, user: dict) -> Any:
+    payload = parse_json_model(LeadCreate)
     ok = database.update_lead(
         lead_id,
         name=payload.name.strip(),
@@ -923,17 +960,15 @@ async def admin_update_lead(
         notes=(payload.notes or "").strip() or None,
     )
     if not ok:
-        raise HTTPException(status_code=404, detail="Lead not found")
+        raise ApiHTTPError(404, "Lead not found")
     return {"success": True, "message": "Lead updated"}
 
 
-@router.delete("/leads/{lead_id}")
-async def admin_delete_lead(
-    lead_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/leads/<int:lead_id>")
+@require_admin
+def admin_delete_lead(lead_id: int, user: dict) -> Any:
     if not database.delete_lead(lead_id):
-        raise HTTPException(status_code=404, detail="Lead not found")
+        raise ApiHTTPError(404, "Lead not found")
     return {"success": True, "message": "Lead deleted"}
 
 
@@ -941,16 +976,16 @@ async def admin_delete_lead(
 # Customers
 # ---------------------------------------------------------------------------
 
-@router.get("/customers")
-async def admin_list_customers(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/customers")
+@require_admin
+def admin_list_customers(user: dict) -> Any:
     return {"success": True, "items": database.list_customers(limit=500)}
 
 
-@router.post("/customers", status_code=status.HTTP_201_CREATED)
-async def admin_create_customer(
-    payload: CustomerCreate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/customers")
+@require_admin
+def admin_create_customer(user: dict) -> Any:
+    payload = parse_json_model(CustomerCreate)
     try:
         row_id = database.insert_customer(
             name=payload.name.strip(),
@@ -961,16 +996,14 @@ async def admin_create_customer(
             notes=(payload.notes or "").strip() or None,
         )
     except database.DuplicateError as exc:
-        raise HTTPException(status_code=409, detail=exc.message) from exc
-    return {"success": True, "message": "Customer created", "id": row_id}
+        raise ApiHTTPError(409, exc.message) from exc
+    return {"success": True, "message": "Customer created", "id": row_id}, 201
 
 
-@router.patch("/customers/{customer_id}")
-async def admin_update_customer(
-    customer_id: int,
-    payload: CustomerCreate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.patch("/customers/<int:customer_id>")
+@require_admin
+def admin_update_customer(customer_id: int, user: dict) -> Any:
+    payload = parse_json_model(CustomerCreate)
     try:
         ok = database.update_customer(
             customer_id,
@@ -982,19 +1015,17 @@ async def admin_update_customer(
             notes=(payload.notes or "").strip() or None,
         )
     except database.DuplicateError as exc:
-        raise HTTPException(status_code=409, detail=exc.message) from exc
+        raise ApiHTTPError(409, exc.message) from exc
     if not ok:
-        raise HTTPException(status_code=404, detail="Customer not found")
+        raise ApiHTTPError(404, "Customer not found")
     return {"success": True, "message": "Customer updated"}
 
 
-@router.delete("/customers/{customer_id}")
-async def admin_delete_customer(
-    customer_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/customers/<int:customer_id>")
+@require_admin
+def admin_delete_customer(customer_id: int, user: dict) -> Any:
     if not database.delete_customer(customer_id):
-        raise HTTPException(status_code=404, detail="Customer not found")
+        raise ApiHTTPError(404, "Customer not found")
     return {"success": True, "message": "Customer deleted"}
 
 
@@ -1002,8 +1033,9 @@ async def admin_delete_customer(
 # Queries (contact + enquiries)
 # ---------------------------------------------------------------------------
 
-@router.get("/queries")
-async def admin_list_queries(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/queries")
+@require_admin
+def admin_list_queries(user: dict) -> Any:
     contacts = database.list_contact_messages(limit=300)
     enquiries = database.list_enquiries(limit=300)
     for c in contacts:
@@ -1017,45 +1049,37 @@ async def admin_list_queries(_user: dict = Depends(require_admin)) -> dict[str, 
     }
 
 
-@router.patch("/queries/contact/{row_id}")
-async def admin_update_contact_status(
-    row_id: int,
-    payload: StatusUpdate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.patch("/queries/contact/<int:row_id>")
+@require_admin
+def admin_update_contact_status(row_id: int, user: dict) -> Any:
+    payload = parse_json_model(StatusUpdate)
     if not database.update_contact_status(row_id, payload.status.strip()):
-        raise HTTPException(status_code=404, detail="Contact message not found")
+        raise ApiHTTPError(404, "Contact message not found")
     return {"success": True, "message": "Status updated"}
 
 
-@router.patch("/queries/enquiry/{row_id}")
-async def admin_update_enquiry_status(
-    row_id: int,
-    payload: StatusUpdate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.patch("/queries/enquiry/<int:row_id>")
+@require_admin
+def admin_update_enquiry_status(row_id: int, user: dict) -> Any:
+    payload = parse_json_model(StatusUpdate)
     if not database.update_enquiry_status(row_id, payload.status.strip()):
-        raise HTTPException(status_code=404, detail="Enquiry not found")
+        raise ApiHTTPError(404, "Enquiry not found")
     return {"success": True, "message": "Status updated"}
 
 
-@router.delete("/queries/contact/{row_id}")
-async def admin_delete_contact(
-    row_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/queries/contact/<int:row_id>")
+@require_admin
+def admin_delete_contact(row_id: int, user: dict) -> Any:
     if not database.delete_contact_message(row_id):
-        raise HTTPException(status_code=404, detail="Contact message not found")
+        raise ApiHTTPError(404, "Contact message not found")
     return {"success": True, "message": "Deleted"}
 
 
-@router.delete("/queries/enquiry/{row_id}")
-async def admin_delete_enquiry(
-    row_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/queries/enquiry/<int:row_id>")
+@require_admin
+def admin_delete_enquiry(row_id: int, user: dict) -> Any:
     if not database.delete_enquiry(row_id):
-        raise HTTPException(status_code=404, detail="Enquiry not found")
+        raise ApiHTTPError(404, "Enquiry not found")
     return {"success": True, "message": "Deleted"}
 
 
@@ -1138,13 +1162,12 @@ class CommLogPayload(BaseModel):
     detail: Optional[str] = None
 
 
-@router.get("/inventory")
-async def admin_list_inventory(
-    _user: dict = Depends(require_admin),
-    category: Optional[str] = None,
-    q: Optional[str] = None,
-    low_stock: int = 0,
-) -> dict[str, Any]:
+@bp.get("/inventory")
+@require_admin
+def admin_list_inventory(user: dict) -> Any:
+    category = request.args.get("category")
+    q = request.args.get("q")
+    low_stock = int(request.args.get("low_stock") or 0)
     items = database.list_inventory(
         category=category,
         q=q,
@@ -1163,40 +1186,43 @@ async def admin_list_inventory(
     }
 
 
-@router.post("/inventory", status_code=status.HTTP_201_CREATED)
-async def admin_create_inventory(
-    _user: dict = Depends(require_admin),
-    name: str = Form(...),
-    category: str = Form(...),
-    brand: Optional[str] = Form(default=None),
-    sku: Optional[str] = Form(default=None),
-    description: Optional[str] = Form(default=None),
-    unit: str = Form(default="pcs"),
-    quantity: float = Form(default=0),
-    reorder_level: float = Form(default=0),
-    purchase_price: float = Form(default=0),
-    selling_price: float = Form(default=0),
-    supplier: Optional[str] = Form(default=None),
-    tax_gst: float = Form(default=0),
-    status: str = Form(default="active"),
-    item_date: Optional[str] = Form(default=None),
-    notes: Optional[str] = Form(default=None),
-    colour: Optional[str] = Form(default=None),
-    pattern: Optional[str] = Form(default=None),
-    show_on_website: int = Form(default=0),
-    material_category: Optional[str] = Form(default=None),
-    size_label: Optional[str] = Form(default=None),
-    finish: Optional[str] = Form(default=None),
-    dim_length: Optional[float] = Form(default=None),
-    dim_width: Optional[float] = Form(default=None),
-    dim_unit: Optional[str] = Form(default=None),
-    image: Optional[UploadFile] = File(default=None),
-) -> dict[str, Any]:
+@bp.post("/inventory")
+@require_admin
+def admin_create_inventory(user: dict) -> Any:
+    name = _form_str("name") or ""
+    category = _form_str("category") or ""
+    brand = _form_str("brand")
+    sku = _form_str("sku")
+    description = _form_str("description")
+    unit = _form_str("unit", "pcs") or "pcs"
+    quantity = _form_float("quantity", 0) or 0
+    reorder_level = _form_float("reorder_level", 0) or 0
+    purchase_price = _form_float("purchase_price", 0) or 0
+    selling_price = _form_float("selling_price", 0) or 0
+    supplier = _form_str("supplier")
+    tax_gst = _form_float("tax_gst", 0) or 0
+    status = _form_str("status", "active") or "active"
+    item_date = _form_str("item_date")
+    notes = _form_str("notes")
+    colour = _form_str("colour")
+    pattern = _form_str("pattern")
+    show_on_website = _form_int("show_on_website", 0) or 0
+    material_category = _form_str("material_category")
+    size_label = _form_str("size_label")
+    finish = _form_str("finish")
+    dim_length = _form_float("dim_length")
+    dim_width = _form_float("dim_width")
+    dim_unit = _form_str("dim_unit")
+    image = _optional_file("image")
+
     if category not in database.INVENTORY_CATEGORIES:
-        raise HTTPException(status_code=400, detail=f"Invalid category. Use one of: {', '.join(database.INVENTORY_CATEGORIES)}")
+        raise ApiHTTPError(
+            400,
+            f"Invalid category. Use one of: {', '.join(database.INVENTORY_CATEGORIES)}",
+        )
     image_path = None
-    if image is not None and image.filename:
-        image_path = await _save_upload(
+    if image is not None:
+        image_path = _save_upload(
             image,
             database.UPLOAD_INVENTORY_DIR,
             ALLOWED_IMAGE_EXT,
@@ -1232,7 +1258,6 @@ async def admin_create_inventory(
         dim_width=dim_width,
         dim_unit=(dim_unit or "").strip() or None,
     )
-    user = _user
     database.log_user(
         user.get("username", "admin"),
         "inventory.create",
@@ -1244,17 +1269,15 @@ async def admin_create_inventory(
         "success": True,
         "message": "Inventory item created",
         "item": database.get_inventory_item(row_id),
-    }
+    }, 201
 
 
-@router.patch("/inventory/{item_id}")
-async def admin_update_inventory(
-    item_id: int,
-    payload: InventoryCreate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.patch("/inventory/<int:item_id>")
+@require_admin
+def admin_update_inventory(item_id: int, user: dict) -> Any:
+    payload = parse_json_model(InventoryCreate)
     if not database.get_inventory_item(item_id):
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise ApiHTTPError(404, "Item not found")
     size_auto = (payload.size_label or "").strip() or None
     if not size_auto and payload.dim_length and payload.dim_width and payload.dim_unit:
         size_auto = f"{payload.dim_length} × {payload.dim_width} {payload.dim_unit}"
@@ -1286,7 +1309,7 @@ async def admin_update_inventory(
         dim_unit=(payload.dim_unit or "").strip() or None,
     )
     database.log_user(
-        _user.get("username", "admin"),
+        user.get("username", "admin"),
         "inventory.update",
         entity_type="inventory",
         entity_id=item_id,
@@ -1295,13 +1318,11 @@ async def admin_update_inventory(
     return {"success": True, "item": database.get_inventory_item(item_id)}
 
 
-@router.delete("/inventory/{item_id}")
-async def admin_delete_inventory(
-    item_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/inventory/<int:item_id>")
+@require_admin
+def admin_delete_inventory(item_id: int, user: dict) -> Any:
     if not database.get_inventory_item(item_id):
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise ApiHTTPError(404, "Item not found")
     path = database.delete_inventory_item(item_id)
     _unlink_public(path)
     return {"success": True, "message": "Deleted"}
@@ -1313,14 +1334,12 @@ class VisibilityPayload(BaseModel):
     show_on_website: int = Field(..., ge=0, le=1)
 
 
-@router.patch("/inventory/{item_id}/visibility")
-async def admin_inventory_visibility(
-    item_id: int,
-    payload: VisibilityPayload,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.patch("/inventory/<int:item_id>/visibility")
+@require_admin
+def admin_inventory_visibility(item_id: int, user: dict) -> Any:
+    payload = parse_json_model(VisibilityPayload)
     if not database.get_inventory_item(item_id):
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise ApiHTTPError(404, "Item not found")
     database.update_inventory_item(
         item_id,
         show_on_website=int(payload.show_on_website),
@@ -1333,12 +1352,10 @@ async def admin_inventory_visibility(
     }
 
 
-@router.post("/inventory/{item_id}/stock")
-async def admin_stock_adjust(
-    item_id: int,
-    payload: StockAdjust,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/inventory/<int:item_id>/stock")
+@require_admin
+def admin_stock_adjust(item_id: int, user: dict) -> Any:
+    payload = parse_json_model(StockAdjust)
     try:
         item = database.stock_adjust(
             item_id,
@@ -1347,15 +1364,13 @@ async def admin_stock_adjust(
             note=payload.note,
         )
     except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        raise ApiHTTPError(400, str(exc)) from exc
     return {"success": True, "item": item}
 
 
-@router.get("/inventory/{item_id}/movements")
-async def admin_stock_movements(
-    item_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.get("/inventory/<int:item_id>/movements")
+@require_admin
+def admin_stock_movements(item_id: int, user: dict) -> Any:
     return {"success": True, "items": database.list_stock_movements(item_id)}
 
 
@@ -1363,40 +1378,38 @@ async def admin_stock_movements(
 # Sales returns & purchases
 # ---------------------------------------------------------------------------
 
-@router.get("/sales-returns")
-async def admin_list_returns(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/sales-returns")
+@require_admin
+def admin_list_returns(user: dict) -> Any:
     return {"success": True, "items": database.list_sales_returns()}
 
 
-@router.post("/sales-returns", status_code=status.HTTP_201_CREATED)
-async def admin_create_return(
-    payload: SalesReturnCreate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/sales-returns")
+@require_admin
+def admin_create_return(user: dict) -> Any:
+    payload = parse_json_model(SalesReturnCreate)
     row_id = database.insert_sales_return(**payload.model_dump())
-    return {"success": True, "id": row_id, "message": "Sales return recorded"}
+    return {"success": True, "id": row_id, "message": "Sales return recorded"}, 201
 
 
-@router.delete("/sales-returns/{row_id}")
-async def admin_delete_return(
-    row_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/sales-returns/<int:row_id>")
+@require_admin
+def admin_delete_return(row_id: int, user: dict) -> Any:
     if not database.delete_sales_return(row_id):
-        raise HTTPException(status_code=404, detail="Not found")
+        raise ApiHTTPError(404, "Not found")
     return {"success": True, "message": "Deleted"}
 
 
-@router.get("/purchases")
-async def admin_list_purchases(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/purchases")
+@require_admin
+def admin_list_purchases(user: dict) -> Any:
     return {"success": True, "items": database.list_purchases()}
 
 
-@router.post("/purchases", status_code=status.HTTP_201_CREATED)
-async def admin_create_purchase(
-    payload: PurchaseCreate,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/purchases")
+@require_admin
+def admin_create_purchase(user: dict) -> Any:
+    payload = parse_json_model(PurchaseCreate)
     row_id = database.insert_purchase(**payload.model_dump())
     # Optional stock-in if linked inventory
     if payload.inventory_id and payload.quantity:
@@ -1409,16 +1422,14 @@ async def admin_create_purchase(
             )
         except ValueError:
             pass
-    return {"success": True, "id": row_id, "message": "Purchase recorded"}
+    return {"success": True, "id": row_id, "message": "Purchase recorded"}, 201
 
 
-@router.delete("/purchases/{row_id}")
-async def admin_delete_purchase(
-    row_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/purchases/<int:row_id>")
+@require_admin
+def admin_delete_purchase(row_id: int, user: dict) -> Any:
     if not database.delete_purchase(row_id):
-        raise HTTPException(status_code=404, detail="Not found")
+        raise ApiHTTPError(404, "Not found")
     return {"success": True, "message": "Deleted"}
 
 
@@ -1426,17 +1437,17 @@ async def admin_delete_purchase(
 # Reminders & communication
 # ---------------------------------------------------------------------------
 
-@router.get("/reminders")
-async def admin_list_reminders(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/reminders")
+@require_admin
+def admin_list_reminders(user: dict) -> Any:
     data = database.list_reminders()
     return {"success": True, **data}
 
 
-@router.post("/reminders")
-async def admin_set_reminder(
-    payload: ReminderPayload,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/reminders")
+@require_admin
+def admin_set_reminder(user: dict) -> Any:
+    payload = parse_json_model(ReminderPayload)
     ok = database.set_entity_reminder(
         payload.entity_type,
         payload.entity_id,
@@ -1444,20 +1455,19 @@ async def admin_set_reminder(
         payload.reminder_note,
     )
     if not ok:
-        raise HTTPException(status_code=400, detail="Invalid entity")
+        raise ApiHTTPError(400, "Invalid entity")
     return {"success": True, "message": "Reminder saved"}
 
 
-@router.post("/communications")
-async def admin_log_comm(
-    payload: CommLogPayload,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/communications")
+@require_admin
+def admin_log_comm(user: dict) -> Any:
     """Log WhatsApp/SMS/Email/Phone/Follow-up action (no fake SMS send)."""
+    payload = parse_json_model(CommLogPayload)
     channel = payload.channel.strip().lower()
     allowed = {"whatsapp", "sms", "phone", "email", "followup", "intimation"}
     if channel not in allowed:
-        raise HTTPException(status_code=400, detail=f"channel must be one of {sorted(allowed)}")
+        raise ApiHTTPError(400, f"channel must be one of {sorted(allowed)}")
     log_id = database.log_communication(
         payload.entity_type,
         payload.entity_id,
@@ -1487,10 +1497,6 @@ async def admin_log_comm(
 # ---------------------------------------------------------------------------
 # Exports (Excel / PDF) + DB backup
 # ---------------------------------------------------------------------------
-
-from fastapi.responses import Response, FileResponse  # noqa: E402
-from api.exports import filename, rows_to_pdf, rows_to_xlsx  # noqa: E402
-
 
 def _export_bundle(kind: str) -> tuple[str, list[str], list[list[Any]]]:
     """Return title, headers, rows for export kind."""
@@ -1576,17 +1582,14 @@ def _export_bundle(kind: str) -> tuple[str, list[str], list[list[Any]]]:
         headers = ["Metric", "Value"]
         rows = [[k, v] for k, v in s.items() if k != "sales_by_day"]
         return "Dashboard", headers, rows
-    raise HTTPException(status_code=400, detail="Unknown export kind")
+    raise ApiHTTPError(400, "Unknown export kind")
 
 
-@router.get("/export/{kind}")
-async def admin_export(
-    kind: str,
-    format: str = "xlsx",
-    _user: dict = Depends(require_admin),
-):
+@bp.get("/export/<kind>")
+@require_admin
+def admin_export(kind: str, user: dict) -> Any:
     title, headers, rows = _export_bundle(kind)
-    fmt = (format or "xlsx").lower()
+    fmt = (request.args.get("format") or "xlsx").lower()
     if fmt == "xlsx":
         data = rows_to_xlsx(title, headers, rows)
         media = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -1596,30 +1599,33 @@ async def admin_export(
         media = "application/pdf"
         fname = filename(f"chalukya_{kind}", "pdf")
     else:
-        raise HTTPException(status_code=400, detail="format must be xlsx or pdf")
+        raise ApiHTTPError(400, "format must be xlsx or pdf")
     return Response(
-        content=data,
-        media_type=media,
+        data,
+        mimetype=media,
         headers={"Content-Disposition": f'attachment; filename="{fname}"'},
     )
 
 
-@router.get("/backup/database")
-async def admin_db_backup(_user: dict = Depends(require_admin)):
+@bp.get("/backup/database")
+@require_admin
+def admin_db_backup(user: dict) -> Any:
     """Download SQLite database file (proper backup, not spreadsheet)."""
     path = database.DATABASE_PATH
     if not path.is_file():
-        raise HTTPException(status_code=404, detail="Database file not found")
-    database.log_user(_user.get("username", "admin"), "backup.database")
-    return FileResponse(
-        path=str(path),
-        filename=filename("chalukya_showroom_backup", "db"),
-        media_type="application/octet-stream",
+        raise ApiHTTPError(404, "Database file not found")
+    database.log_user(user.get("username", "admin"), "backup.database")
+    return send_file(
+        str(path),
+        as_attachment=True,
+        download_name=filename("chalukya_showroom_backup", "db"),
+        mimetype="application/octet-stream",
     )
 
 
-@router.get("/analytics")
-async def admin_analytics(_user: dict = Depends(require_admin)) -> dict[str, Any]:
+@bp.get("/analytics")
+@require_admin
+def admin_analytics(user: dict) -> Any:
     return {"success": True, "data": database.get_analytics_payload()}
 
 
@@ -1632,34 +1638,31 @@ class ReviewStatusPayload(BaseModel):
     is_featured: Optional[int] = Field(default=None, ge=0, le=1)
 
 
-@router.get("/reviews")
-async def admin_list_reviews(
-    _user: dict = Depends(require_admin),
-    status: Optional[str] = None,
-) -> dict[str, Any]:
+@bp.get("/reviews")
+@require_admin
+def admin_list_reviews(user: dict) -> Any:
+    status_filter = request.args.get("status")
     return {
         "success": True,
-        "items": database.list_reviews(status=status, limit=300),
+        "items": database.list_reviews(status=status_filter, limit=300),
     }
 
 
-@router.patch("/reviews/{review_id}")
-async def admin_update_review(
-    review_id: int,
-    payload: ReviewStatusPayload,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.patch("/reviews/<int:review_id>")
+@require_admin
+def admin_update_review(review_id: int, user: dict) -> Any:
+    payload = parse_json_model(ReviewStatusPayload)
     fields: dict[str, Any] = {}
     if payload.status is not None:
         fields["status"] = payload.status
     if payload.is_featured is not None:
         fields["is_featured"] = int(payload.is_featured)
     if not fields:
-        raise HTTPException(status_code=400, detail="Nothing to update")
+        raise ApiHTTPError(400, "Nothing to update")
     if not database.update_review(review_id, **fields):
-        raise HTTPException(status_code=404, detail="Review not found")
+        raise ApiHTTPError(404, "Review not found")
     database.log_user(
-        _user.get("username", "admin"),
+        user.get("username", "admin"),
         "review.moderate",
         entity_type="review",
         entity_id=review_id,
@@ -1668,15 +1671,13 @@ async def admin_update_review(
     return {"success": True, "message": "Review updated"}
 
 
-@router.delete("/reviews/{review_id}")
-async def admin_delete_review(
-    review_id: int,
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.delete("/reviews/<int:review_id>")
+@require_admin
+def admin_delete_review(review_id: int, user: dict) -> Any:
     if not database.delete_review(review_id):
-        raise HTTPException(status_code=404, detail="Review not found")
+        raise ApiHTTPError(404, "Review not found")
     database.log_user(
-        _user.get("username", "admin"),
+        user.get("username", "admin"),
         "review.delete",
         entity_type="review",
         entity_id=review_id,
@@ -1684,34 +1685,31 @@ async def admin_delete_review(
     return {"success": True, "message": "Review deleted"}
 
 
-@router.get("/logs/app")
-async def admin_app_logs(
-    _user: dict = Depends(require_admin),
-    level: Optional[str] = None,
-    limit: int = 200,
-) -> dict[str, Any]:
+@bp.get("/logs/app")
+@require_admin
+def admin_app_logs(user: dict) -> Any:
+    level = request.args.get("level")
+    limit = int(request.args.get("limit") or 200)
     return {"success": True, "items": database.list_app_logs(limit=limit, level=level)}
 
 
-@router.get("/logs/user")
-async def admin_user_logs(
-    _user: dict = Depends(require_admin),
-    username: Optional[str] = None,
-    limit: int = 200,
-) -> dict[str, Any]:
+@bp.get("/logs/user")
+@require_admin
+def admin_user_logs(user: dict) -> Any:
+    username = request.args.get("username")
+    limit = int(request.args.get("limit") or 200)
     return {
         "success": True,
         "items": database.list_user_logs(limit=limit, username=username),
     }
 
 
-@router.get("/logs/cli")
-async def admin_logs_cli(
-    _user: dict = Depends(require_admin),
-    kind: str = "both",
-    limit: int = 100,
-) -> Response:
+@bp.get("/logs/cli")
+@require_admin
+def admin_logs_cli(user: dict) -> Any:
     """CLI-friendly plain-text dump of logs (timestamps)."""
+    kind = request.args.get("kind") or "both"
+    limit = int(request.args.get("limit") or 100)
     lines: list[str] = []
     lines.append(f"# Chalukya Tiles logs dump (UTC) · {database.utc_now_iso()}")
     lines.append(f"# kind={kind} limit={limit}")
@@ -1732,23 +1730,24 @@ async def admin_logs_cli(
             )
     text = "\n".join(lines) + "\n"
     return Response(
-        content=text,
-        media_type="text/plain; charset=utf-8",
+        text,
+        mimetype="text/plain; charset=utf-8",
         headers={
             "Content-Disposition": f'attachment; filename="{filename("chalukya_logs", "txt")}"'
         },
     )
 
 
-@router.post("/import/json")
-async def admin_import_json(
-    payload: dict[str, Any],
-    _user: dict = Depends(require_admin),
-) -> dict[str, Any]:
+@bp.post("/import/json")
+@require_admin
+def admin_import_json(user: dict) -> Any:
     """
     Import JSON: { "inventory": [ {...}, ... ], "customers": [...] optional }
     Inventory rows use same fields as create (name, category, material_category, ...).
     """
+    payload = request.get_json(silent=True) or {}
+    if not isinstance(payload, dict):
+        raise ApiHTTPError(400, "JSON object required")
     inv_rows = payload.get("inventory") or []
     cust_rows = payload.get("customers") or []
     created_inv = 0
@@ -1807,7 +1806,7 @@ async def admin_import_json(
         except Exception as exc:  # pragma: no cover
             errors.append(f"customers[{i}]: {exc}")
     database.log_user(
-        _user.get("username", "admin"),
+        user.get("username", "admin"),
         "import.json",
         detail=f"inv={created_inv} cust={created_cust} errors={len(errors)}",
     )
@@ -1822,6 +1821,3 @@ async def admin_import_json(
         "created_customers": created_cust,
         "errors": errors,
     }
-
-
-

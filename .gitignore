@@ -97,3 +97,7 @@ static/videos/*
 # Local browser verification artifacts
 .chrome-verify/
 
+
+database/*.pre-flask-backup
+database/*.db.pre-flask-backup
+
