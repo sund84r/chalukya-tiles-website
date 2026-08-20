@@ -33,16 +33,17 @@
   object-position: 55% 45%;
 }
 
-/* Mobile: show the FULL wide hero photo (no crop) */
+/* Mobile: hero box = exact photo ratio → full image, zero letterbox gap */
 @media (max-width: 767px) {
   .hero {
-    /* Match photo aspect (~1802×872) so the entire image fits the frame */
-    min-height: 0;
+    /* Kill desktop 100vh so no black band under the photo */
+    min-height: unset;
     max-height: none;
     height: auto;
+    width: 100%;
+    /* Native hero-luxury.jpg ratio (1802×872) */
     aspect-ratio: 1802 / 872;
-    /* Floor so headline still has room on very narrow phones */
-    min-height: max(calc(100vw * 872 / 1802), 13.5rem);
+    background: transparent;
   }
 
   .hero__media {
@@ -59,9 +60,10 @@
   .hero__poster {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* entire photo visible */
+    /* Same ratio as box → fills edge-to-edge, no crop, no bars */
+    object-fit: cover;
     object-position: center center;
-    background-color: #0a0a0a;
+    background-color: transparent;
   }
 }
 
@@ -148,17 +150,27 @@
   .hero__title {
     max-width: none;
     width: 100%;
-    font-size: clamp(1.15rem, 5.4vw, 1.55rem);
+    /* Phone: auto-scale with viewport — stays compact on short hero */
+    font-size: clamp(0.95rem, 3.8vw + 0.35rem, 1.25rem);
+    letter-spacing: 0.03em;
+    line-height: 1.18;
+    -webkit-text-stroke: 0.6px #000000;
+  }
+
+  .hero__title-line--static {
+    letter-spacing: 0.04em;
   }
 
   .hero__title-line--typing {
-    margin-top: 0.3em;
+    margin-top: 0.28em;
     font-size: 0.78em;
+    min-height: 1.2em;
   }
 
   .hero__typing {
-    min-width: min(14ch, 100%);
+    min-width: min(12ch, 100%);
     white-space: normal;
+    -webkit-text-stroke: 0.5px #000000;
   }
 
   /* Softer right wash on short mobile hero */
@@ -218,7 +230,8 @@
 .hero__title {
   color: #ffffff;
   font-family: var(--font-sans);
-  font-size: clamp(1.65rem, 4.2vw, 2.65rem);
+  /* Fluid type: phone → tablet → desktop */
+  font-size: clamp(1.05rem, 0.55rem + 2.2vw, 2.35rem);
   font-weight: var(--fw-semibold);
   letter-spacing: 0.04em;
   line-height: 1.2;
@@ -226,8 +239,8 @@
   margin-inline: 0;
   margin-left: auto;
   margin-bottom: 0;
-  /* Black outline / border around white letters */
-  -webkit-text-stroke: 1px #000000;
+  /* Black outline scales down via thinner stroke on small screens (see mobile block) */
+  -webkit-text-stroke: 0.85px #000000;
   paint-order: stroke fill;
   text-shadow:
     -1px -1px 0 #000,
@@ -237,6 +250,20 @@
      0 0 2px #000;
   width: 100%;
   text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .hero__title {
+    font-size: clamp(1.45rem, 1rem + 1.6vw, 2.15rem);
+    -webkit-text-stroke: 0.95px #000000;
+  }
+}
+
+@media (min-width: 1100px) {
+  .hero__title {
+    font-size: clamp(1.85rem, 1.1rem + 1.35vw, 2.45rem);
+    -webkit-text-stroke: 1px #000000;
+  }
 }
 
 .hero__subtitle {

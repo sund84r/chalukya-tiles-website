@@ -281,6 +281,8 @@ body[data-page="home"] .nav__brand--home {
   border-radius: var(--radius-sm);
   transition: color var(--duration-base) var(--ease-out);
   -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  cursor: pointer;
 }
 
 .nav__toggle:hover {
@@ -340,6 +342,8 @@ body[data-page="home"] .nav__brand--home {
   transition: opacity var(--duration-base) var(--ease-out);
   /* Solid enough that page cards never “show through” the menu chrome */
   -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  cursor: pointer;
 }
 
 .nav__drawer.is-open .nav__drawer-overlay {

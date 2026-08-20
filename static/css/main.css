@@ -582,15 +582,17 @@ p {
     transform var(--duration-fast) var(--ease-out);
 }
 
-.btn:hover {
-  color: var(--btn-hover-color);
-  background-color: var(--btn-hover-bg);
-  box-shadow: var(--shadow-md), var(--btn-glow);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    color: var(--btn-hover-color);
+    background-color: var(--btn-hover-bg);
+    box-shadow: var(--shadow-md), var(--btn-glow);
+    transform: translateY(-1px);
+  }
 }
 
 .btn:active {
-  transform: translateY(0);
+  transform: none;
 }
 
 .btn:disabled,
@@ -929,6 +931,13 @@ img[loading="lazy"] {
   flex-direction: column;
   gap: var(--space-3);
   align-items: flex-end;
+  /* Never let a stuck transform/pulse paint outside the stack */
+  overflow: visible;
+  pointer-events: none;
+}
+
+.float-actions > * {
+  pointer-events: auto;
 }
 
 @media (min-width: 768px) {
@@ -942,30 +951,60 @@ img[loading="lazy"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.25rem;
-  height: 3.25rem;
+  box-sizing: border-box;
+  width: 3.25rem !important;
+  height: 3.25rem !important;
+  min-width: 3.25rem !important;
+  min-height: 3.25rem !important;
+  max-width: 3.25rem !important;
+  max-height: 3.25rem !important;
+  flex: 0 0 3.25rem;
   border: none;
   cursor: pointer;
-  border-radius: var(--radius-full);
+  border-radius: 50%;
   box-shadow: var(--shadow-md);
+  /* CRITICAL: never scale — sticky :hover on touch/desktop was creating a giant green disc */
+  transform: none !important;
+  scale: none;
   transition:
-    transform var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out),
-    opacity var(--duration-base) var(--ease-out);
+    opacity var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    filter var(--duration-base) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overflow: hidden;
 }
 
-.float-btn:hover {
-  transform: translateY(-3px) scale(1.04);
-  box-shadow: var(--shadow-lg);
+.float-btn:hover,
+.float-btn:focus,
+.float-btn:active,
+.float-btn.pulse-soft {
+  transform: none !important;
+  width: 3.25rem !important;
+  height: 3.25rem !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .float-btn:hover {
+    box-shadow: var(--shadow-lg);
+    filter: brightness(1.06);
+  }
 }
 
 .float-btn--whatsapp {
   background: #25d366;
   color: #fff;
+  /* Soft static glow only — no animated expanding ring */
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+  animation: none !important;
 }
 
-.float-btn--whatsapp:hover {
+.float-btn--whatsapp:hover,
+.float-btn--whatsapp:focus,
+.float-btn--whatsapp:active {
   color: #fff;
+  transform: none !important;
 }
 
 .float-btn--review {
@@ -2005,7 +2044,6 @@ body.review-modal-open {
 @media (prefers-reduced-motion: reduce) {
   .card:hover,
   .btn:hover,
-  .float-btn:hover,
   .mv-card:hover,
   .achievement-card:hover,
   .testimonial-card:hover,

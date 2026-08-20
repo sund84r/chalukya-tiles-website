@@ -66,6 +66,7 @@
       document.body.style.width = "100%";
       document.body.style.left = "0";
       document.body.style.right = "0";
+      document.body.style.overflow = "hidden";
     } else {
       document.documentElement.classList.remove("nav-open");
       document.body.classList.remove("nav-open");
@@ -74,7 +75,20 @@
       document.body.style.width = "";
       document.body.style.left = "";
       document.body.style.right = "";
-      window.scrollTo(0, scrollLockY);
+      document.body.style.overflow = "";
+      // Instant restore — avoids visible “scroll jump” when tapping the dimmed side
+      const y = scrollLockY;
+      if (typeof window.scrollTo === "function") {
+        try {
+          window.scrollTo({ top: y, left: 0, behavior: "instant" });
+        } catch (_) {
+          window.scrollTo(0, y);
+        }
+      }
+      // iOS sometimes needs a second tick
+      window.requestAnimationFrame(() => {
+        window.scrollTo(0, y);
+      });
     }
   }
 
@@ -106,7 +120,11 @@
     }
   }
 
-  function closeDrawer() {
+  function closeDrawer(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     setDrawer(false);
     if (toggle) {
       try {
@@ -125,7 +143,20 @@
     });
 
     if (overlay) {
-      overlay.addEventListener("click", closeDrawer);
+      // pointerdown closes faster and blocks click-through scroll on the hero
+      overlay.addEventListener(
+        "pointerdown",
+        (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          closeDrawer(event);
+        },
+        { passive: false }
+      );
+      overlay.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      });
     }
 
     drawerLinks.forEach((link) => {

@@ -179,17 +179,18 @@
 /* --------------------------------------------------------------------------
    Soft pulse (e.g. live indicator / WhatsApp attention)
    -------------------------------------------------------------------------- */
+/* Deprecated — kept inert so old cached HTML cannot inflate FABs */
 .pulse-soft {
-  animation: pulse-soft 2.4s var(--ease-in-out) infinite;
+  animation: none !important;
+  transform: none !important;
 }
 
 @keyframes pulse-soft {
   0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.45);
-  }
+  100%,
   70% {
-    box-shadow: 0 0 0 12px rgba(37, 211, 102, 0);
+    box-shadow: none;
+    transform: none;
   }
 }
 
