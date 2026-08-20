@@ -37,6 +37,7 @@ from database.db import (
     CONCEPT_GALLERY_CATEGORIES,
     INVENTORY_CATEGORIES,
     category_slug,
+    get_site_stats,
     init_db,
     list_collection_videos,
     list_concept_gallery,
@@ -190,6 +191,7 @@ def create_app() -> Flask:
 
     @app.get("/")
     def home():
+        trust_stats = get_site_stats()
         collection_videos = list_collection_videos(active_only=True, limit=6)
 
         inv = list_public_inventory_products(limit=50)
@@ -291,6 +293,7 @@ def create_app() -> Flask:
             gallery_preview_items=gallery_preview,
             home_reviews=home_reviews,
             new_arrivals=new_arrivals,
+            trust_stats=trust_stats,
         )
 
     @app.get("/about")

@@ -23,6 +23,7 @@
     "data-tools": "Backup / Export / Import",
     "app-logs": "Application Logs",
     "user-logs": "User Logs",
+    "site-stats": "Homepage Stats",
     users: "User Management",
   };
 
@@ -414,9 +415,21 @@
     if (name === "customers") return loadCustomers();
     if (name === "reviews") return loadReviews();
     if (name === "users") return loadUsers();
+    if (name === "site-stats") return loadSiteStats();
     if (window.ChalukyaAdminBiz && typeof window.ChalukyaAdminBiz.load === "function") {
       return window.ChalukyaAdminBiz.load(name);
     }
+  }
+
+  async function loadSiteStats() {
+    const data = await api("/api/admin/site-stats");
+    const stats = (data && data.stats) || {};
+    const form = document.getElementById("site-stats-form");
+    if (!form) return;
+    form.years_experience.value = stats.years_experience ?? 25;
+    form.projects_completed.value = stats.projects_completed ?? 2500;
+    form.tile_designs.value = stats.tile_designs ?? 800;
+    form.happy_clients.value = stats.happy_clients ?? 15000;
   }
 
   function renderPermCheckboxes(container, selected) {
@@ -1342,6 +1355,30 @@
           renderCreatePermGrid();
           toast("Staff user created", "success");
           loadUsers();
+        } catch (ex) {
+          toast(ex.message, "error");
+        }
+      });
+    }
+
+    const siteStatsForm = document.getElementById("site-stats-form");
+    if (siteStatsForm && !siteStatsForm.dataset.bound) {
+      siteStatsForm.dataset.bound = "1";
+      siteStatsForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const payload = {
+          years_experience: Number(siteStatsForm.years_experience.value || 0),
+          projects_completed: Number(siteStatsForm.projects_completed.value || 0),
+          tile_designs: Number(siteStatsForm.tile_designs.value || 0),
+          happy_clients: Number(siteStatsForm.happy_clients.value || 0),
+        };
+        try {
+          await api("/api/admin/site-stats", {
+            method: "PUT",
+            body: JSON.stringify(payload),
+          });
+          toast("Homepage stats saved — refresh the public home page", "success");
+          loadSiteStats();
         } catch (ex) {
           toast(ex.message, "error");
         }

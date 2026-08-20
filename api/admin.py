@@ -39,7 +39,7 @@ def _resolve_api_modules(path: str) -> Optional[tuple[str, ...]]:
     """Map /api/admin/* paths to required permission module keys."""
     if path in ("/api/admin/login", "/api/admin/logout", "/api/admin/me"):
         return None
-    if path.startswith("/api/admin/users"):
+    if path.startswith("/api/admin/users") or path.startswith("/api/admin/site-stats"):
         return ("__superadmin__",)
     if path.startswith("/api/admin/logs/app") or path.startswith("/api/admin/logs/cli"):
         # CLI dump may be either log type; require either log permission
@@ -410,6 +410,42 @@ class AdminUserUpdate(BaseModel):
     password: Optional[str] = Field(default=None, min_length=6, max_length=200)
     permissions: Optional[dict[str, int]] = None
     is_active: Optional[int] = Field(default=None, ge=0, le=1)
+
+
+class SiteStatsUpdate(BaseModel):
+    years_experience: int = Field(..., ge=0, le=999999)
+    projects_completed: int = Field(..., ge=0, le=99999999)
+    tile_designs: int = Field(..., ge=0, le=99999999)
+    happy_clients: int = Field(..., ge=0, le=99999999)
+
+
+@bp.get("/site-stats")
+@require_admin
+@require_superadmin
+def admin_get_site_stats(user: dict) -> Any:
+    return {"success": True, "stats": database.get_site_stats()}
+
+
+@bp.put("/site-stats")
+@require_admin
+@require_superadmin
+def admin_put_site_stats(user: dict) -> Any:
+    payload = parse_json_model(SiteStatsUpdate)
+    stats = database.update_site_stats(
+        years_experience=payload.years_experience,
+        projects_completed=payload.projects_completed,
+        tile_designs=payload.tile_designs,
+        happy_clients=payload.happy_clients,
+    )
+    client = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (
+        request.remote_addr or None
+    )
+    database.log_user(user["username"], "site_stats.update", ip=client)
+    database.log_app(
+        f"Homepage trust stats updated by {user['username']}: {stats}",
+        source="admin",
+    )
+    return {"success": True, "message": "Homepage stats saved", "stats": stats}
 
 
 @bp.get("/users")

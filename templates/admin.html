@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/admin.css?v182-oxford">
+  <link rel="stylesheet" href="/static/css/admin.css?v196-stats">
   <link rel="icon" type="image/png" href="/static/icons/favicon-32.png?v=193" sizes="32x32">
   <link rel="icon" type="image/png" href="/static/icons/favicon-48.png?v=193" sizes="48x48">
   <link rel="icon" href="/static/icons/favicon.ico?v=193" sizes="any">
@@ -20,8 +20,8 @@
 
     <aside class="admin-sidebar" data-admin-sidebar id="admin-sidebar" aria-label="Admin menu">
       <div class="admin-sidebar__brand admin-sidebar__brand--stack">
-        <img src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="200" height="68">
-<strong class="admin-sidebar__admin-title">ADMIN</strong>
+        <img src="/static/icons/logo-chalukya.png?v=175" alt="Chalukya Tiles" width="120" height="41">
+        <strong class="admin-sidebar__admin-title">ADMIN</strong>
       </div>
       <nav class="admin-nav" aria-label="Admin sections">
         <p class="admin-nav__group">Dashboard</p>
@@ -83,6 +83,9 @@
         </button>
         <button type="button" class="admin-nav__item" data-admin-nav="user-logs">
           <span class="admin-nav__text">User Logs</span>
+        </button>
+        <button type="button" class="admin-nav__item" data-admin-nav="site-stats" data-admin-super-only hidden>
+          <span class="admin-nav__text">Homepage Stats</span>
         </button>
         <button type="button" class="admin-nav__item" data-admin-nav="users" data-admin-super-only hidden>
           <span class="admin-nav__text">User Management</span>
@@ -1032,6 +1035,43 @@
         </div>
       </section>
 
+      <!-- Homepage trust stats (superadmin only) -->
+      <section class="admin-panel" data-admin-panel="site-stats" hidden>
+        <div class="admin-card">
+          <div class="admin-card__head">
+            <h2>Homepage trust stats</h2>
+          </div>
+          <p class="admin-help">
+            These numbers appear on the public home page under the hero
+            (Years Experience, Projects Completed, Tile Designs, Happy Clients).
+            Only the main admin can edit them. Values show with a “+” suffix on the site.
+          </p>
+          <form id="site-stats-form" class="admin-form" novalidate>
+            <div class="admin-form-row">
+              <label class="admin-field">
+                <span>Years Experience *</span>
+                <input type="number" name="years_experience" min="0" step="1" required>
+              </label>
+              <label class="admin-field">
+                <span>Projects Completed *</span>
+                <input type="number" name="projects_completed" min="0" step="1" required>
+              </label>
+            </div>
+            <div class="admin-form-row">
+              <label class="admin-field">
+                <span>Tile Designs *</span>
+                <input type="number" name="tile_designs" min="0" step="1" required>
+              </label>
+              <label class="admin-field">
+                <span>Happy Clients *</span>
+                <input type="number" name="happy_clients" min="0" step="1" required>
+              </label>
+            </div>
+            <button type="submit" class="admin-btn admin-btn--primary">Save homepage stats</button>
+          </form>
+        </div>
+      </section>
+
       <!-- User management (superadmin only) -->
       <section class="admin-panel" data-admin-panel="users" hidden>
         <div class="admin-card">
@@ -1075,7 +1115,7 @@
       </section>
     </div>
   </div>
-  <script src="/static/js/admin.js?v182-oxford" defer></script>
+  <script src="/static/js/admin.js?v196-stats" defer></script>
   <script src="/static/js/admin-biz.js?v170" defer></script>
   <script src="/static/js/admin-charts.js?v170" defer></script>
 </body>

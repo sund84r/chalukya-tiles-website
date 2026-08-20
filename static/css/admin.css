@@ -229,7 +229,7 @@ html.admin-menu-open {
 }
 
 .admin-sidebar__brand--stack img {
-  max-width: 190px;
+  max-width: 108px;
 }
 
 .admin-sidebar__brand-name {
@@ -249,15 +249,15 @@ html.admin-menu-open {
 .admin-sidebar__admin-title {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.85rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   /* Match logo mark blue (deep navy / Oxford) */
   color: #150f3e;
   line-height: 1.1;
   text-shadow: none;
-  margin-top: 0.15rem;
+  margin-top: 0.35rem;
 }
 
 .admin-sidebar__menu-title {

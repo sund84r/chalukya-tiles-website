@@ -2097,3 +2097,71 @@ def sub_category_label(item: dict) -> str:
         or (item.get("pattern") or "").strip()
         or "General"
     )
+
+
+# ---------------------------------------------------------------------------
+# Homepage trust-strip stats (site_settings)
+# ---------------------------------------------------------------------------
+
+TRUST_STAT_KEYS = (
+    "trust_years_experience",
+    "trust_projects_completed",
+    "trust_tile_designs",
+    "trust_happy_clients",
+)
+
+TRUST_STAT_DEFAULTS = {
+    "trust_years_experience": 25,
+    "trust_projects_completed": 2500,
+    "trust_tile_designs": 800,
+    "trust_happy_clients": 15000,
+}
+
+
+def get_site_stats() -> dict[str, int]:
+    """Return homepage trust counters (ints). Missing keys fall back to defaults."""
+    out = dict(TRUST_STAT_DEFAULTS)
+    with get_db() as conn:
+        rows = conn.execute(
+            "SELECT key, value FROM site_settings WHERE key LIKE 'trust_%'"
+        ).fetchall()
+    for row in rows:
+        key = row["key"]
+        if key in out:
+            try:
+                out[key] = max(0, int(str(row["value"]).strip()))
+            except (TypeError, ValueError):
+                pass
+    return {
+        "years_experience": out["trust_years_experience"],
+        "projects_completed": out["trust_projects_completed"],
+        "tile_designs": out["trust_tile_designs"],
+        "happy_clients": out["trust_happy_clients"],
+    }
+
+
+def update_site_stats(
+    *,
+    years_experience: int,
+    projects_completed: int,
+    tile_designs: int,
+    happy_clients: int,
+) -> dict[str, int]:
+    """Upsert trust-strip numbers. Returns normalized stats."""
+    mapping = {
+        "trust_years_experience": max(0, int(years_experience)),
+        "trust_projects_completed": max(0, int(projects_completed)),
+        "trust_tile_designs": max(0, int(tile_designs)),
+        "trust_happy_clients": max(0, int(happy_clients)),
+    }
+    now = utc_now_iso()
+    with get_db() as conn:
+        for key, val in mapping.items():
+            conn.execute(
+                """
+                INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, ?)
+                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+                """,
+                (key, str(val), now),
+            )
+    return get_site_stats()

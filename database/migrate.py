@@ -330,5 +330,33 @@ def migrate(conn: sqlite3.Connection) -> dict[str, Any]:
         except sqlite3.IntegrityError:
             report["steps"].append("uq_tiles_name_colour_pattern_SKIPPED")
 
+    # --- Homepage trust-strip stats (editable by superadmin) ---
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS site_settings (
+            key         VARCHAR(80) PRIMARY KEY,
+            value       TEXT NOT NULL,
+            updated_at  TEXT NOT NULL
+        )
+        """
+    )
+    defaults = {
+        "trust_years_experience": "25",
+        "trust_projects_completed": "2500",
+        "trust_tile_designs": "800",
+        "trust_happy_clients": "15000",
+    }
+    now = utc_now_iso()
+    for key, val in defaults.items():
+        exists = conn.execute(
+            "SELECT 1 FROM site_settings WHERE key = ?", (key,)
+        ).fetchone()
+        if not exists:
+            conn.execute(
+                "INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, ?)",
+                (key, val, now),
+            )
+    report["steps"].append("site_settings.trust_defaults")
+
     report["migrated_at"] = utc_now_iso()
     return report
