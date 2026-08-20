@@ -276,6 +276,8 @@
   function initParallax() {
     const layers = document.querySelectorAll("[data-parallax]");
     if (!layers.length || prefersReducedMotion) return;
+    // Skip on phones — parallax crops/breaks the wide hero photo
+    if (window.matchMedia("(max-width: 767px)").matches) return;
 
     let ticking = false;
 

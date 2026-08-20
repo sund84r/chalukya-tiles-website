@@ -20,6 +20,8 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+  /* Prevent parallax transforms from exposing empty gaps on small screens */
+  overflow: hidden;
 }
 
 .hero__video,
@@ -29,6 +31,31 @@
   object-fit: cover;
   /* Keep island / counter visible under right-aligned copy */
   object-position: 55% 45%;
+}
+
+/* Mobile: wide photo + tall viewport — avoid extreme crop / broken framing */
+@media (max-width: 767px) {
+  .hero {
+    /* Shorter than full phone height so cover doesn't zoom past the scene */
+    min-height: min(100dvh, 72vw + 14rem);
+    min-height: min(100svh, 72vw + 14rem);
+    height: min(100dvh, 72vw + 14rem);
+    max-height: 100dvh;
+  }
+
+  .hero__media[data-parallax] {
+    transform: none !important;
+  }
+
+  .hero__video,
+  .hero__poster {
+    /* Show more of the wide kitchen; bias slightly toward counter/text area */
+    object-fit: cover;
+    object-position: 58% 42%;
+    /* Extra scale safety against subpixel gaps */
+    min-width: 100%;
+    min-height: 100%;
+  }
 }
 
 .hero__poster {
@@ -94,6 +121,38 @@
   box-shadow: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
+}
+
+/* Mobile: keep copy inside the frame, avoid overflow / cut-off */
+@media (max-width: 767px) {
+  .hero__content,
+  .hero__content--right {
+    top: auto;
+    bottom: max(1.5rem, env(safe-area-inset-bottom, 0px) + 1.25rem);
+    right: 1.15rem;
+    left: 1.15rem;
+    width: auto;
+    max-width: none;
+    transform: none;
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .hero__title {
+    max-width: none;
+    width: 100%;
+    font-size: clamp(1.35rem, 6.2vw, 1.85rem);
+  }
+
+  .hero__title-line--typing {
+    margin-top: 0.4em;
+    font-size: 0.78em;
+  }
+
+  .hero__typing {
+    min-width: min(15ch, 100%);
+    white-space: normal;
+  }
 }
 
 @media (min-width: 768px) {
