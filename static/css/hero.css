@@ -1,6 +1,6 @@
 /* ==========================================================================
    Chalukya Tiles — hero.css
-   Homepage hero + home sections. White + light Oxford blue.
+   Luxury black + shine gold (marble showroom hero)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -11,11 +11,11 @@
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  color: var(--color-charcoal, #0a2540);
+  color: #f5efe6;
   overflow: hidden;
-  background: #ffffff;
+  background: #050505;
 }
 
 .hero__media {
@@ -29,6 +29,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center center;
+  image-rendering: auto;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0) scale(1.02);
 }
 
 .hero__poster {
@@ -43,21 +47,24 @@
   pointer-events: none;
 }
 
+/* Soft vignette only — no flat wash over marble/gold */
 .hero__overlay {
   position: absolute;
   inset: 0;
   z-index: 2;
+  pointer-events: none;
   background:
     linear-gradient(
-      165deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(238, 243, 249, 0.82) 45%,
-      rgba(214, 226, 240, 0.88) 100%
+      180deg,
+      rgba(5, 5, 5, 0.55) 0%,
+      rgba(5, 5, 5, 0.12) 28%,
+      rgba(5, 5, 5, 0.2) 55%,
+      rgba(5, 5, 5, 0.78) 100%
     ),
     radial-gradient(
-      ellipse at 50% 18%,
-      rgba(107, 140, 184, 0.16),
-      transparent 55%
+      ellipse at 50% 40%,
+      transparent 0%,
+      rgba(5, 5, 5, 0.35) 100%
     );
 }
 
@@ -65,7 +72,7 @@
   position: relative;
   z-index: 3;
   width: 100%;
-  padding-top: calc(var(--header-height) + var(--space-6));
+  padding-top: calc(var(--header-height) + var(--space-8));
   padding-bottom: var(--space-16);
   text-align: center;
   display: flex;
@@ -73,66 +80,28 @@
   align-items: center;
 }
 
-/* Center logo — natural colours, no plate / no extra text */
-.hero__brand {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  width: 100%;
-  margin-bottom: var(--space-7);
-  background: transparent;
-}
-
-.hero__logo {
-  display: block;
-  width: min(88vw, 28rem);
-  height: auto;
-  max-height: 8.5rem;
-  object-fit: contain;
-  background: transparent;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  image-rendering: auto;
-  -ms-interpolation-mode: bicubic;
-  filter: none;
-}
-
+.hero__brand,
+.hero__logo,
 .hero__brand-name {
   display: none !important;
 }
 
-@media (min-width: 768px) {
-  .hero__logo {
-    width: min(70vw, 34rem);
-    max-height: 9.5rem;
-  }
-}
-
-@media (min-width: 1100px) {
-  .hero__logo {
-    width: min(48vw, 38rem);
-    max-height: 10.5rem;
-  }
-}
-
 .hero__eyebrow {
-  color: var(--color-highlight, #1a4a8a);
+  color: var(--color-gold, #d4af37);
   margin-bottom: var(--space-4);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+  letter-spacing: 0.22em;
 }
 
 .hero__title {
-  color: var(--color-oxford, #002147);
-  font-size: clamp(2rem, 6.2vw, 3.85rem);
+  color: #faf7f2;
+  font-size: clamp(2.1rem, 6.4vw, 4rem);
   font-weight: var(--fw-bold);
   letter-spacing: var(--ls-tight);
   max-width: 18ch;
   margin-inline: auto;
   margin-bottom: var(--space-5);
-  text-shadow: none;
+  text-shadow: 0 4px 28px rgba(0, 0, 0, 0.65);
   width: 100%;
 }
 
@@ -140,7 +109,6 @@
   display: block;
 }
 
-/* Typing row: reserved space so phrases never collide with subtitle */
 .hero__title-line--typing {
   display: flex;
   flex-wrap: wrap;
@@ -152,7 +120,7 @@
 }
 
 .hero__title-for {
-  color: var(--color-oxford-soft, #3d5f8f);
+  color: rgba(245, 239, 230, 0.88);
   font-weight: var(--fw-bold);
 }
 
@@ -162,8 +130,9 @@
   justify-content: flex-start;
   min-width: min(12.5ch, 100%);
   min-height: 1.2em;
-  color: var(--color-highlight, #1a4a8a);
+  color: var(--color-gold-bright, #e8c547);
   white-space: nowrap;
+  text-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
 }
 
 .hero__typing [data-typing-text] {
@@ -172,7 +141,7 @@
 }
 
 .hero__title-accent {
-  color: var(--color-highlight, #1a4a8a);
+  color: var(--color-gold-bright, #e8c547);
 }
 
 .hero__subtitle {
@@ -181,7 +150,8 @@
   margin-bottom: var(--space-8);
   font-size: clamp(var(--fs-md), 2.2vw, var(--fs-lg));
   line-height: var(--lh-relaxed);
-  color: var(--color-stone, #5a7394);
+  color: rgba(245, 239, 230, 0.86);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
   position: relative;
   z-index: 1;
 }
@@ -199,7 +169,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
-  color: var(--color-oxford-soft, #3d5f8f);
+  color: var(--color-gold, #d4af37);
   font-size: var(--fs-xs);
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
@@ -208,7 +178,7 @@
 }
 
 .hero__scroll:hover {
-  color: var(--color-highlight, #1a4a8a);
+  color: var(--color-gold-bright, #e8c547);
 }
 
 .hero__scroll-icon {
@@ -281,9 +251,10 @@
   font-family: var(--font-display);
   font-size: clamp(var(--fs-2xl), 3vw, var(--fs-3xl));
   font-weight: var(--fw-bold);
-  color: var(--color-brand-blue-light);
+  color: var(--color-gold, #d4af37);
   line-height: 1;
   margin-bottom: var(--space-2);
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
 }
 
 .trust-strip__label {
@@ -341,8 +312,8 @@
 
 .feature-card {
   padding: var(--space-8) var(--space-6);
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
+  background: #141414;
+  border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xs);
   transition:
@@ -353,8 +324,8 @@
 }
 
 .feature-card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: rgba(47, 125, 225, 0.35);
+  box-shadow: var(--shadow-glow);
+  border-color: rgba(212, 175, 55, 0.45);
   transform: translateY(-4px);
 }
 

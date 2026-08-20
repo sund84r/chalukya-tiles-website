@@ -20,11 +20,11 @@
 /* Keep logo + hamburger above the full-screen drawer */
 body.nav-open .site-header {
   z-index: calc(var(--z-modal) + 20);
-  background-color: #ffffff;
+  background-color: #0a0a0a;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   box-shadow: var(--shadow-sm);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
 }
 
 body.nav-open .site-header .nav__toggle {
@@ -50,26 +50,26 @@ body.nav-open .float-actions {
   box-shadow: none;
 }
 
-/* Light hero: Oxford blue links on white */
+/* Transparent over luxury hero — champagne links */
 .site-header--transparent .nav__logo-text,
 .site-header--transparent .nav__link,
 .site-header--transparent .nav__toggle {
-  color: var(--color-oxford, #002147);
+  color: #f5efe6;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
 }
 
 .site-header--transparent .nav__logo-mark {
-  color: var(--color-highlight);
+  color: var(--color-gold, #d4af37);
 }
 
-/* Solid state while scrolling (or always on inner pages without hero video).
-   Pure white header so tile pages stay bright and clean. */
+/* Solid scrolled / inner pages — black glass + gold */
 .site-header--solid,
 .site-header.is-scrolled {
-  background-color: #ffffff;
+  background-color: rgba(10, 10, 10, 0.94);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  box-shadow: var(--shadow-sm);
-  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
 }
 
 .site-header--solid .nav__logo-text,
@@ -78,19 +78,20 @@ body.nav-open .float-actions {
 .site-header.is-scrolled .nav__logo-text,
 .site-header.is-scrolled .nav__link,
 .site-header.is-scrolled .nav__toggle {
-  color: var(--color-charcoal);
+  color: #f5efe6;
+  text-shadow: none;
 }
 
 .site-header--solid .nav__logo-mark,
 .site-header.is-scrolled .nav__logo-mark {
-  color: var(--color-highlight);
+  color: var(--color-gold, #d4af37);
 }
 
 .site-header--solid .nav__link:hover,
 .site-header--solid .nav__link.is-active,
 .site-header.is-scrolled .nav__link:hover,
 .site-header.is-scrolled .nav__link.is-active {
-  color: var(--color-highlight-dark);
+  color: var(--color-gold-bright, #e8c547);
 }
 
 /* Nav bar layout */
@@ -116,7 +117,7 @@ body.nav-open .float-actions {
   color: inherit;
 }
 
-/* Logo — original colours only, no plate / no duplicate brand text */
+/* Nav mark on black chrome — soft champagne plate so official logo stays true */
 .nav__logo-img {
   display: block;
   height: 2.75rem;
@@ -124,10 +125,11 @@ body.nav-open .float-actions {
   max-width: 11.5rem;
   object-fit: contain;
   object-position: left center;
-  background: transparent;
-  padding: 0;
-  border-radius: 0;
-  box-shadow: none;
+  background: #f5efe6;
+  padding: 0.22rem 0.4rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
   image-rendering: auto;
   -ms-interpolation-mode: bicubic;
   filter: none;
@@ -158,11 +160,11 @@ body.nav-open .float-actions {
 
 .site-header--transparent .nav__link.is-active,
 .site-header--transparent .nav__link:hover {
-  color: var(--color-highlight, #1a4a8a);
+  color: var(--color-gold-bright, #e8c547);
 }
 
 .site-header--transparent .nav__link::after {
-  background: var(--color-highlight, #1a4a8a);
+  background: var(--color-gold, #d4af37);
 }
 
 .site-header--solid .nav__link.is-active,
@@ -324,7 +326,7 @@ body.nav-open .float-actions {
   height: 100%;
   height: 100dvh;
   max-height: 100dvh;
-  background: #ffffff;
+  background: #0a0a0a;
   /* Fully opaque — no glass/blur that reveals content underneath */
   opacity: 1;
   box-shadow: var(--shadow-xl);
@@ -340,6 +342,7 @@ body.nav-open .float-actions {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   z-index: 1;
+  border-left: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 .nav__drawer.is-open .nav__drawer-panel {
@@ -352,9 +355,9 @@ body.nav-open .float-actions {
   font-family: var(--font-display);
   font-size: var(--fs-lg);
   font-weight: var(--fw-medium);
-  color: var(--color-charcoal);
+  color: #f5efe6;
   border-radius: var(--radius-md);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
   transition:
     color var(--duration-fast) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out),

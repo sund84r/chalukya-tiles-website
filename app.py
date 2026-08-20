@@ -61,7 +61,7 @@ SESSION_SECRET = os.environ.get(
     "chalukya-tiles-dev-secret-change-me-in-production-v15",
 )
 
-APP_VERSION = "1.6.13"
+APP_VERSION = "1.6.14"
 
 # ---------------------------------------------------------------------------
 # Lifespan: init DB on startup
