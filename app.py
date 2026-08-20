@@ -12,6 +12,7 @@ Serves:
 
 from __future__ import annotations
 
+import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -25,6 +26,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.sessions import SessionMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from api.admin import router as admin_router
 from api.enquiry import router as enquiry_router
@@ -52,16 +54,60 @@ BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
 
-# Public site origin for sitemap absolute URLs (override in production)
-SITE_URL = os.environ.get("SITE_URL", "https://www.chalukyatiles.example")
+logger = logging.getLogger("chalukya")
 
-# Session secret for admin login (set ADMIN_SECRET in production)
-SESSION_SECRET = os.environ.get(
-    "ADMIN_SECRET",
-    "chalukya-tiles-dev-secret-change-me-in-production-v15",
+# ---------------------------------------------------------------------------
+# Environment / production security
+# ---------------------------------------------------------------------------
+
+APP_ENV = os.environ.get("APP_ENV", os.environ.get("ENVIRONMENT", "development")).strip().lower()
+IS_PRODUCTION = APP_ENV in {"production", "prod", "live"}
+
+# Public site origin for sitemap absolute URLs (override in production)
+SITE_URL = os.environ.get("SITE_URL", "https://www.chalukyatiles.example").rstrip("/")
+
+_DEV_SESSION_FALLBACK = "chalukya-tiles-dev-secret-change-me-in-production-v15"
+SESSION_SECRET = os.environ.get("ADMIN_SECRET", "").strip() or _DEV_SESSION_FALLBACK
+
+# Cookie over HTTPS only in production (or when explicitly forced)
+_https_only_env = os.environ.get("SESSION_HTTPS_ONLY", "").strip().lower()
+SESSION_HTTPS_ONLY = (
+    _https_only_env in {"1", "true", "yes"}
+    if _https_only_env
+    else IS_PRODUCTION
 )
 
-APP_VERSION = "1.6.15"
+# Comma-separated hostnames, e.g. "chalukyatiles.com,www.chalukyatiles.com"
+_allowed_hosts_raw = os.environ.get("ALLOWED_HOSTS", "").strip()
+ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts_raw.split(",") if h.strip()]
+
+# Hide OpenAPI docs on the public internet unless explicitly enabled
+_enable_docs_env = os.environ.get("ENABLE_API_DOCS", "").strip().lower()
+ENABLE_API_DOCS = (
+    _enable_docs_env in {"1", "true", "yes"}
+    if _enable_docs_env
+    else not IS_PRODUCTION
+)
+
+if IS_PRODUCTION:
+    if SESSION_SECRET == _DEV_SESSION_FALLBACK or len(SESSION_SECRET) < 32:
+        raise RuntimeError(
+            "Production requires a strong ADMIN_SECRET env var "
+            "(at least 32 random characters). "
+            "Example: python -c \"import secrets; print(secrets.token_urlsafe(48))\""
+        )
+    if SITE_URL.endswith("chalukyatiles.example"):
+        logger.warning(
+            "SITE_URL still looks like a placeholder (%s). "
+            "Set SITE_URL=https://your-real-domain.com before launch.",
+            SITE_URL,
+        )
+elif SESSION_SECRET == _DEV_SESSION_FALLBACK:
+    logger.warning(
+        "Using development ADMIN_SECRET. Set ADMIN_SECRET before hosting."
+    )
+
+APP_VERSION = "1.6.16"
 
 # ---------------------------------------------------------------------------
 # Lifespan: init DB on startup
@@ -90,8 +136,15 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "Permissions-Policy",
             "camera=(), microphone=(), geolocation=()",
         )
-        # Avoid indexing admin
-        if request.url.path.startswith("/admin"):
+        # HSTS when the request arrived over HTTPS (typical behind a TLS proxy)
+        if request.url.scheme == "https" or SESSION_HTTPS_ONLY:
+            response.headers.setdefault(
+                "Strict-Transport-Security",
+                "max-age=31536000; includeSubDomains",
+            )
+        # Avoid indexing admin + login
+        path = request.url.path
+        if path.startswith("/admin") or path == "/login":
             response.headers.setdefault("X-Robots-Tag", "noindex, nofollow")
         return response
 
@@ -105,21 +158,23 @@ app = FastAPI(
     description="Premium floor tiles and interior tiles showroom website API & pages.",
     version=APP_VERSION,
     lifespan=lifespan,
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
-    openapi_url="/api/openapi.json",
+    docs_url="/api/docs" if ENABLE_API_DOCS else None,
+    redoc_url="/api/redoc" if ENABLE_API_DOCS else None,
+    openapi_url="/api/openapi.json" if ENABLE_API_DOCS else None,
 )
 
-# Session first (outermost added last in Starlette — add session before security)
+# Middleware order: last added = outermost. TrustedHost should be outer.
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     SessionMiddleware,
     secret_key=SESSION_SECRET,
     session_cookie="chalukya_admin_session",
     same_site="lax",
-    https_only=False,
+    https_only=SESSION_HTTPS_ONLY,
     max_age=60 * 60 * 12,  # 12 hours
 )
+if ALLOWED_HOSTS:
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
 
 # Static files: CSS, JS, images, videos, icons, uploads
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")

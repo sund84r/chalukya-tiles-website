@@ -13,13 +13,16 @@
   <title>{{ page_title }} | {{ brand_name }} — {{ brand_tagline }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/main.css?v182-oxford">
-  <link rel="stylesheet" href="/static/css/navbar.css?v182-oxford">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css?v193-clean">
+  <link rel="stylesheet" href="/static/css/navbar.css?v194-login">
   <link rel="stylesheet" href="/static/css/gallery.css?v182-oxford">
-  <link rel="stylesheet" href="/static/css/footer.css?v182-oxford">
+  <link rel="stylesheet" href="/static/css/footer.css?v193-clean">
   <link rel="stylesheet" href="/static/css/animations.css?v151-fonts">
-  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" href="/static/icons/favicon-32.png?v=193" sizes="32x32">
+  <link rel="icon" type="image/png" href="/static/icons/favicon-48.png?v=193" sizes="48x48">
+  <link rel="icon" href="/static/icons/favicon.ico?v=193" sizes="any">
+  <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png?v=193">
 </head>
 <body data-page="gallery">
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -44,7 +47,9 @@
           <a class="nav__link" href="/testimonials" data-nav-link="testimonials" role="menuitem">Testimonials</a>
           <a class="nav__link" href="/contact" data-nav-link="contact" role="menuitem">Contact</a>
         </div>
-        <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+        <div class="nav__actions">
+          <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+</div>
         <button class="nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
           <span class="nav__toggle-bar"></span>
           <span class="nav__toggle-bar"></span>
@@ -62,7 +67,7 @@
         <a class="nav__drawer-link" href="/testimonials" data-nav-link="testimonials">Testimonials</a>
         <a class="nav__drawer-link" href="/contact" data-nav-link="contact">Contact</a>
         <a class="btn btn--primary nav__drawer-cta" href="/contact">Book Showroom Visit</a>
-        <p class="nav__drawer-meta">Call us: <a href="tel:+919940718307">99407 18307</a></p>
+<p class="nav__drawer-meta">Call us: <a href="tel:+919940718307">99407 18307</a></p>
       </div>
     </div>
   </header>
@@ -146,7 +151,7 @@
 
         <div class="gallery-empty" data-gallery-empty hidden>
           <h3 class="heading-4">No concept pictures yet</h3>
-          <p class="text-muted text-sm mt-4 mb-6">Upload pictures in Admin → Concept Gallery (with Post on website = Yes), or try another filter.</p>
+          <p class="text-muted text-sm mt-4 mb-6">Upload pictures in Admin â†’ Concept Gallery (with Post on website = Yes), or try another filter.</p>
           <button type="button" class="btn btn--primary btn--sm" data-gallery-reset>Show all</button>
         </div>
 

@@ -50,16 +50,12 @@ body.nav-open .float-actions {
   box-shadow: none;
 }
 
-/* Hero header — white glow on nav text for marble contrast */
+/* Hero header — flat white nav text (no glow / shadow) */
 .site-header--transparent .nav__logo-text,
 .site-header--transparent .nav__link,
 .site-header--transparent .nav__toggle {
   color: #ffffff;
-  text-shadow:
-    0 0 2px #fff,
-    0 0 8px rgba(255, 255, 255, 0.85),
-    0 0 16px rgba(255, 255, 255, 0.45),
-    0 1px 8px rgba(0, 0, 0, 0.45);
+  text-shadow: none;
 }
 
 .site-header--transparent .nav__logo-mark {
@@ -131,7 +127,7 @@ body[data-page="home"] .nav__brand--home {
   color: inherit;
 }
 
-/* Logo — soft white glow border on hero / dark chrome */
+/* Logo — flat white plate on hero / dark chrome */
 .nav__logo-img {
   display: block;
   height: 2.75rem;
@@ -139,15 +135,11 @@ body[data-page="home"] .nav__brand--home {
   max-width: 11.5rem;
   object-fit: contain;
   object-position: left center;
-  background: rgba(255, 255, 255, 0.92);
+  background: #ffffff;
   padding: 0.22rem 0.4rem;
   border-radius: 0.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.65),
-    0 0 10px rgba(255, 255, 255, 0.85),
-    0 0 22px rgba(255, 255, 255, 0.45),
-    0 2px 10px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: none;
   image-rendering: auto;
   -ms-interpolation-mode: bicubic;
   filter: none;
@@ -168,13 +160,9 @@ body[data-page="home"] .nav__brand--home {
 }
 
 .site-header--transparent:not(.is-scrolled) .nav__logo-img {
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.65),
-    0 0 10px rgba(255, 255, 255, 0.85),
-    0 0 22px rgba(255, 255, 255, 0.45),
-    0 2px 10px rgba(0, 0, 0, 0.35);
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: none;
   padding: 0.22rem 0.4rem;
   filter: none;
 }
@@ -191,15 +179,12 @@ body[data-page="home"] .nav__brand--home {
 .site-header--transparent .nav__link.is-active,
 .site-header--transparent .nav__link:hover {
   color: #ffffff;
-  text-shadow:
-    0 0 2px #fff,
-    0 0 12px rgba(255, 255, 255, 1),
-    0 0 22px rgba(255, 255, 255, 0.65);
+  text-shadow: none;
 }
 
 .site-header--transparent .nav__link::after {
   background: #ffffff;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.85);
+  box-shadow: none;
 }
 
 .site-header--solid .nav__link.is-active,
@@ -227,10 +212,11 @@ body[data-page="home"] .nav__brand--home {
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 0.55rem 0.85rem;
-  font-size: var(--fs-sm);
+  padding: 0.55rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
   font-weight: var(--fw-medium);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--color-charcoal);
   text-decoration: none;
   border-radius: var(--radius-sm);
@@ -265,9 +251,16 @@ body[data-page="home"] .nav__brand--home {
   font-weight: var(--fw-semibold);
 }
 
-.nav__cta {
+.nav__actions {
   display: none;
+  align-items: center;
+  gap: 0.55rem;
   margin-left: var(--space-3);
+  flex-shrink: 0;
+}
+
+.nav__cta {
+  display: inline-flex;
 }
 
 /* Hamburger */
@@ -446,7 +439,7 @@ html.nav-open {
     display: flex;
   }
 
-  .nav__cta {
+  .nav__actions {
     display: inline-flex;
   }
 
@@ -455,11 +448,49 @@ html.nav-open {
   }
 }
 
-/* When header is transparent, solid CTA still readable */
-.site-header--transparent .nav__cta.btn--primary {
-  box-shadow: var(--shadow-glow);
+/* Home top-of-page: Book Visit + Login flat white outline */
+body[data-page="home"] .site-header--transparent:not(.is-scrolled) .nav__actions .btn--primary {
+  --btn-bg: transparent;
+  --btn-color: #ffffff;
+  --btn-border: rgba(255, 255, 255, 0.95);
+  --btn-hover-bg: rgba(255, 255, 255, 0.12);
+  --btn-hover-color: #ffffff;
+  color: #ffffff;
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: none;
+  text-shadow: none;
 }
 
-.site-header--transparent.is-scrolled .nav__cta.btn--primary {
-  box-shadow: var(--shadow-sm), var(--shadow-glow);
+body[data-page="home"] .site-header--transparent:not(.is-scrolled) .nav__actions .btn--primary:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+/* After scroll on home: solid Oxford primary for both CTAs */
+body[data-page="home"] .site-header.is-scrolled .nav__actions .btn--primary {
+  --btn-bg: var(--color-highlight);
+  --btn-color: #ffffff;
+  --btn-border: var(--color-highlight);
+  --btn-hover-bg: var(--color-highlight-dark);
+  --btn-hover-color: #ffffff;
+  color: #ffffff;
+  background-color: var(--color-highlight);
+  border-color: var(--color-highlight);
+  box-shadow: var(--shadow-sm);
+  text-shadow: none;
+}
+
+body[data-page="home"] .site-header.is-scrolled .nav__actions .btn--primary:hover {
+  background-color: var(--color-highlight-dark);
+  border-color: var(--color-highlight-dark);
+  color: #ffffff;
+  text-shadow: none;
+}
+
+.nav__drawer-cta + .nav__drawer-cta {
+  margin-top: var(--space-3);
 }

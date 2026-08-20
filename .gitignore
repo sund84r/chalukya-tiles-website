@@ -93,3 +93,7 @@ static/videos/*
 # local auth temp
 .gh-auth-*.txt
 
+
+# Local browser verification artifacts
+.chrome-verify/
+

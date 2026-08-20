@@ -14,14 +14,17 @@
   <title>{{ page_title }} | {{ brand_name }} — {{ brand_tagline }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/main.css?v186-final">
-  <link rel="stylesheet" href="/static/css/navbar.css?v186-final">
-  <link rel="stylesheet" href="/static/css/hero.css?v186-final">
-  <link rel="stylesheet" href="/static/css/footer.css?v182-oxford">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css?v193-clean">
+  <link rel="stylesheet" href="/static/css/navbar.css?v194-login">
+  <link rel="stylesheet" href="/static/css/hero.css?v193-clean">
+  <link rel="stylesheet" href="/static/css/footer.css?v193-clean">
   <link rel="stylesheet" href="/static/css/animations.css?v151-fonts">
-  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
-  <link rel="canonical" href="{{ site_url }}/">
+  <link rel="icon" type="image/png" href="/static/icons/favicon-32.png?v=193" sizes="32x32">
+  <link rel="icon" type="image/png" href="/static/icons/favicon-48.png?v=193" sizes="48x48">
+  <link rel="icon" href="/static/icons/favicon.ico?v=193" sizes="any">
+  <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png?v=193">
+<link rel="canonical" href="{{ site_url }}/">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -84,7 +87,10 @@
           <a class="nav__link" href="/contact" data-nav-link="contact" role="menuitem">Contact</a>
         </div>
 
-        <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+        <div class="nav__actions">
+          <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+          <a class="btn btn--primary btn--sm nav__cta nav__cta--login" href="/login">Login</a>
+        </div>
 
         <button
           class="nav__toggle"
@@ -111,6 +117,7 @@
         <a class="nav__drawer-link" href="/testimonials" data-nav-link="testimonials">Testimonials</a>
         <a class="nav__drawer-link" href="/contact" data-nav-link="contact">Contact</a>
         <a class="btn btn--primary nav__drawer-cta" href="/contact">Book Showroom Visit</a>
+        <a class="btn btn--primary nav__drawer-cta" href="/login">Login</a>
         <p class="nav__drawer-meta">
           Call us:
           <a href="tel:+919940718307">99407 18307</a>
@@ -125,10 +132,10 @@
       <div class="hero__media" data-parallax="0.15">
         <img
           class="hero__poster"
-          src="/static/images/hero-luxury.jpg?v=186"
-          alt="Premium marble showroom interior"
-          width="1672"
-          height="809"
+          src="/static/images/hero-luxury.jpg?v=190"
+          alt="Premium kitchen and tile showroom interior"
+          width="1802"
+          height="872"
           fetchpriority="high"
           decoding="async"
         >
@@ -140,13 +147,13 @@
           loop
           playsinline
           preload="none"
-          poster="/static/images/hero-luxury.jpg?v=186"
+          poster="/static/images/hero-luxury.jpg?v=190"
           aria-hidden="true"
         ></video>
       </div>
       <div class="hero__overlay" aria-hidden="true"></div>
 
-      <div class="hero__content">
+      <div class="hero__content hero__content--right">
         <p class="eyebrow hero__eyebrow delay-1" data-animate="fade-up">Premium Floor &amp; Interior Tiles</p>
         <h1 class="hero__title delay-2" data-animate="fade-up">
           <span class="hero__title-line">Crafted Surfaces</span>
@@ -159,14 +166,6 @@
             ><span data-typing-text>Modern Homes</span></span>
           </span>
         </h1>
-        <div class="hero__actions delay-3" data-animate="fade-up">
-          <a class="btn btn--primary btn--lg" href="/products">Explore Collections</a>
-          <a class="btn btn--ghost btn--lg" href="/gallery">View Concept Gallery</a>
-        </div>
-        <a class="hero__scroll" href="#featured" aria-label="Scroll to featured products">
-          <span class="hero__scroll-icon" aria-hidden="true"></span>
-          Scroll
-        </a>
       </div>
     </section>
 
@@ -339,7 +338,7 @@
       </div>
     </section>
 
-    <!-- Latest collections = Admin → New Arrivals (active tiles) -->
+    <!-- Latest collections = Admin â†’ New Arrivals (active tiles) -->
     <section class="section" id="collections" aria-labelledby="collections-heading">
       <div class="container">
         <header class="section__header section__header--center" data-animate="fade-up">
@@ -374,7 +373,7 @@
           {% endfor %}
           {% else %}
           <p class="lead text-center collections-grid__empty" data-animate="fade-up">
-            Upload tiles in Admin → <strong>New Arrivals</strong> and set them active to show them here.
+            Upload tiles in Admin â†’ <strong>New Arrivals</strong> and set them active to show them here.
           </p>
           {% endif %}
         </div>

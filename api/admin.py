@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import re
 import secrets
+import time
 import uuid
 from pathlib import Path
 from typing import Any, Optional
@@ -252,12 +253,49 @@ async def _save_upload(
 # Auth routes
 # ---------------------------------------------------------------------------
 
+# Simple in-memory login throttle (per process). Enough to slow password guessing.
+_LOGIN_ATTEMPTS: dict[str, list[float]] = {}
+_LOGIN_WINDOW_SEC = 15 * 60
+_LOGIN_MAX_ATTEMPTS = 8
+
+
+def _client_ip(request: Request) -> str:
+    forwarded = (request.headers.get("x-forwarded-for") or "").split(",")[0].strip()
+    if forwarded:
+        return forwarded
+    return request.client.host if request.client else "unknown"
+
+
+def _login_throttle_check(ip: str) -> None:
+    now = time.time()
+    window_start = now - _LOGIN_WINDOW_SEC
+    attempts = [t for t in _LOGIN_ATTEMPTS.get(ip, []) if t >= window_start]
+    _LOGIN_ATTEMPTS[ip] = attempts
+    if len(attempts) >= _LOGIN_MAX_ATTEMPTS:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many login attempts. Please wait 15 minutes and try again.",
+        )
+
+
+def _login_throttle_fail(ip: str) -> None:
+    _LOGIN_ATTEMPTS.setdefault(ip, []).append(time.time())
+
+
+def _login_throttle_clear(ip: str) -> None:
+    _LOGIN_ATTEMPTS.pop(ip, None)
+
+
 @router.post("/login")
 async def admin_login(request: Request, payload: LoginRequest) -> dict[str, Any]:
+    ip = _client_ip(request)
+    _login_throttle_check(ip)
+
     user = database.authenticate_admin(payload.username, payload.password)
     if not user:
+        _login_throttle_fail(ip)
         database.log_app(
-            f"Failed admin login for '{payload.username}'",
+            f"Failed admin login for '{payload.username}' from {ip}",
             level="WARN",
             source="auth",
         )
@@ -265,10 +303,11 @@ async def admin_login(request: Request, payload: LoginRequest) -> dict[str, Any]
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",
         )
+
+    _login_throttle_clear(ip)
     request.session["admin_user"] = user
     request.session["csrf"] = secrets.token_hex(16)
-    client = request.client.host if request.client else None
-    database.log_user(user["username"], "login", ip=client)
+    database.log_user(user["username"], "login", ip=ip)
     database.log_app(
         f"Admin login: {user['username']} ({user.get('role', 'user')})",
         source="auth",

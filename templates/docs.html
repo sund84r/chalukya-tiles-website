@@ -9,13 +9,16 @@
   <title>{{ page_title }} | {{ brand_name }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/main.css?v182-oxford">
-  <link rel="stylesheet" href="/static/css/navbar.css?v182-oxford">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css?v193-clean">
+  <link rel="stylesheet" href="/static/css/navbar.css?v194-login">
   <link rel="stylesheet" href="/static/css/docs.css?v151-fonts">
-  <link rel="stylesheet" href="/static/css/footer.css?v182-oxford">
+  <link rel="stylesheet" href="/static/css/footer.css?v193-clean">
   <link rel="stylesheet" href="/static/css/animations.css?v151-fonts">
-  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" href="/static/icons/favicon-32.png?v=193" sizes="32x32">
+  <link rel="icon" type="image/png" href="/static/icons/favicon-48.png?v=193" sizes="48x48">
+  <link rel="icon" href="/static/icons/favicon.ico?v=193" sizes="any">
+  <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png?v=193">
 </head>
 <body data-page="docs">
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -34,7 +37,9 @@
           <a class="nav__link" href="/testimonials" data-nav-link="testimonials" role="menuitem">Testimonials</a>
           <a class="nav__link" href="/contact" data-nav-link="contact" role="menuitem">Contact</a>
         </div>
-        <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+        <div class="nav__actions">
+          <a class="btn btn--primary btn--sm nav__cta" href="/contact">Book Visit</a>
+</div>
         <button class="nav__toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
           <span class="nav__toggle-bar"></span>
           <span class="nav__toggle-bar"></span>
@@ -52,7 +57,7 @@
         <a class="nav__drawer-link" href="/testimonials">Testimonials</a>
         <a class="nav__drawer-link" href="/contact">Contact</a>
         <a class="btn btn--primary nav__drawer-cta" href="#main">On this page</a>
-      </div>
+</div>
     </div>
   </header>
 
@@ -164,10 +169,10 @@
           <h2 id="architecture">4. Architecture</h2>
           <p>Request flow at a high level:</p>
           <div class="docs-diagram" role="img" aria-label="Architecture diagram">Browser
-  │
-  ├─ GET  /pages/*     → app.py → Jinja2 templates → HTML
-  ├─ GET  /static/*    → StaticFiles (css, js, images, videos)
-  └─ POST /api/*       → api/enquiry.py → database/db.py → SQLite
+  â”‚
+  â”œâ”€ GET  /pages/*     â†’ app.py â†’ Jinja2 templates â†’ HTML
+  â”œâ”€ GET  /static/*    â†’ StaticFiles (css, js, images, videos)
+  â””â”€ POST /api/*       â†’ api/enquiry.py â†’ database/db.py â†’ SQLite
 </div>
           <h3>Design principles</h3>
           <ul>
@@ -180,15 +185,15 @@
 
           <h2 id="structure">5. Folder structure</h2>
           <pre><code>website_tiles1/
-├── PROJECT_MEMORY.md      # Permanent session memory
-├── app.py                 # FastAPI app, pages, SEO, 404
-├── requirements.txt
-├── README.md
-├── templates/             # HTML (Jinja2)
-├── static/css|js|images|videos|icons
-├── api/enquiry.py         # JSON API routers
-├── database/db.py         # SQLite schema &amp; helpers
-└── assets/                # Non-public brand sources</code></pre>
+â”œâ”€â”€ PROJECT_MEMORY.md      # Permanent session memory
+â”œâ”€â”€ app.py                 # FastAPI app, pages, SEO, 404
+â”œâ”€â”€ requirements.txt
+â”œâ”€â”€ README.md
+â”œâ”€â”€ templates/             # HTML (Jinja2)
+â”œâ”€â”€ static/css|js|images|videos|icons
+â”œâ”€â”€ api/enquiry.py         # JSON API routers
+â”œâ”€â”€ database/db.py         # SQLite schema &amp; helpers
+â””â”€â”€ assets/                # Non-public brand sources</code></pre>
           <p>
             Public URLs under <code>/static/…</code> map to the <code>static/</code> folder.
             Source design files (logo masters, raw video) belong in <code>assets/</code>, not in the public web root.
@@ -386,7 +391,7 @@ uvicorn app:app --reload --host 127.0.0.1 --port 8000</code></pre>
             <li>Change admin password (env vars or re-seed after deleting admin row).</li>
             <li>Update phone, email, WhatsApp links, address, map embeds.</li>
             <li>Set <code>SITE_URL</code> / <code>ADMIN_SECRET</code> for production.</li>
-            <li>Upload real tile photos and collection videos via Admin → Tile Media / Videos.</li>
+            <li>Upload real tile photos and collection videos via Admin â†’ Tile Media / Videos.</li>
             <li>Back up <code>database/showroom.db</code> and <code>static/uploads/</code> on a schedule.</li>
             <li>Serve behind HTTPS reverse proxy in production.</li>
           </ol>

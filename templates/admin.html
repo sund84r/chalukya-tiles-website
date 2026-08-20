@@ -7,9 +7,12 @@
   <title>Admin Dashboard | {{ brand_name }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/admin.css?v182-oxford">
-  <link rel="icon" href="/static/icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" href="/static/icons/favicon-32.png?v=193" sizes="32x32">
+  <link rel="icon" type="image/png" href="/static/icons/favicon-48.png?v=193" sizes="48x48">
+  <link rel="icon" href="/static/icons/favicon.ico?v=193" sizes="any">
+  <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png?v=193">
 </head>
 <body class="admin-body" data-admin-app data-admin-user="{{ admin_user.username }}">
   <div class="admin-shell" data-admin-shell>
@@ -432,7 +435,7 @@
             <label class="admin-field"><span>Phone</span><input name="customer_phone"></label>
             <label class="admin-field"><span>Product *</span><input name="product_name" required></label>
             <label class="admin-field"><span>Qty</span><input name="quantity" type="number" step="0.01" value="1"></label>
-            <label class="admin-field"><span>Amount (₹) *</span><input name="amount" type="number" step="0.01" required></label>
+            <label class="admin-field"><span>Amount (â‚¹) *</span><input name="amount" type="number" step="0.01" required></label>
             <label class="admin-field"><span>Date *</span><input name="sale_date" type="date" required></label>
             <label class="admin-field"><span>Status</span>
               <select name="status">
@@ -694,7 +697,7 @@
               <thead>
                 <tr>
                   <th>Name</th><th>Category</th><th>Subcategory</th><th>SKU</th><th>Qty</th><th>Unit</th><th>Reorder</th>
-                  <th>Sell ₹</th><th>Post in website</th><th>Status</th><th>Stock</th><th></th>
+                  <th>Sell â‚¹</th><th>Post in website</th><th>Status</th><th>Stock</th><th></th>
                 </tr>
               </thead>
               <tbody data-inventory-table></tbody>
