@@ -24,7 +24,9 @@
 **GSTIN:** 33AAWFC0185C1ZL  
 **MD:** C. Venkatesan, MBA
 
-**Deploy note (2026-08):** Owner has a **domain** but **no host yet**. Domain alone cannot serve this FastAPI app. Needs a VPS/PaaS. SQLite can live on the **same host** first; separate MySQL later is optional. Cannot run as static-only without a major rewrite (admin, products, forms, reviews all need DB).
+**Deploy note (2026-08):** Owner has a **domain** but **no host yet**. Domain alone cannot serve this Flask app. Needs a VPS/PaaS. SQLite can live on the **same host** first; separate MySQL later is optional. Cannot run as static-only without a major rewrite (admin, products, forms, reviews all need DB).
+
+**GitHub `main` (2026-08-20):** Backend migrated **FastAPI/ASGI → Flask/WSGI**. Only Flask code is on `main` (`a12714c`). Local run: `flask --app app run --host 127.0.0.1 --port 8002`. Linux prod: `gunicorn -w 2 -b 0.0.0.0:8000 "app:app"`.
 
 ---
 
@@ -32,16 +34,22 @@
 
 | Layer | Choice | Notes |
 |-------|--------|--------|
+| Language | Python 3.11–3.14 (local: 3.14.6) | Project `.venv` |
 | Frontend | HTML5, CSS3, Vanilla JS (ES6+) | No React/Vue/Angular/Bootstrap/jQuery |
-| Backend | Python, FastAPI | Uvicorn ASGI server |
-| Templates | Jinja2 | Served by FastAPI |
+| Backend | **Flask 3** (WSGI) | App factory `create_app()` in `app.py` |
+| Server (local) | Flask development server | `flask --app app run` |
+| Server (prod Linux) | **Gunicorn** | `gunicorn "app:app"` |
+| Templates | Jinja2 | Via Flask `render_template` |
+| API layout | Flask Blueprints | `api/enquiry.py`, `api/admin.py` |
 | Database | SQLite (`database/showroom.db`) | Runtime file gitignored; MySQL-ready design |
-| Validation | Pydantic v2 | API request models |
-| Fonts | Google Fonts — Inter + Poppins | Linked from templates |
+| Validation | Pydantic v2 | JSON/form validation in handlers |
+| Auth | Flask sessions + PBKDF2 | Cookie `chalukya_admin_session` (12h) |
+| Exports | openpyxl + fpdf2 | Admin Excel/PDF |
+| Fonts | Google Fonts — **Inter** | Linked from templates |
 | Platform | Windows local + GitHub remote | VS Code; clone anywhere |
-| VCS | Git + GitHub CLI | Logged in as **sund84r** |
+| VCS | Git + GitHub CLI | Account **sund84r**, branch **`main` only** |
 
-**Strict exclusions:** React, Vue, Angular, Bootstrap, jQuery, unnecessary libraries.
+**Strict exclusions:** React, Vue, Angular, Bootstrap, jQuery; no FastAPI/Starlette/Uvicorn remaining on `main`.
 
 **Git ignores (do not commit):** `.venv/`, `.env*`, `database/*.db`, uploaded media under `static/uploads/**` (keep `.gitkeep` + README only).
 
@@ -52,8 +60,9 @@
 ```
 website_tiles1/
 ├── PROJECT_MEMORY.md          # This file — permanent memory
-├── app.py                     # FastAPI entry, pages, SEO, 404, security headers
-├── requirements.txt
+├── app.py                     # Flask create_app(), pages, SEO, 404, security headers
+├── .env.example               # Production env template (APP_ENV, ADMIN_SECRET, SITE_URL, …)
+├── requirements.txt           # Flask + Gunicorn + Pydantic + export libs
 ├── README.md                  # Run + clone + git workflow notes
 ├── .gitignore
 ├── .gitattributes             # LF normalization (fewer Windows merge issues)
@@ -105,19 +114,22 @@ website_tiles1/
 ```
 Browser
   │
-  ├─ GET HTML pages ──► FastAPI (app.py) ──► Jinja2 templates/
-  ├─ GET /static/*   ──► StaticFiles
-  └─ POST /api/*     ──► api/enquiry.py ──► database/db.py ──► SQLite
+  ├─ GET HTML pages ──► Flask (app.py) ──► Jinja2 templates/
+  ├─ GET /static/*   ──► Flask static folder
+  ├─ POST /api/contact|enquiry|review ──► api/enquiry.py Blueprint ──► db.py ──► SQLite
+  └─ /api/admin/*    ──► api/admin.py Blueprint (session auth) ──► db.py + uploads/
 ```
 
 **Patterns:**
 - Modular CSS/JS by feature (no inline CSS/JS on product pages)
 - Shared design tokens in `:root` (`main.css`)
 - Sticky navbar: transparent on home hero, solid on inner pages / scroll
-- Forms: Vanilla JS validation → `ChalukyaAPI` Fetch → FastAPI Pydantic → SQLite
+- Forms: Vanilla JS validation → `ChalukyaAPI` Fetch → Pydantic (Flask handlers) → SQLite
+- Admin: `credentials: same-origin` fetch + Flask session cookie
 - Product enquire deep-link: `/contact?product=…&category=…` → `POST /api/enquiry`
 - SEO: meta tags, JSON-LD (home), `/robots.txt`, `/sitemap.xml`, security headers
 - A11y: skip link, ARIA, keyboard lightbox, focus-visible, reduced-motion
+- Prod guards: `APP_ENV=production` requires strong `ADMIN_SECRET`; HTTPS-only cookie; login rate limit
 
 **Config knobs:**
 - `SITE_URL` in `app.py` (sitemap + JSON-LD absolute URLs)
@@ -283,13 +295,15 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 
 ## Current project version
 
-**Version:** `1.6.15`  
-**App version string:** `1.6.15` in FastAPI metadata / health  
-**Memory schema version:** `1.6` (inventory, finance, exports, logs, charts, Concept Gallery, reviews, GitHub, user management)  
-**Last memory update:** 2026-08-17 (Admin User Management + permissions)
+**Version:** `1.7.0-flask`  
+**App version string:** `1.7.0-flask` in `/api/health` (`runtime: flask-wsgi`)  
+**Memory schema version:** `1.7` (Flask WSGI + prior 1.6 feature set)  
+**Last memory update:** 2026-08-20 (FastAPI → Flask migration; GitHub `main` is Flask-only)
 
 | Version | Date | Notes |
 |---------|------|--------|
+| 1.7.0-flask | 2026-08-20 | Backend migrated to Flask/WSGI; Gunicorn for Linux prod; FastAPI removed from `main` |
+| 1.6.15 | 2026-08-20 | Oxford theme + hero polish (pre-Flask) |
 | 1.0.0 | 2026-07-15 | Modules 1–11 complete, production-ready site |
 | 1.1.0 | 2026-07-15 | PROJECT_MEMORY.md + `/docs` documentation page |
 | 1.2.0 | 2026-07-23 | Rebrand Prestige → Chalukya Tiles (logo, contact, colors) |
@@ -317,6 +331,19 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 ---
 
 ## Session log (append-only style)
+
+### Session — FastAPI → Flask migration (v1.7.0-flask) — 2026-08-20
+- Migrated monolithic backend from **FastAPI + Uvicorn (ASGI)** to **Flask 3 + WSGI**
+- `app.py`: `create_app()`, Jinja pages, SEO, security headers, Trusted Host / HSTS / prod `ADMIN_SECRET` gate
+- `api/enquiry.py` + `api/admin.py`: Flask Blueprints; Pydantic validation kept; multipart via `request.files`
+- `api/http_utils.py`: shared JSON error + parse helpers
+- Session cookie name unchanged: `chalukya_admin_session`; login rate limit preserved
+- `requirements.txt`: Flask + Gunicorn; removed FastAPI/Uvicorn
+- GitHub: merged to **`main` only** (commit `a12714c`); FastAPI code no longer current
+- Local: `flask --app app run --host 127.0.0.1 --port 8002`
+- Prod Linux: `gunicorn -w 2 -b 0.0.0.0:8000 "app:app"`
+- Smoke-tested pages, contact API, admin login/me/dashboard/logout; DB row counts intact
+- Also earlier same day: hero/fonts/favicon, home-only Login, testimonials encoding, About Journey removed, security `.env.example`
 
 ### Session — luxury black + gold + hero image (v1.6.14)
 - Home hero: removed Chalukya logo; full-bleed `hero-luxury.jpg` from ChatGPT showroom PNG
@@ -588,11 +615,11 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 
 | Area | Path / file |
 |------|-------------|
-| Login | GET `/admin/login` |
+| Login | GET `/login` (legacy `/admin/login` → redirect) |
 | Dashboard UI | GET `/admin` |
 | Admin API | `/api/admin/*` — tiles, videos, concept-gallery, inventory, sales, returns, purchases, leads, customers, queries, reviews, analytics, logs, backup/export |
 | Uploads | `static/uploads/{tiles,videos,posters,gallery,inventory}/` |
-| Auth | Starlette sessions (`chalukya_admin_session`) |
+| Auth | Flask sessions (`chalukya_admin_session`, 12h, Secure in production) |
 | Default login | `admin` / `chalukya@2026` (change before production) |
 
 ### Public content sources (admin-driven)
@@ -614,7 +641,7 @@ No migrations framework yet — schema created with `CREATE TABLE IF NOT EXISTS`
 2. **Update always:** Append/revise PROJECT_MEMORY after every module or session; do not delete useful history.
 3. **Docs sync:** Keep `templates/docs.html` and `GET /docs` accurate when architecture/features change.
 4. **CONTINUE PROMPT:** Regenerate at session end for clean handoff.
-5. **Stack:** HTML5 / CSS3 / Vanilla JS ES6+ only on frontend; FastAPI + Jinja2 + SQLite backend; modular `static/css/` and `static/js/`; no inline CSS or inline JS.
+5. **Stack:** HTML5 / CSS3 / Vanilla JS ES6+ only on frontend; **Flask + Jinja2 + SQLite** backend (WSGI); modular `static/css/` and `static/js/`; no inline CSS or inline JS.
 6. **Scope:** Module-by-module for large work; keep architecture modular.
 7. **Git:** Prefer single `main` branch; `pull` before work; never force-push `main` casually; never commit secrets/DB/uploads binaries.
 
@@ -631,31 +658,31 @@ Workspace: C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1
 GitHub (private): https://github.com/sund84r/chalukya-tiles-website — account sund84r, branch main.
 Read PROJECT_MEMORY.md first and treat it as permanent project memory. Update it at the end of every module/session (never discard useful history). Keep templates/docs.html, USER_GUIDE.html, GET /docs + /user-guide in sync when architecture changes.
 
-Stack (strict): HTML5, CSS3, Vanilla JS ES6+ only — no React/Vue/Angular/Bootstrap/jQuery. Backend: Python FastAPI + Jinja2. Database: SQLite database/showroom.db (gitignored; MySQL-ready). Modular static/css + static/js. No inline CSS/JS.
+Stack (strict): HTML5, CSS3, Vanilla JS ES6+ only — no React/Vue/Angular/Bootstrap/jQuery. Backend: Python Flask 3 (WSGI) + Jinja2 + Blueprints. Database: SQLite database/showroom.db (gitignored; MySQL-ready). Local: flask --app app run. Linux prod: gunicorn "app:app". Modular static/css + static/js. No inline CSS/JS. No FastAPI/Uvicorn on main.
 
-Brand: Chalukya Tiles. Logo: static/icons/logo-chalukya.png (official final logo; keep natural colours). Theme: white + light Oxford blue (#002147 family); product/media cards pure white + object-fit contain for true tile colour. Nav/footer: logo only (no extra “Chalukya Tiles” text beside mark). Admin sidebar: white top-left brand corner + ADMIN text #150f3e. Phone/WhatsApp 99407 18307. Email chalukyatiles@gmail.com. Address Coimbatore Kurumbapalayam. Version: 1.6.12.
+Brand: Chalukya Tiles. Logo: static/icons/logo-chalukya.png (+ favicon from logo final.png). Theme: white + light Oxford blue (#002147 family). Phone/WhatsApp 99407 18307. Email chalukyatiles@gmail.com. Address Coimbatore Kurumbapalayam. Version: 1.7.0-flask.
 
-What exists: Full public site + full Admin + USER_GUIDE.
-Public: /, /about, /products (posted inventory only), /gallery (concept uploads only), /testimonials (approved reviews), /contact, /docs, /user-guide, 404.
-Home: collection videos, featured shuffle (inventory+concepts), New Arrivals from tiles table, gallery preview, reviews slider, pen FAB → POST /api/review.
-Admin: dashboard, inventory, New Arrivals, Collection Videos, Concept Gallery, sales/returns/purchases, leads, queries, customers, Reviews & Ratings, logs/backup/export.
-DB: SQLite required for products/admin/forms/reviews — not a static site. Domain exists; no host yet — needs VPS/PaaS to go live; SQLite can stay on same server first.
+What exists: Full public site + full Admin + USER_GUIDE on Flask.
+Public: /, /about, /products, /gallery, /testimonials, /contact, /docs, /user-guide, 404.
+Home: Login CTA (home only), hero image, featured shuffle, New Arrivals, reviews, pen FAB → POST /api/review, WhatsApp FAB.
+Admin: /login → /admin — dashboard, inventory, media, CRM, reviews, users, logs, backup/export.
+DB: SQLite required. Domain exists; no host yet — needs VPS/PaaS; set APP_ENV, ADMIN_SECRET, SITE_URL, ALLOWED_HOSTS; HTTPS for Secure cookies.
 
-Default admin: admin / chalukya@2026 (CHANGE before public). Env: ADMIN_USERNAME, ADMIN_PASSWORD, ADMIN_SECRET, SITE_URL.
+Default admin: admin / chalukya@2026 (CHANGE before public). See .env.example.
 
-Run (Windows; prefer 8002 if 8000 blocked):
+Run (Windows; prefer 8002):
   cd C:\Users\Admin\Downloads\ChalukyaTiles_website\website_tiles1
   .\.venv\Scripts\Activate.ps1
-  python -m uvicorn app:app --reload --host 0.0.0.0 --port 8002
-Open: http://127.0.0.1:8002  Admin: /admin  Repo: github.com/sund84r/chalukya-tiles-website
+  flask --app app run --host 127.0.0.1 --port 8002
+Open: http://127.0.0.1:8002  Login: /login  Repo: github.com/sund84r/chalukya-tiles-website (main = Flask)
 
 Git hygiene: pull before work; commit + push main; never commit .venv, .env, showroom.db, upload binaries.
 
 Suggested next tasks:
-1) Choose host (VPS recommended) + deploy + point domain DNS + HTTPS
-2) Change admin password + ADMIN_SECRET + production SITE_URL
-3) Upload real inventory/concepts/new arrivals/videos; backup DB + uploads
-4) Sync USER_GUIDE / docs with v1.6.12 features
+1) Choose host + deploy Flask/gunicorn + DNS + HTTPS
+2) Change admin password + ADMIN_SECRET + SITE_URL + ALLOWED_HOSTS
+3) Copy showroom.db + static/uploads to host; backup regularly
+4) Sync USER_GUIDE / docs.html with Flask 1.7.0 notes
 5) Optional: email on form/review; MySQL later
 
 Rules: Module-by-module if large; modular architecture; update PROJECT_MEMORY.md before ending; refresh CONTINUE PROMPT; keep /docs and USER_GUIDE in sync with major changes.
@@ -665,4 +692,4 @@ User request: [PASTE USER REQUEST HERE]
 
 ---
 
-*Last updated: 2026-08-11 · v1.5.1 mobile nav fix · Maintainer: development sessions via Grok Build*
+*Last updated: 2026-08-20 · v1.7.0-flask (FastAPI → Flask on GitHub main) · Maintainer: development sessions via Grok Build*
