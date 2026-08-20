@@ -395,6 +395,8 @@ def _seed_demo_analytics(conn: sqlite3.Connection) -> None:
 
     cust_count = conn.execute("SELECT COUNT(*) AS c FROM customers").fetchone()["c"]
     if cust_count == 0:
+        from database.migrate import normalize_name, normalize_phone
+
         now = utc_now_iso()
         customers = [
             ("Ravi Kumar", "9876543210", "ravi@email.com", "RS Puram", "Coimbatore"),
@@ -403,14 +405,29 @@ def _seed_demo_analytics(conn: sqlite3.Connection) -> None:
             ("Suresh Builders", "9940718307", "suresh@builders.in", "Kurumbapalayam", "Coimbatore"),
         ]
         for name, phone, email, address, city in customers:
-            conn.execute(
-                """
-                INSERT INTO customers (
-                    name, phone, email, address, city, notes, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (name, phone, email, address, city, None, now),
-            )
+            try:
+                conn.execute(
+                    """
+                    INSERT INTO customers (
+                        name, phone, phone_normalized, name_normalized,
+                        email, address, city, notes, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        name,
+                        phone,
+                        normalize_phone(phone),
+                        normalize_name(name),
+                        email,
+                        address,
+                        city,
+                        None,
+                        now,
+                    ),
+                )
+            except sqlite3.IntegrityError:
+                # Unique index already has this demo row — skip safely
+                continue
 
 
 def init_db() -> None:
@@ -422,7 +439,10 @@ def init_db() -> None:
 
         migrate(conn)
         _seed_admin(conn)
-        _seed_demo_analytics(conn)
+        # Never inject demo CRM rows on a live host
+        env = os.environ.get("APP_ENV", os.environ.get("ENVIRONMENT", "development")).strip().lower()
+        if env not in {"production", "prod", "live"}:
+            _seed_demo_analytics(conn)
 
 
 # ---------------------------------------------------------------------------
