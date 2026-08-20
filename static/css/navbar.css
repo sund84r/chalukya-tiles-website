@@ -50,15 +50,20 @@ body.nav-open .float-actions {
   box-shadow: none;
 }
 
-/* Light hero: Oxford blue links on white */
+/* Hero header — white glow on nav text for marble contrast */
 .site-header--transparent .nav__logo-text,
 .site-header--transparent .nav__link,
 .site-header--transparent .nav__toggle {
-  color: var(--color-oxford, #002147);
+  color: #ffffff;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 8px rgba(255, 255, 255, 0.85),
+    0 0 16px rgba(255, 255, 255, 0.45),
+    0 1px 8px rgba(0, 0, 0, 0.45);
 }
 
 .site-header--transparent .nav__logo-mark {
-  color: var(--color-highlight);
+  color: #ffffff;
 }
 
 /* Solid state while scrolling (or always on inner pages without hero video).
@@ -112,11 +117,21 @@ body.nav-open .float-actions {
   text-decoration: none;
 }
 
+/* Home hero: no top-left logo */
+body[data-page="home"] .nav__brand--home {
+  display: none !important;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
 .nav__brand:hover {
   color: inherit;
 }
 
-/* Logo — original colours only, no plate / no duplicate brand text */
+/* Logo — soft white glow border on hero / dark chrome */
 .nav__logo-img {
   display: block;
   height: 2.75rem;
@@ -124,10 +139,15 @@ body.nav-open .float-actions {
   max-width: 11.5rem;
   object-fit: contain;
   object-position: left center;
-  background: transparent;
-  padding: 0;
-  border-radius: 0;
-  box-shadow: none;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.22rem 0.4rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.65),
+    0 0 10px rgba(255, 255, 255, 0.85),
+    0 0 22px rgba(255, 255, 255, 0.45),
+    0 2px 10px rgba(0, 0, 0, 0.35);
   image-rendering: auto;
   -ms-interpolation-mode: bicubic;
   filter: none;
@@ -147,10 +167,22 @@ body.nav-open .float-actions {
   }
 }
 
-.site-header--transparent:not(.is-scrolled) .nav__logo-img,
+.site-header--transparent:not(.is-scrolled) .nav__logo-img {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.65),
+    0 0 10px rgba(255, 255, 255, 0.85),
+    0 0 22px rgba(255, 255, 255, 0.45),
+    0 2px 10px rgba(0, 0, 0, 0.35);
+  padding: 0.22rem 0.4rem;
+  filter: none;
+}
+
 .site-header--solid .nav__logo-img,
 .site-header.is-scrolled .nav__logo-img {
   background: transparent;
+  border: none;
   filter: none;
   box-shadow: none;
   padding: 0;
@@ -158,11 +190,16 @@ body.nav-open .float-actions {
 
 .site-header--transparent .nav__link.is-active,
 .site-header--transparent .nav__link:hover {
-  color: var(--color-highlight, #1a4a8a);
+  color: #ffffff;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 12px rgba(255, 255, 255, 1),
+    0 0 22px rgba(255, 255, 255, 0.65);
 }
 
 .site-header--transparent .nav__link::after {
-  background: var(--color-highlight, #1a4a8a);
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.85);
 }
 
 .site-header--solid .nav__link.is-active,
