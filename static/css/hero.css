@@ -1,6 +1,6 @@
 /* ==========================================================================
    Chalukya Tiles — hero.css
-   Luxury black + shine gold (marble showroom hero)
+   Homepage hero + home sections. White + light Oxford blue.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -10,12 +10,10 @@
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  color: #f5efe6;
+  display: block;
+  color: #f5f8fc;
   overflow: hidden;
-  background: #050505;
+  background: #0a0a0a;
 }
 
 .hero__media {
@@ -30,9 +28,6 @@
   height: 100%;
   object-fit: cover;
   object-position: center center;
-  image-rendering: auto;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0) scale(1.02);
 }
 
 .hero__poster {
@@ -47,7 +42,7 @@
   pointer-events: none;
 }
 
-/* Soft vignette only — no flat wash over marble/gold */
+/* Keep showroom vivid — soft top/bottom only, table zone stays clear */
 .hero__overlay {
   position: absolute;
   inset: 0;
@@ -56,28 +51,49 @@
   background:
     linear-gradient(
       180deg,
-      rgba(5, 5, 5, 0.55) 0%,
-      rgba(5, 5, 5, 0.12) 28%,
-      rgba(5, 5, 5, 0.2) 55%,
-      rgba(5, 5, 5, 0.78) 100%
-    ),
-    radial-gradient(
-      ellipse at 50% 40%,
-      transparent 0%,
-      rgba(5, 5, 5, 0.35) 100%
+      rgba(8, 14, 28, 0.5) 0%,
+      rgba(8, 14, 28, 0.08) 22%,
+      transparent 38%,
+      transparent 68%,
+      rgba(238, 243, 249, 0.55) 88%,
+      #eef3f9 100%
     );
 }
 
+/* Headline block sits on the table surface in the photo */
 .hero__content {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  top: 63%;
+  transform: translate(-50%, -48%);
   z-index: 3;
-  width: 100%;
-  padding-top: calc(var(--header-height) + var(--space-8));
-  padding-bottom: var(--space-16);
+  width: min(92vw, 34rem);
+  padding: 1.1rem 1.25rem 1.25rem;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: rgba(8, 14, 28, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+@media (min-width: 768px) {
+  .hero__content {
+    top: 61%;
+    width: min(88vw, 38rem);
+    padding: 1.25rem 1.6rem 1.4rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .hero__content {
+    top: 60%;
+    width: min(46vw, 40rem);
+  }
 }
 
 .hero__brand,
@@ -87,21 +103,20 @@
 }
 
 .hero__eyebrow {
-  color: var(--color-gold, #d4af37);
-  margin-bottom: var(--space-4);
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
-  letter-spacing: 0.22em;
+  color: #9ec5ff;
+  margin-bottom: var(--space-3);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
 }
 
 .hero__title {
-  color: #faf7f2;
-  font-size: clamp(2.1rem, 6.4vw, 4rem);
+  color: #ffffff;
+  font-size: clamp(1.75rem, 4.8vw, 3rem);
   font-weight: var(--fw-bold);
   letter-spacing: var(--ls-tight);
   max-width: 18ch;
   margin-inline: auto;
-  margin-bottom: var(--space-5);
-  text-shadow: 0 4px 28px rgba(0, 0, 0, 0.65);
+  margin-bottom: var(--space-3);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
   width: 100%;
 }
 
@@ -120,7 +135,7 @@
 }
 
 .hero__title-for {
-  color: rgba(245, 239, 230, 0.88);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: var(--fw-bold);
 }
 
@@ -130,9 +145,8 @@
   justify-content: flex-start;
   min-width: min(12.5ch, 100%);
   min-height: 1.2em;
-  color: var(--color-gold-bright, #e8c547);
+  color: #7ec4f5;
   white-space: nowrap;
-  text-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
 }
 
 .hero__typing [data-typing-text] {
@@ -141,17 +155,17 @@
 }
 
 .hero__title-accent {
-  color: var(--color-gold-bright, #e8c547);
+  color: #7ec4f5;
 }
 
 .hero__subtitle {
-  max-width: 36rem;
+  max-width: 34rem;
   margin-inline: auto;
-  margin-bottom: var(--space-8);
-  font-size: clamp(var(--fs-md), 2.2vw, var(--fs-lg));
+  margin-bottom: var(--space-5);
+  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
   line-height: var(--lh-relaxed);
-  color: rgba(245, 239, 230, 0.86);
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
   position: relative;
   z-index: 1;
 }
@@ -159,9 +173,9 @@
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
+  gap: var(--space-3);
   justify-content: center;
-  margin-bottom: var(--space-12);
+  margin-bottom: var(--space-4);
 }
 
 .hero__scroll {
@@ -169,7 +183,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
-  color: var(--color-gold, #d4af37);
+  color: rgba(255, 255, 255, 0.8);
   font-size: var(--fs-xs);
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
@@ -178,7 +192,7 @@
 }
 
 .hero__scroll:hover {
-  color: var(--color-gold-bright, #e8c547);
+  color: #7ec4f5;
 }
 
 .hero__scroll-icon {
@@ -251,10 +265,9 @@
   font-family: var(--font-display);
   font-size: clamp(var(--fs-2xl), 3vw, var(--fs-3xl));
   font-weight: var(--fw-bold);
-  color: var(--color-gold, #d4af37);
+  color: var(--color-brand-blue-light);
   line-height: 1;
   margin-bottom: var(--space-2);
-  text-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
 }
 
 .trust-strip__label {
@@ -312,8 +325,8 @@
 
 .feature-card {
   padding: var(--space-8) var(--space-6);
-  background: #141414;
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xs);
   transition:
@@ -324,8 +337,8 @@
 }
 
 .feature-card:hover {
-  box-shadow: var(--shadow-glow);
-  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(47, 125, 225, 0.35);
   transform: translateY(-4px);
 }
 

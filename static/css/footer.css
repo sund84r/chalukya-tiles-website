@@ -1,15 +1,15 @@
 /* ==========================================================================
    Chalukya Tiles — footer.css
-   Luxury black + shine gold
+   Multi-column footer: links, products, contact, social, newsletter.
    ========================================================================== */
 
 .site-footer {
   background:
-    linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 55%, #050505 100%);
-  color: #cfc3b4;
+    linear-gradient(180deg, #ffffff 0%, #eef3f9 55%, #e4ecf6 100%);
+  color: #3d5f8f;
   position: relative;
   overflow: hidden;
-  border-top: 1px solid rgba(212, 175, 55, 0.22);
+  border-top: 1px solid rgba(0, 33, 71, 0.1);
 }
 
 .site-footer::before {
@@ -18,12 +18,12 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 3px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(212, 175, 55, 0.75),
-    rgba(232, 197, 71, 0.55),
+    rgba(26, 74, 138, 0.55),
+    rgba(107, 140, 184, 0.55),
     transparent
   );
 }
@@ -48,6 +48,7 @@
   }
 }
 
+/* Brand column */
 .footer__brand {
   max-width: 20rem;
 }
@@ -58,11 +59,11 @@
   gap: var(--space-3);
   margin-bottom: var(--space-5);
   text-decoration: none;
-  color: #f5efe6;
+  color: var(--color-oxford, #002147);
 }
 
 .footer__logo:hover {
-  color: #e8c547;
+  color: var(--color-highlight, #1a4a8a);
 }
 
 .footer__logo {
@@ -76,10 +77,9 @@
   width: auto;
   max-width: 12rem;
   object-fit: contain;
-  background: #f5efe6;
-  padding: 0.28rem 0.45rem;
-  border-radius: 0.4rem;
-  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
   filter: none;
   flex-shrink: 0;
 }
@@ -90,6 +90,7 @@
   gap: var(--space-3);
 }
 
+/* Logo already carries the brand wordmark */
 .footer__brand-text,
 .footer__brand-name,
 .footer__brand-sub {
@@ -99,10 +100,11 @@
 .footer__tagline {
   font-size: var(--fs-sm);
   line-height: var(--lh-relaxed);
-  color: #a89b8c;
+  color: var(--color-stone, #5a7394);
   margin-bottom: var(--space-6);
 }
 
+/* Social icons */
 .footer__social {
   display: flex;
   flex-wrap: wrap;
@@ -116,8 +118,8 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  color: #d4af37;
+  border: 1px solid rgba(0, 33, 71, 0.14);
+  color: var(--color-oxford-soft, #3d5f8f);
   transition:
     color var(--duration-base) var(--ease-out),
     background-color var(--duration-base) var(--ease-out),
@@ -126,9 +128,9 @@
 }
 
 .footer__social-link:hover {
-  color: #0a0a0a;
-  background: #d4af37;
-  border-color: #d4af37;
+  color: #ffffff;
+  background: var(--color-highlight, #1a4a8a);
+  border-color: var(--color-highlight, #1a4a8a);
   transform: translateY(-2px);
 }
 
@@ -138,13 +140,14 @@
   fill: currentColor;
 }
 
+/* Columns */
 .footer__col-title {
   font-family: var(--font-display);
   font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
-  color: #d4af37;
+  color: var(--color-oxford, #002147);
   margin-bottom: var(--space-5);
 }
 
@@ -156,16 +159,17 @@
 
 .footer__links a {
   font-size: var(--fs-sm);
-  color: #cfc3b4;
+  color: var(--color-stone, #5a7394);
   transition: color var(--duration-fast) var(--ease-out),
     padding-left var(--duration-fast) var(--ease-out);
 }
 
 .footer__links a:hover {
-  color: #e8c547;
+  color: var(--color-highlight, #1a4a8a);
   padding-left: var(--space-1);
 }
 
+/* Contact details */
 .footer__contact-list {
   display: flex;
   flex-direction: column;
@@ -185,18 +189,19 @@
   width: 1.1rem;
   height: 1.1rem;
   margin-top: 0.15rem;
-  fill: #d4af37;
+  fill: var(--color-highlight);
 }
 
 .footer__contact-item a:hover {
-  color: #e8c547;
+  color: var(--color-highlight);
 }
 
+/* Newsletter */
 .footer__newsletter-text {
   font-size: var(--fs-sm);
   line-height: var(--lh-relaxed);
   margin-bottom: var(--space-5);
-  color: #a89b8c;
+  color: var(--color-stone, #5a7394);
 }
 
 .footer__newsletter-form {
@@ -216,23 +221,23 @@
   flex: 1;
   min-height: 2.75rem;
   padding: 0.65rem 1rem;
-  background: #141414;
-  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: #ffffff;
+  border: 1px solid rgba(0, 33, 71, 0.14);
   border-radius: var(--radius-full);
-  color: #f5efe6;
+  color: var(--color-oxford, #002147);
   font-size: var(--fs-sm);
   transition: border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .footer__newsletter-input::placeholder {
-  color: rgba(245, 239, 230, 0.4);
+  color: rgba(0, 33, 71, 0.4);
 }
 
 .footer__newsletter-input:focus {
   outline: none;
-  border-color: #d4af37;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+  border-color: var(--color-highlight, #1a4a8a);
+  box-shadow: 0 0 0 3px var(--color-highlight-soft);
 }
 
 .footer__newsletter-form .btn {
@@ -242,12 +247,13 @@
 
 .footer__newsletter-note {
   font-size: var(--fs-xs);
-  color: #a89b8c;
+  color: var(--color-stone, #5a7394);
   margin-top: var(--space-3);
 }
 
+/* Bottom bar */
 .footer__bottom {
-  border-top: 1px solid rgba(212, 175, 55, 0.16);
+  border-top: 1px solid rgba(0, 33, 71, 0.1);
   padding-block: var(--space-5);
 }
 
@@ -258,7 +264,7 @@
   align-items: center;
   text-align: center;
   font-size: var(--fs-xs);
-  color: #a89b8c;
+  color: var(--color-stone, #5a7394);
 }
 
 @media (min-width: 768px) {
@@ -277,10 +283,10 @@
 }
 
 .footer__legal a:hover {
-  color: #e8c547;
+  color: var(--color-highlight, #1a4a8a);
 }
 
 .footer__copy strong {
-  color: #d4af37;
+  color: var(--color-oxford, #002147);
   font-weight: var(--fw-medium);
 }

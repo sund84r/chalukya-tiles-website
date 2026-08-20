@@ -8,62 +8,55 @@
    1. Design tokens (CSS custom properties)
    -------------------------------------------------------------------------- */
 :root {
-  /* Luxury black + shine gold (hero marble showroom) */
-  --color-gold: #d4af37;
-  --color-gold-bright: #e8c547;
-  --color-gold-deep: #a68520;
-  --color-champagne: #f2d8b9;
-  --color-champagne-soft: #efe0cc;
+  /* White + light Oxford blue — clean for tile photography */
+  --color-oxford: #002147;
+  --color-oxford-deep: #001a38;
+  --color-oxford-mid: #1a3a66;
+  --color-oxford-soft: #3d5f8f;
+  --color-oxford-light: #6b8cb8;
+  --color-oxford-mist: #d6e2f0;
+  --color-oxford-pale: #eef3f9;
 
-  --color-oxford: #0a0a0a;
-  --color-oxford-deep: #050505;
-  --color-oxford-mid: #1c1c1c;
-  --color-oxford-soft: #2a2a2a;
-  --color-oxford-light: #d4af37;
-  --color-oxford-mist: #1a1a1a;
-  --color-oxford-pale: #141414;
+  --color-primary: #ffffff;
+  --color-secondary: #002147;
+  --color-accent: #5a7394;
+  --color-highlight: #1a4a8a;
+  --color-highlight-dark: #002147;
+  --color-highlight-soft: rgba(0, 33, 71, 0.1);
+  --color-brand-blue: #1a4a8a;
+  --color-brand-blue-light: #6b8cb8;
+  --color-brand-blue-mid: #3d5f8f;
+  /* legacy aliases → Oxford (avoid broken refs) */
+  --color-walnut: #1a4a8a;
+  --color-walnut-deep: #002147;
+  --color-gold-soft: #6b8cb8;
+  --color-sage: #1a4a8a;
+  --color-sage-light: #d6e2f0;
+  --color-ivory: #ffffff;
+  --color-ivory-deep: #eef3f9;
 
-  --color-primary: #0b0b0b;
-  --color-secondary: #050505;
-  --color-accent: #a89b8c;
-  --color-highlight: #d4af37;
-  --color-highlight-dark: #a68520;
-  --color-highlight-soft: rgba(212, 175, 55, 0.14);
-  --color-brand-blue: #d4af37;
-  --color-brand-blue-light: #e8c547;
-  --color-brand-blue-mid: #c9a227;
-  --color-walnut: #d4af37;
-  --color-walnut-deep: #0a0a0a;
-  --color-gold-soft: #e8c547;
-  --color-sage: #d4af37;
-  --color-sage-light: #1f1a12;
-  --color-ivory: #f5efe6;
-  --color-ivory-deep: #1a1610;
-
-  /* Neutrals — black luxury with warm gold text accents */
-  --color-charcoal: #f5efe6;
-  --color-charcoal-soft: #e8dfd0;
-  --color-stone: #a89b8c;
-  --color-stone-light: #cfc3b4;
-  --color-stone-pale: #1a1a1a;
-  --color-cream: #121212;
-  --color-white: #faf7f2;
-  --color-black: #050505;
+  /* Neutrals — white + cool Oxford tints */
+  --color-charcoal: #0a2540;
+  --color-charcoal-soft: #1a3a66;
+  --color-stone: #5a7394;
+  --color-stone-light: #9aafc8;
+  --color-stone-pale: #eef3f9;
+  --color-cream: #f7f9fc;
+  --color-white: #ffffff;
+  --color-black: #001529;
 
   /* Semantic */
-  --color-text: #f5efe6;
-  --color-text-muted: #a89b8c;
-  --color-text-inverse: #0a0a0a;
-  --color-bg: #0b0b0b;
-  --color-bg-alt: #121212;
-  --color-bg-dark: #050505;
-  --color-border: rgba(212, 175, 55, 0.18);
-  --color-border-strong: rgba(212, 175, 55, 0.32);
-  --color-success: #3d9a6a;
-  --color-error: #d45454;
+  --color-text: var(--color-charcoal);
+  --color-text-muted: var(--color-stone);
+  --color-text-inverse: var(--color-white);
+  --color-bg: var(--color-primary);
+  --color-bg-alt: var(--color-cream);
+  --color-bg-dark: var(--color-secondary);
+  --color-border: rgba(0, 33, 71, 0.1);
+  --color-border-strong: rgba(0, 33, 71, 0.16);
+  --color-success: #1f6b4a;
+  --color-error: #b33a3a;
   --color-focus: var(--color-highlight);
-  /* Tile media surfaces stay light so product photos read true */
-  --color-media-bg: #f7f2ea;
 
   /* Typography — original stack */
   --font-sans: "Inter", "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
@@ -127,15 +120,15 @@
   --radius-xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* Shadows — soft black + gold glow */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 28px 64px rgba(0, 0, 0, 0.55);
-  --shadow-glow: 0 0 0 1px rgba(212, 175, 55, 0.35),
-    0 8px 32px rgba(212, 175, 55, 0.18);
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  /* Shadows — soft Oxford blue tint (tiles stay crisp on white) */
+  --shadow-xs: 0 1px 2px rgba(0, 33, 71, 0.05);
+  --shadow-sm: 0 2px 10px rgba(0, 33, 71, 0.07);
+  --shadow-md: 0 10px 28px rgba(0, 33, 71, 0.09);
+  --shadow-lg: 0 18px 48px rgba(0, 33, 71, 0.12);
+  --shadow-xl: 0 28px 64px rgba(0, 33, 71, 0.14);
+  --shadow-glow: 0 0 0 1px rgba(26, 74, 138, 0.28),
+    0 8px 28px rgba(26, 74, 138, 0.18);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 
   /* Transitions */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -607,49 +600,42 @@ p {
   transform: none;
 }
 
-/* Primary CTA — shine gold */
+/* Primary CTA — elegant red */
 .btn--primary {
-  --btn-bg: linear-gradient(135deg, #e8c547 0%, #d4af37 45%, #a68520 100%);
-  --btn-color: #0a0a0a;
-  --btn-hover-bg: linear-gradient(135deg, #f0d46a 0%, #e8c547 50%, #d4af37 100%);
-  --btn-hover-color: #0a0a0a;
+  --btn-bg: var(--color-highlight);
+  --btn-color: #ffffff;
+  --btn-hover-bg: var(--color-highlight-dark);
+  --btn-hover-color: #ffffff;
   --btn-glow: var(--shadow-glow);
-  background-image: linear-gradient(135deg, #e8c547 0%, #d4af37 45%, #a68520 100%);
-  border-color: rgba(212, 175, 55, 0.65);
-}
-
-.btn--primary:hover {
-  background-image: linear-gradient(135deg, #f0d46a 0%, #e8c547 50%, #d4af37 100%);
 }
 
 /* Outline */
 .btn--outline {
   --btn-bg: transparent;
-  --btn-color: var(--color-gold, #d4af37);
-  --btn-border: rgba(212, 175, 55, 0.55);
-  --btn-hover-bg: rgba(212, 175, 55, 0.12);
-  --btn-hover-color: #e8c547;
+  --btn-color: var(--color-charcoal);
+  --btn-border: var(--color-charcoal);
+  --btn-hover-bg: var(--color-charcoal);
+  --btn-hover-color: var(--color-white);
   box-shadow: none;
 }
 
-/* Ghost on dark / hero */
+/* Ghost / light on dark sections */
 .btn--ghost {
   --btn-bg: transparent;
-  --btn-color: #f5efe6;
-  --btn-border: rgba(212, 175, 55, 0.45);
-  --btn-hover-bg: rgba(212, 175, 55, 0.14);
-  --btn-hover-color: #e8c547;
+  --btn-color: var(--color-white);
+  --btn-border: rgba(255, 255, 255, 0.45);
+  --btn-hover-bg: var(--color-white);
+  --btn-hover-color: var(--color-charcoal);
   box-shadow: none;
 }
 
 /* Soft secondary */
 .btn--soft {
-  --btn-bg: #1a1a1a;
-  --btn-color: #f5efe6;
-  --btn-hover-bg: rgba(212, 175, 55, 0.16);
-  --btn-hover-color: #e8c547;
+  --btn-bg: var(--color-stone-pale);
+  --btn-color: var(--color-charcoal);
+  --btn-hover-bg: var(--color-highlight-soft);
+  --btn-hover-color: var(--color-charcoal);
   box-shadow: none;
-  border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 /* Sizes */
@@ -700,7 +686,7 @@ p {
    6. Cards
    -------------------------------------------------------------------------- */
 .card {
-  background: #141414;
+  background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -712,8 +698,8 @@ p {
 }
 
 .card:hover {
-  box-shadow: var(--shadow-glow);
-  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(47, 125, 225, 0.35);
   transform: translateY(-4px);
 }
 
@@ -721,14 +707,14 @@ p {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: var(--color-media-bg, #f7f2ea);
+  background: #ffffff;
 }
 
 .card__media img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: var(--color-media-bg, #f7f2ea);
+  background: #ffffff;
   transition: transform var(--duration-slower) var(--ease-out);
 }
 
@@ -983,14 +969,13 @@ img[loading="lazy"] {
 }
 
 .float-btn--review {
-  background: #111111;
-  color: #d4af37;
-  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: var(--color-oxford, #002147);
+  color: #9ec5ff;
 }
 
 .float-btn--review:hover {
-  color: #0a0a0a;
-  background: #d4af37;
+  color: #fff;
+  background: var(--color-highlight, #1a4a8a);
 }
 
 .float-btn--scrolltop {

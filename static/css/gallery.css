@@ -83,7 +83,7 @@
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #141414;
+  background: #ffffff;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
   cursor: pointer;
@@ -123,7 +123,7 @@
   width: 100%;
   height: auto;
   display: block;
-  background: var(--color-media-bg, #f7f2ea);
+  background: #ffffff;
   transition: transform var(--duration-slower) var(--ease-out);
 }
 
